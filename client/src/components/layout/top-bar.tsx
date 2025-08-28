@@ -24,7 +24,7 @@ export function TopBar() {
             style={{ 
               paddingLeft: '1.75px',
               fontFamily: "'Zain', sans-serif",
-              fontWeight: 700,
+              fontWeight: 400,
               fontSize: '28px'
             }}
             data-testid="text-scriptum-learning"
