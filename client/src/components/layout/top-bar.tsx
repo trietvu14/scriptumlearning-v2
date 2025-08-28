@@ -9,7 +9,7 @@ export function TopBar() {
   const { user, logout } = useAuth();
 
   return (
-    <div className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg">
+    <div className="w-full bg-gradient-to-r from-blue-600 to-purple-500 text-white shadow-lg">
       <div className="flex items-center justify-between px-6 py-3">
         {/* Left side - Logo and Scriptum Learning */}
         <div className="flex items-center space-x-1">
