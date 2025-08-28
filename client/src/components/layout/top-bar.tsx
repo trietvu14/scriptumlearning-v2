@@ -23,7 +23,7 @@ export function TopBar() {
             className="text-lg text-white" 
             style={{ 
               paddingLeft: '3.5px',
-              fontFamily: "'Petit Formal Script', cursive"
+              fontFamily: "'Parisienne', cursive"
             }}
             data-testid="text-scriptum-learning"
           >
