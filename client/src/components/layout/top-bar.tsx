@@ -11,32 +11,34 @@ export function TopBar() {
   return (
     <div className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg">
       <div className="flex items-center justify-between px-6 py-3">
-        {/* Left side - Logo, Scriptum Learning, and Search */}
-        <div className="flex items-center space-x-4 flex-1">
-          {/* Logo and Scriptum Learning */}
-          <div className="flex items-center space-x-2">
-            <img 
-              src={scriptumLogo} 
-              alt="Scriptum Logo" 
-              className="w-8 h-8"
-              data-testid="img-scriptum-logo"
-            />
-            <span 
-              className="text-lg font-semibold text-white" 
-              style={{ paddingLeft: '7px' }}
-              data-testid="text-scriptum-learning"
-            >
-              Scriptum Learning
-            </span>
-          </div>
-          
-          {/* Search */}
-          <div className="relative flex-1 max-w-md">
+        {/* Left side - Logo and Scriptum Learning */}
+        <div className="flex items-center space-x-1">
+          <img 
+            src={scriptumLogo} 
+            alt="Scriptum Logo" 
+            className="w-8 h-8"
+            data-testid="img-scriptum-logo"
+          />
+          <span 
+            className="text-lg text-white" 
+            style={{ 
+              paddingLeft: '3.5px',
+              fontFamily: "'Petit Formal Script', cursive"
+            }}
+            data-testid="text-scriptum-learning"
+          >
+            Scriptum Learning
+          </span>
+        </div>
+        
+        {/* Center - Search */}
+        <div className="flex-1 flex justify-center px-8">
+          <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-200" />
             <Input
               type="text"
               placeholder="Search courses, content, standards..."
-              className="pl-10 bg-blue-500/30 border-blue-300/30 text-white focus:bg-blue-500/20 focus:border-blue-200 search-placeholder"
+              className="w-full pl-10 bg-blue-500/30 border-blue-300/30 text-white focus:bg-blue-500/20 focus:border-blue-200 search-placeholder"
               data-testid="input-search"
             />
           </div>
