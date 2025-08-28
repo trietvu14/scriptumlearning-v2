@@ -58,8 +58,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(users)
         .where(eq(users.email, email));
 
-      console.log("User from DB:", user); // Debug log
-
       if (!user || !user.isActive) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
