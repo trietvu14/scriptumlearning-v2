@@ -1,20 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 
-// Extend Express Request interface to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-        tenantId: string;
-        name: string;
-      };
-    }
-  }
-}
+// User interface is now declared in middleware/auth.ts
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -44,6 +31,11 @@ import { authenticateToken, requireRole, requireSchoolAdmin, requireFaculty } fr
 import { loadTenant } from "./middleware/tenant";
 import { aiService } from "./services/ai";
 import { lmsService } from "./services/lms";
+
+// Import route modules
+import tenantRoutes from "./routes/tenants";
+import userRoutes from "./routes/users";
+import invitationRoutes from "./routes/invitations";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -483,6 +475,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch student progress" });
     }
   });
+
+  // Mount the new route modules
+  app.use("/api/tenants", tenantRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/invitations", invitationRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

@@ -88,6 +88,21 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+export const userInvitations = pgTable("user_invitations", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  invitedBy: uuid("invited_by").references(() => users.id).notNull(),
+  email: text("email").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  role: userRoleEnum("role").notNull(),
+  invitationToken: text("invitation_token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  acceptedAt: timestamp("accepted_at"),
+  isAccepted: boolean("is_accepted").default(false),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
 export const standards = pgTable("standards", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
@@ -398,12 +413,22 @@ export const insertRAGDocumentSchema = createInsertSchema(ragDocuments).omit({
   updatedAt: true
 });
 
+export const insertUserInvitationSchema = createInsertSchema(userInvitations).omit({
+  id: true,
+  createdAt: true,
+  acceptedAt: true,
+  isAccepted: true
+});
+
 // Types
 export type Tenant = typeof tenants.$inferSelect;
 export type InsertTenant = z.infer<typeof insertTenantSchema>;
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type UserInvitation = typeof userInvitations.$inferSelect;
+export type InsertUserInvitation = z.infer<typeof insertUserInvitationSchema>;
 
 export type Standard = typeof standards.$inferSelect;
 export type InsertStandard = z.infer<typeof insertStandardSchema>;

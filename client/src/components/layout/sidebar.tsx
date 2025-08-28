@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/hooks/use-tenant";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { 
   GraduationCap, 
@@ -11,7 +12,10 @@ import {
   University,
   Settings,
   BarChart3,
-  Bot
+  Bot,
+  Users,
+  Building2,
+  Shield
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -21,34 +25,47 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const { tenant } = useTenant();
+  const { user } = useAuth();
   const [location] = useLocation();
 
+  // Build navigation based on user role
   const navigation = [
     {
       name: "Main",
       items: [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Course Content", href: "/content", icon: BookOpen },
-        { name: "Curriculum Mapping", href: "/mapping", icon: Map },
-        { name: "Board Review", href: "/board-review", icon: ClipboardCheck }
+        { name: "Curriculum Mapping", href: "/mapping", icon: Map, requiredRoles: ["super_admin", "school_admin", "faculty"] },
+        { name: "Board Review", href: "/board-review", icon: ClipboardCheck, requiredRoles: ["super_admin", "school_admin", "faculty"] }
       ]
     },
     {
       name: "Standards",
       items: [
-        { name: "USMLE Mapping", href: "/standards/usmle", icon: Award },
-        { name: "LCME Standards", href: "/standards/lcme", icon: University },
-        { name: "Internal Standards", href: "/standards/internal", icon: Settings }
+        { name: "USMLE Mapping", href: "/standards/usmle", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] },
+        { name: "LCME Standards", href: "/standards/lcme", icon: University, requiredRoles: ["super_admin", "school_admin", "faculty"] },
+        { name: "Internal Standards", href: "/standards/internal", icon: Settings, requiredRoles: ["super_admin", "school_admin", "faculty"] }
       ]
     },
     {
       name: "Analytics",
       items: [
         { name: "Student Progress", href: "/progress", icon: BarChart3 },
-        { name: "AI Insights", href: "/ai-insights", icon: Bot }
+        { name: "AI Insights", href: "/ai-insights", icon: Bot, requiredRoles: ["super_admin", "school_admin", "faculty"] }
       ]
-    }
-  ];
+    },
+    // Admin section - only for super admin and school admin
+    ...(["super_admin", "school_admin"].includes(user?.role || "") ? [{
+      name: "Administration",
+      items: [
+        ...(user?.role === "super_admin" ? [
+          { name: "Tenants", href: "/admin/tenants", icon: Building2 },
+          { name: "Onboarding", href: "/onboarding", icon: Shield }
+        ] : []),
+        { name: "User Management", href: "/admin/users", icon: Users }
+      ]
+    }] : [])
+  ].filter(section => section.items.length > 0);
 
   return (
     <aside className={cn("w-64 border-r border-border", className)} style={{ backgroundColor: '#eeeeee' }}>
@@ -76,6 +93,11 @@ export function Sidebar({ className }: SidebarProps) {
             </p>
             <ul className="space-y-1">
               {section.items.map((item) => {
+                // Check if user has required role for this item
+                if (item.requiredRoles && !item.requiredRoles.includes(user?.role || "")) {
+                  return null;
+                }
+                
                 const isActive = location === item.href;
                 const Icon = item.icon;
                 

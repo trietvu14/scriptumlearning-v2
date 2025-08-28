@@ -1,12 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { db } from "../db";
-import { users } from "@shared/schema";
+import { users, User } from "@shared/schema";
 import { eq } from "drizzle-orm";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User & { name?: string };
+    }
+  }
+}
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export const authenticateToken = async (
+export const requireAuth = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,7 +23,7 @@ export const authenticateToken = async (
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "Access token required" });
+    return res.status(401).json({ error: "Access token required" });
   }
 
   try {
@@ -26,7 +34,7 @@ export const authenticateToken = async (
       .where(eq(users.id, decoded.userId));
 
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(401).json({ error: "User not found" });
     }
 
     req.user = {
@@ -35,18 +43,21 @@ export const authenticateToken = async (
     };
     next();
   } catch (error) {
-    return res.status(403).json({ message: "Invalid token" });
+    return res.status(403).json({ error: "Invalid token" });
   }
 };
+
+// Legacy export for compatibility
+export const authenticateToken = requireAuth;
 
 export const requireRole = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({ message: "Authentication required" });
+      return res.status(401).json({ error: "Authentication required" });
     }
 
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Insufficient permissions" });
+      return res.status(403).json({ error: "Insufficient permissions" });
     }
 
     next();
@@ -55,4 +66,5 @@ export const requireRole = (roles: string[]) => {
 
 export const requireSchoolAdmin = requireRole(["school_admin", "super_admin"]);
 export const requireFaculty = requireRole(["faculty", "school_admin", "super_admin"]);
-export const adminMiddleware = requireRole(["super_admin"]);
+export const requireSuperAdmin = requireRole(["super_admin"]);
+export const adminMiddleware = requireSuperAdmin;

@@ -14,11 +14,16 @@ import CurriculumMappingPage from "@/pages/curriculum-mapping";
 import BoardReviewPage from "@/pages/board-review";
 import StudentProgressPage from "@/pages/student-progress";
 import NotFound from "@/pages/not-found";
+import { TenantsPage } from "@/pages/admin/tenants";
+import { UsersPage } from "@/pages/admin/users";
+import { OnboardingPage } from "@/pages/onboarding";
+import { AcceptInvitationPage } from "@/pages/accept-invitation";
 
 function Router() {
   return (
     <Switch>
       <Route path="/login" component={LoginPage} />
+      <Route path="/accept-invitation" component={AcceptInvitationPage} />
       
       <Route path="/dashboard">
         <ProtectedRoute>
@@ -63,6 +68,45 @@ function Router() {
             <div className="flex flex-1">
               <Sidebar />
               <StudentProgressPage />
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/tenants">
+        <ProtectedRoute requiredRole={["super_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <TenantsPage />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/users">
+        <ProtectedRoute requiredRole={["super_admin", "school_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <UsersPage />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/onboarding">
+        <ProtectedRoute requiredRole={["super_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <OnboardingPage />
             </div>
           </div>
         </ProtectedRoute>
