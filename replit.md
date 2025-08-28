@@ -13,7 +13,7 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 
 ## User Preferences
 - Clean, professional interface suitable for educational institutions
-- Custom branding with Scriptum logo and elegant typography (Tangerine font)
+- Custom branding with Scriptum logo and elegant typography (Zain font)
 - Centered search functionality with intuitive navigation
 - Blue-to-purple gradient styling for modern appearance
 - Comprehensive documentation and error handling
@@ -25,7 +25,7 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 - Added RAG document stores for AI training and course-specific assistance (2025-08-28)
 - **UI Enhancements (2025-08-28)**:
   - Added Scriptum logo to top navigation bar
-  - Implemented custom Tangerine font (28px, bold) for "Scriptum Learning" branding
+  - Implemented custom Zain font (28px, normal weight) for "Scriptum Learning" branding
   - Repositioned search bar to center of top navigation
   - Updated favicon with Scriptum branding
   - Applied blue-to-purple gradient to top bar
@@ -39,7 +39,7 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 - Wouter for routing
 - Multi-tenant dashboard system
 - **UI Components**:
-  - Custom TopBar with Scriptum logo and Tangerine font branding
+  - Custom TopBar with Scriptum logo and Zain font branding
   - Centered search functionality with custom placeholder styling
   - Blue-to-purple gradient navigation header
   - Sidebar with school/institution branding and graduation cap icons
@@ -86,7 +86,7 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 - Enhanced architecture design complete
 - **UI/UX Implementation Complete**:
   - Custom branding with Scriptum logo integration
-  - Professional typography with Tangerine font
+  - Professional typography with Zain font
   - Modern gradient navigation design
   - Centered search functionality
   - Responsive layout optimization
@@ -97,13 +97,13 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 
 ### Asset Management
 - **Logo Integration**: Scriptum logo integrated via @assets alias in Vite config
-- **Font Loading**: Google Fonts integration with Tangerine (400, 700 weights)
+- **Font Loading**: Google Fonts integration with Zain (200-900 weights)
 - **Favicon**: Custom Scriptum favicon.ico implemented
 
 ### Component Architecture
 - **TopBar Component**: 
   - Logo positioning with reduced spacing (1.75px)
-  - Custom font styling (Tangerine, 28px, bold)
+  - Custom font styling (Zain, 28px, normal weight)
   - Centered search with custom placeholder color (#eeeeee)
   - Blue-to-purple gradient background (from-blue-600 to-purple-500)
   - Responsive flex layout
@@ -116,7 +116,7 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
 - **Custom CSS Classes**: 
   - `.search-placeholder` for custom placeholder text color
   - Gradient implementation via Tailwind utilities
-- **Typography Hierarchy**: Tangerine for branding, Inter for body text
+- **Typography Hierarchy**: Zain for branding, Inter for body text
 - **Color Scheme**: Blue-purple gradient with white text contrast
 
 ## Development Plan - Next Steps
