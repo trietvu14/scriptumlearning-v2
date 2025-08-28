@@ -19,6 +19,7 @@ import { UsersPage } from "@/pages/admin/users";
 import { OnboardingPage } from "@/pages/onboarding";
 import { AcceptInvitationPage } from "@/pages/accept-invitation";
 import { StandardsPage } from "@/pages/standards";
+import { SuperAdminDashboard } from "@/pages/admin/super-admin-dashboard";
 
 function Router() {
   return (
@@ -121,6 +122,20 @@ function Router() {
               <Sidebar />
               <div className="flex-1 p-6">
                 <StandardsPage />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/super-admin">
+        <ProtectedRoute requiredRole={["super_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <SuperAdminDashboard />
               </div>
             </div>
           </div>

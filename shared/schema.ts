@@ -366,6 +366,45 @@ export const studentProgress = pgTable("student_progress", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Notifications system for super admin and tenant notifications
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  fromUserId: uuid("from_user_id").references(() => users.id).notNull(),
+  toUserId: uuid("to_user_id").references(() => users.id),
+  tenantId: uuid("tenant_id").references(() => tenants.id), // For tenant-wide notifications
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  type: text("type").notNull(), // "info", "warning", "deadline", "action_required", "system"
+  priority: text("priority").notNull().default("normal"), // "low", "normal", "high", "urgent"
+  isRead: boolean("is_read").default(false),
+  emailSent: boolean("email_sent").default(false),
+  actionUrl: text("action_url"), // Optional URL for actions
+  expiresAt: timestamp("expires_at"), // For deadline notifications
+  createdAt: timestamp("created_at").defaultNow(),
+  readAt: timestamp("read_at")
+});
+
+// Notification Recipients table for bulk notifications
+export const notificationRecipients = pgTable("notification_recipients", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  notificationId: uuid("notification_id").references(() => notifications.id, { onDelete: "cascade" }).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  isRead: boolean("is_read").default(false),
+  emailSent: boolean("email_sent").default(false),
+  readAt: timestamp("read_at"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// System Analytics table for super admin dashboard metrics
+export const systemAnalytics = pgTable("system_analytics", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id),
+  metricType: text("metric_type").notNull(), // "user_login", "framework_created", "content_mapped", etc.
+  metricValue: integer("metric_value").default(1),
+  metadata: jsonb("metadata"), // Additional context data
+  recordedAt: timestamp("recorded_at").defaultNow()
+});
+
 // Relations
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
@@ -564,6 +603,35 @@ export const insertStandardsDocumentSchema = createInsertSchema(standardsDocumen
 });
 export type InsertStandardsDocument = z.infer<typeof insertStandardsDocumentSchema>;
 export type SelectStandardsDocument = typeof standardsDocuments.$inferSelect;
+
+// Notification schemas
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  isRead: true,
+  emailSent: true,
+  readAt: true,
+  createdAt: true
+});
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type SelectNotification = typeof notifications.$inferSelect;
+
+export const insertNotificationRecipientSchema = createInsertSchema(notificationRecipients).omit({
+  id: true,
+  isRead: true,
+  emailSent: true,
+  readAt: true,
+  createdAt: true
+});
+export type InsertNotificationRecipient = z.infer<typeof insertNotificationRecipientSchema>;
+export type SelectNotificationRecipient = typeof notificationRecipients.$inferSelect;
+
+// System Analytics schemas
+export const insertSystemAnalyticsSchema = createInsertSchema(systemAnalytics).omit({
+  id: true,
+  recordedAt: true
+});
+export type InsertSystemAnalytics = z.infer<typeof insertSystemAnalyticsSchema>;
+export type SelectSystemAnalytics = typeof systemAnalytics.$inferSelect;
 
 export type RAGDocument = typeof ragDocuments.$inferSelect;
 export type InsertRAGDocument = z.infer<typeof insertRAGDocumentSchema>;

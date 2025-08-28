@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export function TopBar() {
   const { user, logout } = useAuth();
@@ -46,8 +47,11 @@ export function TopBar() {
           </div>
         </div>
 
-        {/* Right side - User info and logout */}
+        {/* Right side - Notifications, User info and logout */}
         <div className="flex items-center space-x-6">
+          {/* Notifications */}
+          <NotificationBell />
+          
           {/* User Info */}
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">

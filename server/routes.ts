@@ -37,6 +37,8 @@ import tenantRoutes from "./routes/tenants";
 import userRoutes from "./routes/users";
 import invitationRoutes from "./routes/invitations";
 import standardsRoutes from "./routes/standards";
+import notificationRoutes from "./routes/notifications";
+import adminRoutes from "./routes/admin";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -482,6 +484,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/users", userRoutes);
   app.use("/api/invitations", invitationRoutes);
   app.use("/api/standards", standardsRoutes);
+  app.use("/api/notifications", notificationRoutes);
+  app.use("/api/admin", adminRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

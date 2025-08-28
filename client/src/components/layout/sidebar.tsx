@@ -15,7 +15,8 @@ import {
   Bot,
   Users,
   Building2,
-  Shield
+  Shield,
+  Activity
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -60,6 +61,7 @@ export function Sidebar({ className }: SidebarProps) {
       name: "Administration",
       items: [
         ...(user?.role === "super_admin" ? [
+          { name: "Super Admin Dashboard", href: "/super-admin", icon: Activity },
           { name: "Tenants", href: "/admin/tenants", icon: Building2 },
           { name: "Onboarding", href: "/onboarding", icon: Shield }
         ] : []),
