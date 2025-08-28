@@ -59,10 +59,9 @@ export function Sidebar({ className }: SidebarProps) {
             <GraduationCap className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-foreground">Scriptum Learning</h1>
-            <p className="text-xs text-muted-foreground" data-testid="text-tenant-name">
-              {tenant?.name || "Loading..."}
-            </p>
+            <h1 className="text-lg font-semibold text-foreground" data-testid="text-tenant-name">
+              {tenant?.name || "John Hopkins Medical School"}
+            </h1>
           </div>
         </div>
       </div>
