@@ -36,6 +36,7 @@ import { lmsService } from "./services/lms";
 import tenantRoutes from "./routes/tenants";
 import userRoutes from "./routes/users";
 import invitationRoutes from "./routes/invitations";
+import standardsRoutes from "./routes/standards";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -480,6 +481,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/tenants", tenantRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/invitations", invitationRoutes);
+  app.use("/api/standards", standardsRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

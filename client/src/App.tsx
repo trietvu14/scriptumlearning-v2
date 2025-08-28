@@ -18,6 +18,7 @@ import { TenantsPage } from "@/pages/admin/tenants";
 import { UsersPage } from "@/pages/admin/users";
 import { OnboardingPage } from "@/pages/onboarding";
 import { AcceptInvitationPage } from "@/pages/accept-invitation";
+import { StandardsPage } from "@/pages/standards";
 
 function Router() {
   return (
@@ -107,6 +108,20 @@ function Router() {
             <TopBar />
             <div className="flex flex-1">
               <OnboardingPage />
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/standards">
+        <ProtectedRoute requiredRole={["super_admin", "school_admin", "faculty"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <StandardsPage />
+              </div>
             </div>
           </div>
         </ProtectedRoute>

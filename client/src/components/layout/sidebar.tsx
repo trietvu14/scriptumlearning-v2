@@ -42,6 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
     {
       name: "Standards",
       items: [
+        { name: "Educational Standards", href: "/standards", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] },
         { name: "USMLE Mapping", href: "/standards/usmle", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] },
         { name: "LCME Standards", href: "/standards/lcme", icon: University, requiredRoles: ["super_admin", "school_admin", "faculty"] },
         { name: "Internal Standards", href: "/standards/internal", icon: Settings, requiredRoles: ["super_admin", "school_admin", "faculty"] }

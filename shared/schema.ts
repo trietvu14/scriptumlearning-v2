@@ -225,6 +225,82 @@ export const examQuestionStandardMappings = pgTable("exam_question_standard_mapp
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// New Educational Standards Framework System
+// Educational standards frameworks (USMLE, LCME, NBDE, etc.)
+export const standardsFrameworks = pgTable("standards_frameworks", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  educationalArea: text("educational_area").notNull(), // medical_school, dental_school, etc.
+  frameworkType: text("framework_type").notNull(), // board_exam, accreditation, internal
+  isOfficial: boolean("is_official").default(true), // true for official standards, false for custom
+  tenantId: uuid("tenant_id").references(() => tenants.id, { onDelete: "cascade" }), // null for official standards
+  version: text("version").default("1.0"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Standards subjects (top level categories)
+export const standardsSubjects = pgTable("standards_subjects", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  frameworkId: uuid("framework_id").notNull().references(() => standardsFrameworks.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  description: text("description"),
+  code: text("code"), // Subject code like "ANAT" for Anatomy
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Standards topics (second level)
+export const standardsTopics = pgTable("standards_topics", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  subjectId: uuid("subject_id").notNull().references(() => standardsSubjects.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  description: text("description"),
+  code: text("code"), // Topic code
+  learningObjectives: text("learning_objectives").array().default(sql`'{}'::text[]`),
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Standards subtopics (third level)
+export const standardsSubtopics = pgTable("standards_subtopics", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  topicId: uuid("topic_id").notNull().references(() => standardsTopics.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  description: text("description"),
+  code: text("code"), // Subtopic code
+  learningObjectives: text("learning_objectives").array().default(sql`'{}'::text[]`),
+  competencyLevel: text("competency_level"), // beginner, intermediate, advanced
+  assessmentCriteria: text("assessment_criteria").array().default(sql`'{}'::text[]`),
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Document uploads for AI-powered standards creation
+export const standardsDocuments = pgTable("standards_documents", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").notNull().references(() => tenants.id, { onDelete: "cascade" }),
+  frameworkId: uuid("framework_id").references(() => standardsFrameworks.id, { onDelete: "cascade" }),
+  fileName: text("file_name").notNull(),
+  originalName: text("original_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: text("mime_type").notNull(),
+  uploadedBy: uuid("uploaded_by").notNull().references(() => users.id),
+  processingStatus: text("processing_status").default("pending"), // pending, processing, completed, failed
+  extractedContent: text("extracted_content"),
+  aiAnalysis: jsonb("ai_analysis"), // AI-generated structure and content
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 export const studentExamAttempts = pgTable("student_exam_attempts", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   studentId: uuid("student_id").references(() => users.id).notNull(),
@@ -447,6 +523,47 @@ export type ExamQuestion = typeof examQuestions.$inferSelect;
 export type InsertExamQuestion = z.infer<typeof insertExamQuestionSchema>;
 
 export type StudentExamAttempt = typeof studentExamAttempts.$inferSelect;
+
+// Standards Framework schemas
+export const insertStandardsFrameworkSchema = createInsertSchema(standardsFrameworks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertStandardsFramework = z.infer<typeof insertStandardsFrameworkSchema>;
+export type SelectStandardsFramework = typeof standardsFrameworks.$inferSelect;
+
+export const insertStandardsSubjectSchema = createInsertSchema(standardsSubjects).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertStandardsSubject = z.infer<typeof insertStandardsSubjectSchema>;
+export type SelectStandardsSubject = typeof standardsSubjects.$inferSelect;
+
+export const insertStandardsTopicSchema = createInsertSchema(standardsTopics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertStandardsTopic = z.infer<typeof insertStandardsTopicSchema>;
+export type SelectStandardsTopic = typeof standardsTopics.$inferSelect;
+
+export const insertStandardsSubtopicSchema = createInsertSchema(standardsSubtopics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertStandardsSubtopic = z.infer<typeof insertStandardsSubtopicSchema>;
+export type SelectStandardsSubtopic = typeof standardsSubtopics.$inferSelect;
+
+export const insertStandardsDocumentSchema = createInsertSchema(standardsDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertStandardsDocument = z.infer<typeof insertStandardsDocumentSchema>;
+export type SelectStandardsDocument = typeof standardsDocuments.$inferSelect;
 
 export type RAGDocument = typeof ragDocuments.$inferSelect;
 export type InsertRAGDocument = z.infer<typeof insertRAGDocumentSchema>;
