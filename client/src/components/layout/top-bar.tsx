@@ -20,11 +20,12 @@ export function TopBar() {
             data-testid="img-scriptum-logo"
           />
           <span 
-            className="text-xl text-white" 
+            className="text-white" 
             style={{ 
               paddingLeft: '3.5px',
               fontFamily: "'Tangerine', cursive",
-              fontWeight: 700
+              fontWeight: 700,
+              fontSize: '24px'
             }}
             data-testid="text-scriptum-learning"
           >
