@@ -23,7 +23,7 @@ export function TopBar() {
             className="text-white" 
             style={{ 
               paddingLeft: '1.75px',
-              fontFamily: "'Tangerine', cursive",
+              fontFamily: "'Zain', sans-serif",
               fontWeight: 700,
               fontSize: '28px'
             }}
