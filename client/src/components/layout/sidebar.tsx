@@ -16,7 +16,8 @@ import {
   Users,
   Building2,
   Shield,
-  Activity
+  Activity,
+  User
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -54,6 +55,12 @@ export function Sidebar({ className }: SidebarProps) {
       items: [
         { name: "Student Progress", href: "/progress", icon: BarChart3 },
         { name: "AI Insights", href: "/ai-insights", icon: Bot, requiredRoles: ["super_admin", "school_admin", "faculty"] }
+      ]
+    },
+    {
+      name: "Account",
+      items: [
+        { name: "Profile Settings", href: "/profile", icon: User }
       ]
     },
     // Admin section - only for super admin and school admin

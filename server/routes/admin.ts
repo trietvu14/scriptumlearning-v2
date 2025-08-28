@@ -6,9 +6,7 @@ import {
   tenants, 
   standardsFrameworks,
   notifications,
-  systemAnalytics,
-  type SelectUser,
-  type SelectTenant
+  systemAnalytics
 } from "../../shared/schema";
 import { requireAuth, requireRole } from "../middleware/auth";
 
@@ -81,7 +79,7 @@ router.get("/dashboard", requireAuth, requireRole(["super_admin"]), async (req, 
         adminCount: sql<number>`(
           SELECT COUNT(*) FROM ${users} 
           WHERE ${users.tenantId} = ${tenants.id} 
-          AND ${users.role} IN ('school_admin', 'admin_support')
+          AND ${users.role} IN ('school_admin', 'administrative_support')
           AND ${users.isActive} = true
         )`.as('admin_count'),
         facultyCount: sql<number>`(

@@ -82,6 +82,12 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   role: userRoleEnum("role").notNull(),
+  title: text("title"), // Job title/position
+  department: text("department"), // Department or division
+  phoneNumber: text("phone_number"), // Contact phone
+  officeLocation: text("office_location"), // Office or room number
+  bio: text("bio"), // Brief professional bio
+  profileImageUrl: text("profile_image_url"), // Profile picture URL
   isActive: boolean("is_active").default(true),
   lastLoginAt: timestamp("last_login_at"),
   createdAt: timestamp("created_at").defaultNow(),
