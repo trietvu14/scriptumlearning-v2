@@ -22,10 +22,10 @@ export function TopBar() {
           <span 
             className="text-white" 
             style={{ 
-              paddingLeft: '3.5px',
+              paddingLeft: '1.75px',
               fontFamily: "'Tangerine', cursive",
               fontWeight: 700,
-              fontSize: '24px'
+              fontSize: '28px'
             }}
             data-testid="text-scriptum-learning"
           >
