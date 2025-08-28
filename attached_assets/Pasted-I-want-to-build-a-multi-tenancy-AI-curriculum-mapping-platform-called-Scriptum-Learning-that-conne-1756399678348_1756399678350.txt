@@ -1,0 +1,53 @@
+I want to build a multi-tenancy AI curriculum mapping platform, called Scriptum Learning, that connects to multiple learning platforms, including learning management systems, student information systems, question banks, and other learning platforms using an API connection to pull/store content, categorize and map it to learning standards, and then allowing users to visualize it in a dashboard.
+
+Application tenancy structure:
+
+I. Scriptum Learning Platform
+	A. Super Admin
+I. School/College
+	A. Users types
+		1. School admin
+		2. Faculty
+		3. Administrative support
+		4. Student
+	B. Educational area
+		1. Medical school
+			a. Standards
+				i. USMLE
+				ii. LCME
+				iii. Internal Curriculum standards
+		2. Dental school
+			a. Standards
+				i. iNBDE
+				ii. CODA
+				iii. Internal Curriculum standards
+		3. Nursing school
+		4. Physical Therapy school
+		5. Law school
+		6. Engineering school
+		7. Etc.
+	C. Connections
+		1. Learning Management System
+			a. Canvas
+			b. Blackboard
+			c. Moodle
+			d. Etc.
+		2. Question Bank
+			a. Examsoft
+			b. Etc
+		3. Student Information system
+			a. Blackbaud
+			b. Etc.
+	D. Board Review
+		1. Create board review mock exams for students to assess their understanding of the content and assess board readiness
+		2. Create a customize study process for students based on mock board exam
+		3. Allows students to generate question sets over different subjects and topics and allows the platform to track understanding
+
+Scriptum should use a Python-based framework, like Django or Flask for the backend for the ETL process as well as integration with Generative AI and agentic AI. It should use a Javascript framework, like React, Next.js, or Typescript for the frontend. Database should be PostgreSQL with PGVector extension. We should use agentic AI for both account setup and data analysis/visualtization.
+
+Curriculum Mapping and Accreditation
+Scriptum will connect with learning platforms and pull data into Postgres. Using Generative AI, the platform will categorize each piece of content (videos, images, text, questions, etc.) based on the different standards for the school/college. The data will be visualized in a dashboard for each standard. Dashboards and data should be exportable to PDF and Excel spreadsheets. Admin users should be able to set the schedule for syncing with learning platforms as weekly, monthly, by semester, and by academic year. Dashboards should be able to show progression of changes to curriculum over time as it relates to each standard. School administrators should be able to see data for each student and see when students are accessing any particular course or course content, how much they are seeing content relating to each standard.
+
+Board review tool should allow faculty and administrators to generate a mock board exam using the questions from the learning management system and question bank. Each question should be tagged as subject/topic as well as to each of the standards that the school/college is aligning to. Assessment of each student's knowledge of the materials should be used by Generative AI to create a recommended study path using course content pulled from the LMS as well as practice questions for each section that needs to be covered. All mock exam questions and practice questions should include an option for the student to submit their answer using one of three options: 100% Confident, Somewhat sure, and I'm guessing. This will add an additional data point in assessing student understanding and overall competency.
+
+Provide a full architecture for this application as well as database schema and infrastructure recommendation. 
