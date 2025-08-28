@@ -14,7 +14,7 @@ export function Header({ title, description }: HeaderProps) {
   };
 
   return (
-    <header className="bg-card border-b border-border p-4">
+    <div className="bg-white rounded-lg border border-border p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground" data-testid="text-page-title">
@@ -45,6 +45,6 @@ export function Header({ title, description }: HeaderProps) {
           </Button>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

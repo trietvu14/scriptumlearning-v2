@@ -19,11 +19,15 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex-1 overflow-hidden">
-        <Header 
-          title="Faculty Dashboard" 
-          description="Overview of your curriculum mapping and student progress" 
-        />
         <div className="p-6 overflow-y-auto h-[calc(100vh-80px)]">
+          {/* Faculty Dashboard Panel */}
+          <div className="mb-6">
+            <Header 
+              title="Faculty Dashboard" 
+              description="Overview of your curriculum mapping and student progress" 
+            />
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[...Array(4)].map((_, i) => (
               <Card key={i}>
@@ -40,12 +44,15 @@ export default function DashboardPage() {
 
   return (
     <div className="flex-1 overflow-hidden">
-      <Header 
-        title="Faculty Dashboard" 
-        description="Overview of your curriculum mapping and student progress" 
-      />
-      
       <div className="p-6 overflow-y-auto h-[calc(100vh-80px)]">
+        {/* Faculty Dashboard Panel */}
+        <div className="mb-6">
+          <Header 
+            title="Faculty Dashboard" 
+            description="Overview of your curriculum mapping and student progress" 
+          />
+        </div>
+        
         {/* Quick Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard

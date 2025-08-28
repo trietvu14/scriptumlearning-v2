@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/use-auth";
 import { useTenant } from "@/hooks/use-tenant";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   GraduationCap, 
   LayoutDashboard, 
@@ -13,8 +11,7 @@ import {
   University,
   Settings,
   BarChart3,
-  Bot,
-  User
+  Bot
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
@@ -23,7 +20,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const { user, logout } = useAuth();
   const { tenant } = useTenant();
   const [location] = useLocation();
 
@@ -55,7 +51,7 @@ export function Sidebar({ className }: SidebarProps) {
   ];
 
   return (
-    <aside className={cn("w-64 bg-card border-r border-border", className)}>
+    <aside className={cn("w-64 border-r border-border", className)} style={{ backgroundColor: '#eeeeee' }}>
       {/* Header */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center space-x-2">
@@ -71,27 +67,6 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
 
-      {/* User Context */}
-      <div className="p-4 bg-muted border-b border-border">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-primary-foreground font-medium text-sm" data-testid="text-user-initials">
-              {user?.firstName?.[0]}{user?.lastName?.[0]}
-            </span>
-          </div>
-          <div>
-            <p className="font-medium text-sm text-foreground" data-testid="text-user-name">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <p className="text-xs text-muted-foreground capitalize">
-              {user?.role?.replace('_', ' ')}
-            </p>
-            <Badge variant="secondary" className="mt-1">
-              Active Session
-            </Badge>
-          </div>
-        </div>
-      </div>
 
       {/* Navigation */}
       <nav className="p-4 space-y-2">
@@ -128,18 +103,6 @@ export function Sidebar({ className }: SidebarProps) {
         ))}
       </nav>
 
-      {/* User Menu at bottom */}
-      <div className="absolute bottom-4 left-4 right-4">
-        <Button
-          variant="outline"
-          className="w-full justify-start"
-          onClick={logout}
-          data-testid="button-logout"
-        >
-          <User className="w-4 h-4 mr-3" />
-          Sign Out
-        </Button>
-      </div>
     </aside>
   );
 }

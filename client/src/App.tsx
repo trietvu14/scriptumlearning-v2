@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { TenantProvider } from "@/hooks/use-tenant";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Sidebar } from "@/components/layout/sidebar";
+import { TopBar } from "@/components/layout/top-bar";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import CurriculumMappingPage from "@/pages/curriculum-mapping";
@@ -21,45 +22,60 @@ function Router() {
       
       <Route path="/dashboard">
         <ProtectedRoute>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <DashboardPage />
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <DashboardPage />
+            </div>
           </div>
         </ProtectedRoute>
       </Route>
       
       <Route path="/mapping">
         <ProtectedRoute requiredRole={["super_admin", "school_admin", "faculty"]}>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <CurriculumMappingPage />
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <CurriculumMappingPage />
+            </div>
           </div>
         </ProtectedRoute>
       </Route>
       
       <Route path="/board-review">
         <ProtectedRoute requiredRole={["super_admin", "school_admin", "faculty"]}>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <BoardReviewPage />
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <BoardReviewPage />
+            </div>
           </div>
         </ProtectedRoute>
       </Route>
       
       <Route path="/progress">
         <ProtectedRoute>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <StudentProgressPage />
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <StudentProgressPage />
+            </div>
           </div>
         </ProtectedRoute>
       </Route>
       
       <Route path="/">
         <ProtectedRoute>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <DashboardPage />
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <DashboardPage />
+            </div>
           </div>
         </ProtectedRoute>
       </Route>
