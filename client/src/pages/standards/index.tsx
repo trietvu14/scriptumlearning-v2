@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,6 +58,7 @@ export function StandardsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [location] = useLocation();
   const [selectedEducationalArea, setSelectedEducationalArea] = useState<string>("medical_school");
   const [isCreateFrameworkOpen, setIsCreateFrameworkOpen] = useState(false);
   const [selectedFramework, setSelectedFramework] = useState<StandardsFramework | null>(null);
@@ -67,6 +69,23 @@ export function StandardsPage() {
     frameworkType: "internal",
     version: "1.0"
   });
+
+  // Parse URL parameters to auto-select area and framework
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const areaParam = urlParams.get('area');
+    const frameworkParam = urlParams.get('framework');
+    
+    if (areaParam && areaParam !== selectedEducationalArea) {
+      setSelectedEducationalArea(areaParam);
+    }
+    
+    // Framework selection will happen after frameworks are loaded
+    if (frameworkParam && !selectedFramework) {
+      // Store framework ID to select after frameworks load
+      sessionStorage.setItem('pendingFrameworkSelection', frameworkParam);
+    }
+  }, [location]);
 
   // Fetch frameworks for selected educational area
   const { data: frameworks, isLoading } = useQuery<StandardsFramework[]>({
@@ -81,6 +100,18 @@ export function StandardsPage() {
       return response.json();
     }
   });
+
+  // Auto-select framework when frameworks load and there's a pending selection
+  useEffect(() => {
+    const pendingFrameworkId = sessionStorage.getItem('pendingFrameworkSelection');
+    if (pendingFrameworkId && frameworks && frameworks.length > 0) {
+      const targetFramework = frameworks.find(f => f.id === pendingFrameworkId);
+      if (targetFramework) {
+        setSelectedFramework(targetFramework);
+        sessionStorage.removeItem('pendingFrameworkSelection');
+      }
+    }
+  }, [frameworks]);
 
   // Fetch detailed framework with hierarchy
   const { data: frameworkDetails } = useQuery({
@@ -153,127 +184,100 @@ export function StandardsPage() {
     createFrameworkMutation.mutate(newFramework);
   };
 
-  const getFrameworkTypeLabel = (type: string) => {
-    return FRAMEWORK_TYPES.find(ft => ft.value === type)?.label || type;
+  const handleFrameworkSelect = (framework: StandardsFramework) => {
+    setSelectedFramework(framework);
   };
 
-  const getEducationalAreaLabel = (area: string) => {
-    return EDUCATIONAL_AREAS.find(ea => ea.value === area)?.label || area;
-  };
-
-  if (!["super_admin", "school_admin", "faculty"].includes(user?.role || "")) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Access denied. Administrative or faculty privileges required.</p>
-      </div>
-    );
-  }
+  const currentAreaConfig = EDUCATIONAL_AREAS.find(area => area.value === selectedEducationalArea);
 
   return (
-    <div className="space-y-6" data-testid="standards-page">
+    <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">Educational Standards</h1>
-          <p className="text-muted-foreground">Manage curriculum mapping standards</p>
+          <h1 className="text-3xl font-bold tracking-tight">Educational Standards</h1>
+          <p className="text-muted-foreground">
+            Manage and create standards frameworks for different educational areas
+          </p>
         </div>
-        
-        {["super_admin", "school_admin"].includes(user?.role || "") && (
+        {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
           <Dialog open={isCreateFrameworkOpen} onOpenChange={setIsCreateFrameworkOpen}>
             <DialogTrigger asChild>
-              <Button data-testid="button-create-framework">
-                <Plus className="h-4 w-4 mr-2" />
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
                 Create Standard
               </Button>
             </DialogTrigger>
-            <DialogContent data-testid="dialog-create-framework">
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Create New Standards Framework</DialogTitle>
                 <DialogDescription>
-                  Create a custom standards framework for your institution
+                  Add a new standards framework for your institution
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Framework Name *</Label>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="framework-name">Framework Name</Label>
                   <Input
-                    id="name"
+                    id="framework-name"
                     value={newFramework.name}
-                    onChange={(e) => setNewFramework(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Custom Medical Standards"
-                    data-testid="input-framework-name"
+                    onChange={(e) => setNewFramework({ ...newFramework, name: e.target.value })}
+                    placeholder="e.g., Custom Medical Standards"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description *</Label>
+                <div>
+                  <Label htmlFor="framework-description">Description</Label>
                   <Textarea
-                    id="description"
+                    id="framework-description"
                     value={newFramework.description}
-                    onChange={(e) => setNewFramework(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Describe the purpose and scope of this framework"
-                    data-testid="input-framework-description"
+                    onChange={(e) => setNewFramework({ ...newFramework, description: e.target.value })}
+                    placeholder="Describe this standards framework..."
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="educationalArea">Educational Area</Label>
-                    <Select 
-                      value={newFramework.educationalArea} 
-                      onValueChange={(value) => setNewFramework(prev => ({ ...prev, educationalArea: value }))}
-                    >
-                      <SelectTrigger data-testid="select-educational-area">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {EDUCATIONAL_AREAS.map(area => (
-                          <SelectItem key={area.value} value={area.value}>
-                            {area.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="frameworkType">Framework Type</Label>
-                    <Select 
-                      value={newFramework.frameworkType} 
-                      onValueChange={(value) => setNewFramework(prev => ({ ...prev, frameworkType: value }))}
-                    >
-                      <SelectTrigger data-testid="select-framework-type">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {FRAMEWORK_TYPES.map(type => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div>
+                  <Label htmlFor="educational-area">Educational Area</Label>
+                  <Select
+                    value={newFramework.educationalArea}
+                    onValueChange={(value) => setNewFramework({ ...newFramework, educationalArea: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {EDUCATIONAL_AREAS.map((area) => (
+                        <SelectItem key={area.value} value={area.value}>
+                          {area.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="version">Version</Label>
-                  <Input
-                    id="version"
-                    value={newFramework.version}
-                    onChange={(e) => setNewFramework(prev => ({ ...prev, version: e.target.value }))}
-                    placeholder="1.0"
-                    data-testid="input-framework-version"
-                  />
+                <div>
+                  <Label htmlFor="framework-type">Framework Type</Label>
+                  <Select
+                    value={newFramework.frameworkType}
+                    onValueChange={(value) => setNewFramework({ ...newFramework, frameworkType: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FRAMEWORK_TYPES.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <DialogFooter>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsCreateFrameworkOpen(false)}
-                  data-testid="button-cancel-create"
-                >
+                <Button variant="outline" onClick={() => setIsCreateFrameworkOpen(false)}>
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   onClick={handleCreateFramework}
                   disabled={createFrameworkMutation.isPending}
-                  data-testid="button-confirm-create"
                 >
                   {createFrameworkMutation.isPending ? "Creating..." : "Create Framework"}
                 </Button>
@@ -283,185 +287,206 @@ export function StandardsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Sidebar - Educational Area Selection */}
-        <div className="col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Educational Areas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {EDUCATIONAL_AREAS.map(area => {
-                const IconComponent = area.icon;
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Educational Areas Panel */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Building2 className="w-5 h-5 mr-2" />
+              Educational Areas
+            </CardTitle>
+            <CardDescription>Select an educational area to view its standards</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="space-y-1">
+              {EDUCATIONAL_AREAS.map((area) => {
+                const Icon = area.icon;
                 return (
                   <Button
                     key={area.value}
-                    variant={selectedEducationalArea === area.value ? "default" : "ghost"}
+                    variant={selectedEducationalArea === area.value ? "secondary" : "ghost"}
                     className="w-full justify-start"
                     onClick={() => setSelectedEducationalArea(area.value)}
-                    data-testid={`button-area-${area.value}`}
+                    data-testid={`button-${area.value}`}
                   >
-                    <IconComponent className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <Icon className="w-4 h-4 mr-3" />
                     {area.label}
                   </Button>
                 );
               })}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Middle - Frameworks List */}
-        <div className="col-span-5">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5" />
-                {getEducationalAreaLabel(selectedEducationalArea)} Standards
-              </CardTitle>
-              <CardDescription>
-                {frameworks?.length || 0} frameworks available
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <p>Loading frameworks...</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {frameworks?.map((framework) => (
-                    <div
-                      key={framework.id}
-                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                        selectedFramework?.id === framework.id
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setSelectedFramework(framework)}
-                      data-testid={`framework-${framework.id}`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-medium">{framework.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {getFrameworkTypeLabel(framework.frameworkType)} • v{framework.version}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {framework.isOfficial && (
-                            <Badge variant="secondary" className="text-xs">Official</Badge>
-                          )}
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        </div>
+        {/* Standards List Panel */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              {currentAreaConfig && <currentAreaConfig.icon className="w-5 h-5 mr-2" />}
+              {currentAreaConfig?.label} Standards
+            </CardTitle>
+            <CardDescription>
+              Click on a standard to view its details and mapping matrix
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isLoading ? (
+              <div className="p-4 text-center text-muted-foreground">Loading standards...</div>
+            ) : frameworks && frameworks.length > 0 ? (
+              <div className="space-y-1">
+                {frameworks.map((framework) => (
+                  <Button
+                    key={framework.id}
+                    variant={selectedFramework?.id === framework.id ? "secondary" : "ghost"}
+                    className="w-full justify-between p-4 h-auto"
+                    onClick={() => handleFrameworkSelect(framework)}
+                    data-testid={`button-framework-${framework.id}`}
+                  >
+                    <div className="flex items-center">
+                      <Award className="w-4 h-4 mr-3" />
+                      <div className="text-left">
+                        <div className="font-medium">{framework.name}</div>
+                        <div className="text-xs text-muted-foreground">{framework.description}</div>
                       </div>
-                      {framework.description && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {framework.description}
-                        </p>
-                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={framework.isOfficial ? "default" : "secondary"}>
+                        {framework.isOfficial ? "Official" : "Custom"}
+                      </Badge>
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 text-center text-muted-foreground">
+                No standards found for this educational area
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-        {/* Right - Framework Details */}
-        <div className="col-span-4">
-          {selectedFramework ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{selectedFramework.name}</span>
-                  <div className="flex gap-1">
-                    <Button variant="outline" size="sm" data-testid="button-view-framework">
-                      <Eye className="h-4 w-4" />
+        {/* Standards Detail Panel */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <BookOpen className="w-5 h-5 mr-2" />
+              {selectedFramework ? selectedFramework.name : "Standard Details"}
+            </CardTitle>
+            <CardDescription>
+              {selectedFramework 
+                ? "View and manage the selected standards framework"
+                : "Select a standard from the list to view its details"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {selectedFramework ? (
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2">Framework Information</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="font-medium">Type:</span>{" "}
+                      <Badge variant={selectedFramework.isOfficial ? "default" : "secondary"}>
+                        {selectedFramework.isOfficial ? "Official" : "Custom"}
+                      </Badge>
+                    </div>
+                    <div>
+                      <span className="font-medium">Version:</span> {selectedFramework.version}
+                    </div>
+                    <div>
+                      <span className="font-medium">Description:</span>
+                      <p className="mt-1 text-muted-foreground">{selectedFramework.description}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {user?.role && ["super_admin", "school_admin", "faculty"].includes(user.role) && (
+                  <div className="flex space-x-2">
+                    <Button size="sm" variant="outline">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit
                     </Button>
-                    {!selectedFramework.isOfficial && ["super_admin", "school_admin"].includes(user?.role || "") && (
-                      <>
-                        <Button variant="outline" size="sm" data-testid="button-edit-framework">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" data-testid="button-delete-framework">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
+                    <Button size="sm" variant="outline">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Import Data
+                    </Button>
                   </div>
-                </CardTitle>
-                <CardDescription>
-                  {selectedFramework.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="font-medium">Type</p>
-                      <p className="text-muted-foreground">
-                        {getFrameworkTypeLabel(selectedFramework.frameworkType)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Version</p>
-                      <p className="text-muted-foreground">{selectedFramework.version}</p>
-                    </div>
-                  </div>
-
-                  {frameworkDetails?.subjects && (
-                    <div>
-                      <h4 className="font-medium mb-2">{selectedFramework.name.split(' ')[0]} Structure</h4>
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {frameworkDetails.subjects.map((subject: any) => (
-                          <div key={subject.id} className="border rounded p-2">
-                            <p className="font-medium text-sm">{subject.name}</p>
-                            {subject.code && (
-                              <p className="text-xs text-muted-foreground">Code: {subject.code}</p>
-                            )}
-                            <p className="text-xs text-muted-foreground">
-                              {subject.topics?.length || 0} topics
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {!selectedFramework.isOfficial && ["super_admin", "school_admin"].includes(user?.role || "") && (
-                    <div className="border-t pt-4">
-                      <Button className="w-full" data-testid="button-manage-structure">
-                        <Building2 className="h-4 w-4 mr-2" />
-                        Manage Structure
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="flex items-center justify-center h-64">
-                <div className="text-center">
-                  <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Select a framework to view details
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground">
+                <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>Select a standard to view its details</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* INBDE Curriculum Mapping Matrix - Only show for INBDE framework */}
-      {selectedFramework && selectedFramework.name === "INBDE" && selectedFramework.educationalArea === "dental_school" && (
-        <div className="mt-8">
-          <INBDEMappingMatrix 
-            frameworkId={selectedFramework.id}
-            tenantId={user?.tenantId || ""}
-          />
-        </div>
+      {/* Framework Content - Show INBDE Matrix or Subject Details */}
+      {selectedFramework && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{selectedFramework.name} - Structure</CardTitle>
+            <CardDescription>
+              {selectedFramework.name === "INBDE" && selectedFramework.educationalArea === "dental_school"
+                ? "Interactive curriculum mapping matrix showing Foundation Knowledge areas vs Clinical Content areas"
+                : "Detailed breakdown of standards and subjects within this framework"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {selectedFramework.name === "INBDE" && selectedFramework.educationalArea === "dental_school" ? (
+              <INBDEMappingMatrix frameworkId={selectedFramework.id} />
+            ) : (
+              <Tabs defaultValue="subjects" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="subjects">Subjects</TabsTrigger>
+                  <TabsTrigger value="hierarchy">Hierarchy</TabsTrigger>
+                </TabsList>
+                <TabsContent value="subjects" className="space-y-4">
+                  {frameworkDetails?.subjects && frameworkDetails.subjects.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Subject</TableHead>
+                          <TableHead>Code</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Order</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {frameworkDetails.subjects
+                          .sort((a: StandardsSubject, b: StandardsSubject) => a.sortOrder - b.sortOrder)
+                          .map((subject: StandardsSubject) => (
+                            <TableRow key={subject.id}>
+                              <TableCell className="font-medium">{subject.name}</TableCell>
+                              <TableCell>{subject.code || "—"}</TableCell>
+                              <TableCell>{subject.description || "—"}</TableCell>
+                              <TableCell>{subject.sortOrder}</TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="text-center text-muted-foreground py-8">
+                      <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>No subjects defined for this framework</p>
+                    </div>
+                  )}
+                </TabsContent>
+                <TabsContent value="hierarchy" className="space-y-4">
+                  <div className="text-center text-muted-foreground py-8">
+                    <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Hierarchy view coming soon</p>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );

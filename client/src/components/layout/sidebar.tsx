@@ -214,7 +214,7 @@ export function Sidebar({ className }: SidebarProps) {
                                 {standards.official?.map((framework: any) => (
                                   <Link
                                     key={framework.id}
-                                    href={`/standards/${area.replace('_', '-')}/${framework.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                    href={`/standards?area=${area}&framework=${framework.id}`}
                                   >
                                     <Button
                                       variant="ghost"
@@ -238,7 +238,7 @@ export function Sidebar({ className }: SidebarProps) {
                                     {standards.custom.map((framework: any) => (
                                       <Link
                                         key={framework.id}
-                                        href={`/standards/${area.replace('_', '-')}/${framework.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                        href={`/standards?area=${area}&framework=${framework.id}`}
                                       >
                                         <Button
                                           variant="ghost"
