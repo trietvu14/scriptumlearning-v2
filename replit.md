@@ -37,6 +37,13 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
   - Added role-based sidebar navigation with proper access controls
   - Established tenant onboarding workflow for new institutions
   - All authentication and authorization systems operational
+- **Standards and Curriculum Mapping (2025-08-29)**:
+  - Updated all educational standards to current August 2025 versions
+  - Replaced obsolete NBDE with current INBDE standard for dental schools
+  - Implemented complete INBDE curriculum mapping system with FK×CC matrix
+  - Added 10 Foundation Knowledge areas and 56 Clinical Content areas from official INBDE guide
+  - Created interactive matrix visualization with percentage-based content alignment
+  - Built comprehensive curriculum mapping infrastructure with statistics tracking
 
 ## Project Architecture
 ### Frontend Layer

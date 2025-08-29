@@ -7,7 +7,7 @@ export const officialStandardsData = {
       name: "USMLE Step 1",
       description: "United States Medical Licensing Examination Step 1 content outline",
       frameworkType: "board_exam",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Anatomy",
@@ -56,7 +56,7 @@ export const officialStandardsData = {
       name: "LCME Standards",
       description: "Liaison Committee on Medical Education accreditation standards",
       frameworkType: "accreditation",
-      version: "2024-25",
+      version: "2025-26",
       subjects: [
         {
           name: "Educational Program",
@@ -80,38 +80,87 @@ export const officialStandardsData = {
   
   dental_school: [
     {
-      name: "NBDE Part I",
-      description: "National Board Dental Examinations Part I content outline",
-      frameworkType: "board_exam",
-      version: "2024",
+      name: "INBDE",
+      description: "Integrated National Board Dental Examinations - comprehensive dental competency assessment",
+      frameworkType: "board_exam", 
+      version: "2025",
       subjects: [
         {
-          name: "Anatomic Sciences",
-          code: "ANAT",
-          description: "Head, neck, and oral anatomy",
+          name: "Foundation Knowledge Areas",
+          code: "FK",
+          description: "Essential foundational knowledge for dental practice (FK 1-10)",
           topics: [
             {
-              name: "Head and Neck Anatomy",
-              code: "ANAT-HN",
+              name: "Molecular, biochemical, cellular, and systems-level development, structure, and function",
+              code: "FK-1",
               learningObjectives: [
-                "Identify cranial nerves",
-                "Describe muscle attachments",
-                "Explain vascular supply"
+                "Understanding molecular and cellular biology",
+                "Systems-level biological processes",
+                "Developmental biology concepts"
+              ]
+            },
+            {
+              name: "Physics and chemistry to explain normal biology and pathobiology",
+              code: "FK-2", 
+              learningObjectives: [
+                "Application of physics principles to biological systems",
+                "Chemical processes in health and disease",
+                "Pathobiological mechanisms"
+              ]
+            },
+            {
+              name: "Pharmacology",
+              code: "FK-8",
+              learningObjectives: [
+                "Drug mechanisms and interactions",
+                "Pharmacokinetics and pharmacodynamics",
+                "Clinical pharmacology applications"
+              ]
+            },
+            {
+              name: "Behavioral sciences, ethics, and jurisprudence",
+              code: "FK-9",
+              learningObjectives: [
+                "Patient behavior and psychology",
+                "Professional ethics in dentistry",
+                "Legal aspects of dental practice"
               ]
             }
           ]
         },
         {
-          name: "Oral Pathology",
-          code: "PATH",
-          description: "Oral and maxillofacial pathology",
+          name: "Clinical Content Areas",
+          code: "CC",
+          description: "Clinical competencies for dental practice (CC 1-56)",
           topics: [
             {
-              name: "Developmental Disorders",
-              code: "PATH-DEV",
+              name: "Diagnosis and Treatment Planning",
+              code: "CC-1-15",
               learningObjectives: [
-                "Recognize developmental anomalies",
-                "Classify congenital conditions"
+                "Interpret patient information and medical data",
+                "Perform comprehensive examinations",
+                "Formulate treatment plans",
+                "Patient communication and education"
+              ]
+            },
+            {
+              name: "Oral Health Management", 
+              code: "CC-16-38",
+              learningObjectives: [
+                "Prevent and manage dental emergencies",
+                "Diagnose and treat oral diseases",
+                "Perform restorative procedures",
+                "Manage pharmacological agents"
+              ]
+            },
+            {
+              name: "Practice and Profession",
+              code: "CC-39-56", 
+              learningObjectives: [
+                "Evaluate healthcare trends",
+                "Practice risk management",
+                "Maintain professional standards",
+                "Quality assurance and improvement"
               ]
             }
           ]
@@ -122,7 +171,7 @@ export const officialStandardsData = {
       name: "CODA Standards",
       description: "Commission on Dental Accreditation standards",
       frameworkType: "accreditation",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Educational Program Standards",
@@ -140,12 +189,15 @@ export const officialStandardsData = {
           ]
         }
       ]
-    },
+    }
+  ],
+
+  nursing_school: [
     {
       name: "NCLEX-RN",
       description: "National Council Licensure Examination for Registered Nurses",
       frameworkType: "board_exam",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Safe and Effective Care Environment",
@@ -185,7 +237,7 @@ export const officialStandardsData = {
       name: "CCNE Standards",
       description: "Commission on Collegiate Nursing Education Accreditation Standards",
       frameworkType: "accreditation",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Program Quality: Mission and Administrative Capacity",
@@ -258,10 +310,10 @@ export const officialStandardsData = {
       ]
     },
     {
-      name: "ACEN Standards",
+      name: "ACEN Standards", 
       description: "Accreditation Commission for Education in Nursing Standards",
       frameworkType: "accreditation",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Mission and Administrative Capacity",
@@ -320,9 +372,9 @@ export const officialStandardsData = {
   physical_therapy_school: [
     {
       name: "NPTE",
-      description: "National Physical Therapy Examination",
+      description: "National Physical Therapy Examination", 
       frameworkType: "board_exam",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Physical Therapy Data Collection",
@@ -345,8 +397,8 @@ export const officialStandardsData = {
     {
       name: "CAPTE Standards",
       description: "Commission on Accreditation in Physical Therapy Education Standards",
-      frameworkType: "accreditation",
-      version: "2024",
+      frameworkType: "accreditation", 
+      version: "2025",
       subjects: [
         {
           name: "Institutional Setting",
@@ -432,7 +484,7 @@ export const officialStandardsData = {
       name: "NAPLEX",
       description: "North American Pharmacist Licensure Examination",
       frameworkType: "board_exam",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Pharmacotherapy",
@@ -456,7 +508,7 @@ export const officialStandardsData = {
       name: "ACPE Standards",
       description: "Accreditation Council for Pharmacy Education Standards",
       frameworkType: "accreditation",
-      version: "2024",
+      version: "2025",
       subjects: [
         {
           name: "Educational Outcomes",
