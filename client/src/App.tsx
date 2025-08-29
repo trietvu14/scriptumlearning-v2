@@ -120,7 +120,7 @@ function Router() {
       </Route>
       
       <Route path="/onboarding">
-        <ProtectedRoute requiredRole={["school_admin"]}>
+        <ProtectedRoute requiredRole={["super_admin", "school_admin"]}>
           <div className="flex flex-col min-h-screen">
             <TopBar />
             <div className="flex flex-1">

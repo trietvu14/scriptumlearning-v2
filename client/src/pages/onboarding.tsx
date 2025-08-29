@@ -146,10 +146,26 @@ export function OnboardingPage() {
     }
   };
 
-  if (user?.role !== "school_admin") {
+  if (!["super_admin", "school_admin"].includes(user?.role || "")) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Access denied. School Admin privileges required.</p>
+        <p className="text-muted-foreground">Access denied. Administrative privileges required.</p>
+      </div>
+    );
+  }
+
+  // Super admin needs to select a tenant to onboard
+  if (user?.role === "super_admin" && !user?.tenantId) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">
+            Super Admins can use onboarding to help configure institutions.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            To use onboarding, create a School Admin user for a tenant first.
+          </p>
+        </div>
       </div>
     );
   }
