@@ -107,3 +107,9 @@
 .search-placeholder::placeholder {
   color: #eeeeee !important;
 }
+
+.word-break {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
