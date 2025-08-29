@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, BookOpen, Award, Building2, Upload, Eye, Edit, Trash2, ChevronRight, Stethoscope, Heart, Activity, Pill, Scale, Smile } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { INBDEMappingMatrix } from "@/components/curriculum/inbde-mapping-matrix";
 
 interface StandardsFramework {
   id: string;
@@ -452,6 +453,16 @@ export function StandardsPage() {
           )}
         </div>
       </div>
+
+      {/* INBDE Curriculum Mapping Matrix - Only show for INBDE framework */}
+      {selectedFramework && selectedFramework.name === "INBDE" && selectedFramework.educationalArea === "dental_school" && (
+        <div className="mt-8">
+          <INBDEMappingMatrix 
+            frameworkId={selectedFramework.id}
+            tenantId={user?.tenantId || ""}
+          />
+        </div>
+      )}
     </div>
   );
 }

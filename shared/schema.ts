@@ -411,6 +411,56 @@ export const systemAnalytics = pgTable("system_analytics", {
   recordedAt: timestamp("recorded_at").defaultNow()
 });
 
+// INBDE-specific curriculum mapping tables
+export const inbdeFoundationKnowledge = pgTable("inbde_foundation_knowledge", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  fkNumber: integer("fk_number").notNull(), // 1-10
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const inbdeClinicalContent = pgTable("inbde_clinical_content", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  ccNumber: integer("cc_number").notNull(), // 1-56
+  name: text("name").notNull(),
+  description: text("description"),
+  category: text("category").notNull(), // "Diagnosis and Treatment Planning", "Oral Health Management", "Practice and Profession"
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Content mapping to INBDE matrix (FK x CC)
+export const inbdeContentMappings = pgTable("inbde_content_mappings", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  contentId: uuid("content_id").references(() => content.id).notNull(),
+  fkId: uuid("fk_id").references(() => inbdeFoundationKnowledge.id).notNull(),
+  ccId: uuid("cc_id").references(() => inbdeClinicalContent.id).notNull(),
+  alignmentStrength: decimal("alignment_strength", { precision: 3, scale: 2 }).default("1.00"), // 0.00-1.00
+  isAiGenerated: boolean("is_ai_generated").default(false),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Curriculum mapping statistics cache for performance
+export const inbdeMappingStats = pgTable("inbde_mapping_stats", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  courseId: uuid("course_id").references(() => courses.id),
+  fkId: uuid("fk_id").references(() => inbdeFoundationKnowledge.id).notNull(),
+  ccId: uuid("cc_id").references(() => inbdeClinicalContent.id).notNull(),
+  contentCount: integer("content_count").default(0),
+  totalContentCount: integer("total_content_count").default(0),
+  coveragePercentage: decimal("coverage_percentage", { precision: 5, scale: 2 }).default("0.00"),
+  lastCalculatedAt: timestamp("last_calculated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Relations
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
@@ -568,6 +618,34 @@ export type ExamQuestion = typeof examQuestions.$inferSelect;
 export type InsertExamQuestion = z.infer<typeof insertExamQuestionSchema>;
 
 export type StudentExamAttempt = typeof studentExamAttempts.$inferSelect;
+
+// INBDE types and schemas
+export const insertINBDEFoundationKnowledgeSchema = createInsertSchema(inbdeFoundationKnowledge).omit({
+  id: true,
+  createdAt: true
+});
+
+export const insertINBDEClinicalContentSchema = createInsertSchema(inbdeClinicalContent).omit({
+  id: true,
+  createdAt: true
+});
+
+export const insertINBDEContentMappingSchema = createInsertSchema(inbdeContentMappings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type INBDEFoundationKnowledge = typeof inbdeFoundationKnowledge.$inferSelect;
+export type InsertINBDEFoundationKnowledge = z.infer<typeof insertINBDEFoundationKnowledgeSchema>;
+
+export type INBDEClinicalContent = typeof inbdeClinicalContent.$inferSelect;
+export type InsertINBDEClinicalContent = z.infer<typeof insertINBDEClinicalContentSchema>;
+
+export type INBDEContentMapping = typeof inbdeContentMappings.$inferSelect;
+export type InsertINBDEContentMapping = z.infer<typeof insertINBDEContentMappingSchema>;
+
+export type INBDEMappingStats = typeof inbdeMappingStats.$inferSelect;
 
 // Standards Framework schemas
 export const insertStandardsFrameworkSchema = createInsertSchema(standardsFrameworks).omit({
