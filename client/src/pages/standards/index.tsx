@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, BookOpen, Award, Building2, Upload, Eye, Edit, Trash2, ChevronRight } from "lucide-react";
+import { Plus, BookOpen, Award, Building2, Upload, Eye, Edit, Trash2, ChevronRight, Stethoscope, Heart, Activity, Pill, Scale, Smile } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -38,12 +38,12 @@ interface StandardsSubject {
 }
 
 const EDUCATIONAL_AREAS = [
-  { value: "medical_school", label: "Medical School" },
-  { value: "dental_school", label: "Dental School" },
-  { value: "nursing_school", label: "Nursing School" },
-  { value: "physical_therapy_school", label: "Physical Therapy School" },
-  { value: "pharmacy_school", label: "Pharmacy School" },
-  { value: "law_school", label: "Law School" }
+  { value: "medical_school", label: "Medical School", icon: Stethoscope },
+  { value: "dental_school", label: "Dental School", icon: Smile },
+  { value: "nursing_school", label: "Nursing School", icon: Heart },
+  { value: "physical_therapy_school", label: "Physical Therapy School", icon: Activity },
+  { value: "pharmacy_school", label: "Pharmacy School", icon: Pill },
+  { value: "law_school", label: "Law School", icon: Scale }
 ];
 
 const FRAMEWORK_TYPES = [
@@ -290,18 +290,21 @@ export function StandardsPage() {
               <CardTitle className="text-sm">Educational Areas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {EDUCATIONAL_AREAS.map(area => (
-                <Button
-                  key={area.value}
-                  variant={selectedEducationalArea === area.value ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedEducationalArea(area.value)}
-                  data-testid={`button-area-${area.value}`}
-                >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  {area.label}
-                </Button>
-              ))}
+              {EDUCATIONAL_AREAS.map(area => {
+                const IconComponent = area.icon;
+                return (
+                  <Button
+                    key={area.value}
+                    variant={selectedEducationalArea === area.value ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedEducationalArea(area.value)}
+                    data-testid={`button-area-${area.value}`}
+                  >
+                    <IconComponent className="h-4 w-4 mr-2 flex-shrink-0" />
+                    {area.label}
+                  </Button>
+                );
+              })}
             </CardContent>
           </Card>
         </div>
