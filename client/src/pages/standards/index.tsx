@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, BookOpen, Award, Building2, Upload, Eye, Edit, Trash2, ChevronRight, Stethoscope, Heart, Activity, Pill, Scale, Smile } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useTenant } from "@/hooks/use-tenant";
 import { INBDEMappingMatrix } from "@/components/curriculum/inbde-mapping-matrix";
 
 interface StandardsFramework {
@@ -338,22 +339,22 @@ export function StandardsPage() {
                   <Button
                     key={framework.id}
                     variant={selectedFramework?.id === framework.id ? "secondary" : "ghost"}
-                    className="w-full justify-between p-4 h-auto"
+                    className="w-full justify-between p-4 h-auto min-h-0"
                     onClick={() => handleFrameworkSelect(framework)}
                     data-testid={`button-framework-${framework.id}`}
                   >
-                    <div className="flex items-center">
-                      <Award className="w-4 h-4 mr-3" />
-                      <div className="text-left">
-                        <div className="font-medium">{framework.name}</div>
-                        <div className="text-xs text-muted-foreground">{framework.description}</div>
+                    <div className="flex items-center min-w-0 flex-1">
+                      <Award className="w-4 h-4 mr-3 flex-shrink-0" />
+                      <div className="text-left min-w-0 flex-1">
+                        <div className="font-medium truncate">{framework.name}</div>
+                        <div className="text-xs text-muted-foreground line-clamp-2">{framework.description}</div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={framework.isOfficial ? "default" : "secondary"}>
+                    <div className="flex items-center space-x-2 flex-shrink-0">
+                      <Badge variant={framework.isOfficial ? "default" : "secondary"} className="text-xs">
                         {framework.isOfficial ? "Official" : "Custom"}
                       </Badge>
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-4 h-4 flex-shrink-0" />
                     </div>
                   </Button>
                 ))}
