@@ -42,10 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
     enabled: ["super_admin", "school_admin", "faculty"].includes(user?.role || "") && !!user
   });
   
-  // Debug logging (temporary)
-  if (standardsFrameworks.length > 0) {
-    console.log("Sidebar - Standards loaded:", standardsFrameworks.length, "frameworks");
-  }
+
 
   // Group standards by educational area
   const groupedStandards = (standardsFrameworks as any[]).reduce((acc: any, framework: any) => {
@@ -66,15 +63,22 @@ export function Sidebar({ className }: SidebarProps) {
     return acc;
   }, {});
 
-  // Educational area labels
+  // Educational area labels with alphabetical ordering
   const educationalAreaLabels: { [key: string]: string } = {
-    'medical_school': 'Medical School',
     'dental_school': 'Dental School',
+    'law_school': 'Law School', 
+    'medical_school': 'Medical School',
     'nursing_school': 'Nursing School',
     'pharmacy_school': 'Pharmacy School',
-    'physical_therapy_school': 'Physical Therapy School',
-    'law_school': 'Law School'
+    'physical_therapy_school': 'Physical Therapy School'
   };
+
+  // Get sorted educational areas
+  const sortedEducationalAreas = Object.keys(groupedStandards).sort((a, b) => {
+    const labelA = educationalAreaLabels[a] || a;
+    const labelB = educationalAreaLabels[b] || b;
+    return labelA.localeCompare(labelB);
+  });
 
   const toggleStandardsArea = (area: string) => {
     setExpandedStandardsAreas(prev => 
@@ -183,7 +187,9 @@ export function Sidebar({ className }: SidebarProps) {
                       {/* Hierarchical Standards Tree */}
                       {Object.keys(groupedStandards).length > 0 && (
                         <div className="ml-4 mt-1 space-y-1">
-                          {Object.entries(groupedStandards).map(([area, standards]: [string, any]) => (
+                          {sortedEducationalAreas.map((area) => {
+                            const standards = groupedStandards[area];
+                            return (
                             <Collapsible
                               key={area}
                               open={expandedStandardsAreas.includes(area)}
@@ -250,7 +256,8 @@ export function Sidebar({ className }: SidebarProps) {
                                 )}
                               </CollapsibleContent>
                             </Collapsible>
-                          ))}
+                          );
+                          })}
                         </div>
                       )}
                     </li>
