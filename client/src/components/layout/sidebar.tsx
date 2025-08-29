@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useTenant } from "@/hooks/use-tenant";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   GraduationCap, 
   LayoutDashboard, 
@@ -17,9 +18,13 @@ import {
   Building2,
   Shield,
   Activity,
-  User
+  User,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface SidebarProps {
   className?: string;
@@ -29,6 +34,50 @@ export function Sidebar({ className }: SidebarProps) {
   const { tenant } = useTenant();
   const { user } = useAuth();
   const [location] = useLocation();
+  const [expandedStandardsAreas, setExpandedStandardsAreas] = useState<string[]>([]);
+
+  // Fetch standards frameworks for hierarchical tree
+  const { data: standardsFrameworks = [] } = useQuery({
+    queryKey: ["/api/standards/frameworks"],
+    enabled: ["super_admin", "school_admin", "faculty"].includes(user?.role || "")
+  });
+
+  // Group standards by educational area
+  const groupedStandards = standardsFrameworks.reduce((acc: any, framework: any) => {
+    const area = framework.educationalArea;
+    if (!acc[area]) {
+      acc[area] = {
+        official: [],
+        custom: []
+      };
+    }
+    
+    if (framework.isOfficial) {
+      acc[area].official.push(framework);
+    } else {
+      acc[area].custom.push(framework);
+    }
+    
+    return acc;
+  }, {});
+
+  // Educational area labels
+  const educationalAreaLabels: { [key: string]: string } = {
+    'medical_school': 'Medical School',
+    'dental_school': 'Dental School',
+    'nursing_school': 'Nursing School',
+    'pharmacy_school': 'Pharmacy School',
+    'physical_therapy_school': 'Physical Therapy School',
+    'law_school': 'Law School'
+  };
+
+  const toggleStandardsArea = (area: string) => {
+    setExpandedStandardsAreas(prev => 
+      prev.includes(area) 
+        ? prev.filter(a => a !== area)
+        : [...prev, area]
+    );
+  };
 
   // Build navigation based on user role
   const navigation = [
@@ -44,10 +93,7 @@ export function Sidebar({ className }: SidebarProps) {
     {
       name: "Standards",
       items: [
-        { name: "Educational Standards", href: "/standards", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] },
-        { name: "USMLE Mapping", href: "/standards/usmle", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] },
-        { name: "LCME Standards", href: "/standards/lcme", icon: University, requiredRoles: ["super_admin", "school_admin", "faculty"] },
-        { name: "Internal Standards", href: "/standards/internal", icon: Settings, requiredRoles: ["super_admin", "school_admin", "faculty"] }
+        { name: "Educational Standards", href: "/standards", icon: Award, requiredRoles: ["super_admin", "school_admin", "faculty"] }
       ]
     },
     {
@@ -110,6 +156,101 @@ export function Sidebar({ className }: SidebarProps) {
                 
                 const isActive = location === item.href;
                 const Icon = item.icon;
+                
+                // Special handling for Educational Standards to show hierarchical tree
+                if (item.name === "Educational Standards") {
+                  return (
+                    <li key={item.name} className="space-y-1">
+                      <Link href={item.href}>
+                        <Button
+                          variant={isActive ? "default" : "ghost"}
+                          className={cn(
+                            "w-full justify-start",
+                            isActive && "bg-primary text-primary-foreground"
+                          )}
+                          data-testid={`link-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          <Icon className="w-4 h-4 mr-3" />
+                          {item.name}
+                        </Button>
+                      </Link>
+                      
+                      {/* Hierarchical Standards Tree */}
+                      {Object.keys(groupedStandards).length > 0 && (
+                        <div className="ml-4 mt-1 space-y-1">
+                          {Object.entries(groupedStandards).map(([area, standards]: [string, any]) => (
+                            <Collapsible
+                              key={area}
+                              open={expandedStandardsAreas.includes(area)}
+                              onOpenChange={() => toggleStandardsArea(area)}
+                            >
+                              <CollapsibleTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="w-full justify-start p-2 h-auto text-xs"
+                                >
+                                  {expandedStandardsAreas.includes(area) ? (
+                                    <ChevronDown className="w-3 h-3 mr-2" />
+                                  ) : (
+                                    <ChevronRight className="w-3 h-3 mr-2" />
+                                  )}
+                                  <University className="w-3 h-3 mr-2" />
+                                  {educationalAreaLabels[area] || area}
+                                </Button>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="ml-4 space-y-1">
+                                {/* Official Standards */}
+                                {standards.official?.map((framework: any) => (
+                                  <Link
+                                    key={framework.id}
+                                    href={`/standards/${area.replace('_', '-')}/${framework.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      className={cn(
+                                        "w-full justify-start p-2 h-auto text-xs",
+                                        location.includes(framework.name.toLowerCase().replace(/\s+/g, '-')) && "bg-primary/10"
+                                      )}
+                                    >
+                                      <Award className="w-3 h-3 mr-2" />
+                                      {framework.name}
+                                    </Button>
+                                  </Link>
+                                ))}
+                                
+                                {/* Custom Standards Section */}
+                                {standards.custom?.length > 0 && (
+                                  <>
+                                    <div className="px-2 py-1">
+                                      <p className="text-xs font-medium text-muted-foreground">Custom</p>
+                                    </div>
+                                    {standards.custom.map((framework: any) => (
+                                      <Link
+                                        key={framework.id}
+                                        href={`/standards/${area.replace('_', '-')}/${framework.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                      >
+                                        <Button
+                                          variant="ghost"
+                                          className={cn(
+                                            "w-full justify-start p-2 h-auto text-xs",
+                                            location.includes(framework.name.toLowerCase().replace(/\s+/g, '-')) && "bg-primary/10"
+                                          )}
+                                        >
+                                          <Settings className="w-3 h-3 mr-2" />
+                                          {framework.name}
+                                        </Button>
+                                      </Link>
+                                    ))}
+                                  </>
+                                )}
+                              </CollapsibleContent>
+                            </Collapsible>
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  );
+                }
                 
                 return (
                   <li key={item.name}>
