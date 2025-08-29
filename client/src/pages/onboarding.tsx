@@ -52,7 +52,7 @@ export function OnboardingPage() {
     customBranding: false
   });
 
-  // Get tenant info for school admin
+  // Get tenant info
   const { data: tenant } = useQuery({
     queryKey: ["/api/tenants", user?.tenantId],
     queryFn: async () => {
@@ -64,7 +64,7 @@ export function OnboardingPage() {
       if (!response.ok) throw new Error("Failed to fetch tenant");
       return response.json();
     },
-    enabled: user?.role === "school_admin" && !!user?.tenantId
+    enabled: !!user?.tenantId
   });
 
   // Complete onboarding mutation
@@ -159,11 +159,20 @@ export function OnboardingPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center space-y-4">
-          <p className="text-muted-foreground">
-            Super Admins can use onboarding to help configure institutions.
+          <h2 className="text-xl font-semibold">Institution Onboarding</h2>
+          <p className="text-muted-foreground max-w-md">
+            This onboarding flow is designed for School Admins to complete their institution setup.
           </p>
+          <div className="p-4 bg-muted rounded-lg text-left max-w-md space-y-2">
+            <p className="text-sm font-medium">Workflow Steps:</p>
+            <ol className="text-sm text-muted-foreground space-y-1">
+              <li>1. Super Admin creates tenant (basic info)</li>
+              <li>2. Super Admin invites School Admin</li>
+              <li>3. School Admin completes onboarding (settings)</li>
+            </ol>
+          </div>
           <p className="text-sm text-muted-foreground">
-            To use onboarding, create a School Admin user for a tenant first.
+            To test this flow, log in as a School Admin user.
           </p>
         </div>
       </div>
@@ -228,12 +237,15 @@ export function OnboardingPage() {
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="p-4 bg-muted rounded-lg">
-                <h3 className="font-medium mb-2">Institution Information</h3>
+                <h3 className="font-medium mb-2">Institution Information (Read-Only)</h3>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p><strong>Name:</strong> {tenant?.name}</p>
-                  <p><strong>Domain:</strong> {tenant?.domain}</p>
-                  <p><strong>Type:</strong> {tenant?.educationalArea?.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}</p>
+                  <p><strong>Name:</strong> {tenant?.name || "Loading..."}</p>
+                  <p><strong>Domain:</strong> {tenant?.domain || "Loading..."}</p>
+                  <p><strong>Type:</strong> {tenant?.educationalArea?.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Loading..."}</p>
                 </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Basic institution details were set by your Super Admin and cannot be changed here.
+                </p>
               </div>
               
               <div className="grid gap-2">
