@@ -140,10 +140,7 @@ export const officialStandardsData = {
           ]
         }
       ]
-    }
-  ],
-
-  nursing_school: [
+    },
     {
       name: "NCLEX-RN",
       description: "National Council Licensure Examination for Registered Nurses",
@@ -183,10 +180,7 @@ export const officialStandardsData = {
           ]
         }
       ]
-    }
-  ],
-
-  nursing_school: [
+    },
     {
       name: "CCNE Standards",
       description: "Commission on Collegiate Nursing Education Accreditation Standards",
