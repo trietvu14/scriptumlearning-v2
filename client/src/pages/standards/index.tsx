@@ -174,7 +174,7 @@ export function StandardsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">Educational Standards</h1>
-          <p className="text-muted-foreground">Manage curriculum mapping standards and frameworks</p>
+          <p className="text-muted-foreground">Manage curriculum mapping standards</p>
         </div>
         
         {["super_admin", "school_admin"].includes(user?.role || "") && (
@@ -182,7 +182,7 @@ export function StandardsPage() {
             <DialogTrigger asChild>
               <Button data-testid="button-create-framework">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Framework
+                Create Standard
               </Button>
             </DialogTrigger>
             <DialogContent data-testid="dialog-create-framework">
@@ -411,7 +411,7 @@ export function StandardsPage() {
 
                   {frameworkDetails?.subjects && (
                     <div>
-                      <h4 className="font-medium mb-2">Framework Structure</h4>
+                      <h4 className="font-medium mb-2">{selectedFramework.name.split(' ')[0]} Structure</h4>
                       <div className="space-y-2 max-h-64 overflow-y-auto">
                         {frameworkDetails.subjects.map((subject: any) => (
                           <div key={subject.id} className="border rounded p-2">
