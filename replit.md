@@ -44,6 +44,12 @@ A comprehensive multi-tenant AI-powered curriculum mapping platform for educatio
   - Added 10 Foundation Knowledge areas and 56 Clinical Content areas from official INBDE guide
   - Created interactive matrix visualization with percentage-based content alignment
   - Built comprehensive curriculum mapping infrastructure with statistics tracking
+  - **Matrix UI Enhancements**:
+    - Foundation Knowledge headers now horizontal (not rotated) for better readability
+    - Added light backgrounds: gray for CC headers, blue for FK headers
+    - Added gray column separators between FK areas for visual clarity
+    - Updated header title to "Clinical Content vs Foundation Knowledge Areas"
+    - Cleaned up duplicate data entries for proper 56×10 matrix display
 
 ## Project Architecture
 ### Frontend Layer

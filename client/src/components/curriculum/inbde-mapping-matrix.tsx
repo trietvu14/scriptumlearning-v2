@@ -250,7 +250,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                 INBDE Curriculum Mapping Matrix
               </CardTitle>
               <CardDescription>
-                Clinical Content (CC) areas vs Foundation Knowledge (FK) areas with content alignment percentages
+                Interactive mapping matrix showing alignment between Clinical Content and Foundation Knowledge areas
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -279,12 +279,12 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                   <Table className="text-xs border-collapse">
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="sticky left-0 bg-background z-10 border-r w-48">
-                          Clinical Content Areas
+                        <TableHead className="sticky left-0 bg-gray-50 z-10 border-r w-48">
+                          Clinical Content vs Foundation Knowledge Areas
                         </TableHead>
                         {foundationKnowledge.map((fk: INBDEFoundationKnowledge) => (
-                          <TableHead key={fk.id} className="text-center min-w-[60px] px-1">
-                            <div className="transform -rotate-90 whitespace-nowrap origin-center text-xs">
+                          <TableHead key={fk.id} className="text-center min-w-[80px] px-2 bg-blue-50 border-r border-gray-200">
+                            <div className="text-xs font-medium">
                               FK{fk.fkNumber}
                             </div>
                           </TableHead>
@@ -294,7 +294,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                     <TableBody>
                       {clinicalContent.map((cc: INBDEClinicalContent) => (
                         <TableRow key={cc.id}>
-                          <TableCell className="sticky left-0 bg-background z-10 border-r font-medium p-2">
+                          <TableCell className="sticky left-0 bg-gray-50 z-10 border-r font-medium p-2">
                             <div className="space-y-1">
                               <div className="font-semibold text-xs">CC{cc.ccNumber}</div>
                               <div className="text-xs text-muted-foreground line-clamp-1" title={cc.name}>
@@ -311,7 +311,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                             const mapping = matrixRow?.ccMappings.find((m: MappingCell) => m.cc.id === cc.id);
                             
                             return (
-                              <TableCell key={fk.id} className="text-center p-0.5">
+                              <TableCell key={fk.id} className="text-center p-0.5 border-r border-gray-200">
                                 <Dialog>
                                   <DialogTrigger asChild>
                                     <Button
