@@ -340,15 +340,15 @@ export function StandardsPage() {
                   <Button
                     key={framework.id}
                     variant={selectedFramework?.id === framework.id ? "secondary" : "ghost"}
-                    className="w-full justify-between p-4 h-auto min-h-0"
+                    className="w-full justify-between p-4 h-auto min-h-[4rem] items-start"
                     onClick={() => handleFrameworkSelect(framework)}
                     data-testid={`button-framework-${framework.id}`}
                   >
                     <div className="flex items-center min-w-0 flex-1">
                       <Award className="w-4 h-4 mr-3 flex-shrink-0" />
                       <div className="text-left min-w-0 flex-1">
-                        <div className="font-medium truncate">{framework.name}</div>
-                        <div className="text-xs text-muted-foreground line-clamp-2">{framework.description}</div>
+                        <div className="font-medium break-words leading-tight">{framework.name}</div>
+                        <div className="text-xs text-muted-foreground line-clamp-2 mt-1">{framework.description}</div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 flex-shrink-0">
