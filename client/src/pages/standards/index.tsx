@@ -340,19 +340,19 @@ export function StandardsPage() {
                   <Button
                     key={framework.id}
                     variant={selectedFramework?.id === framework.id ? "secondary" : "ghost"}
-                    className="w-full justify-between p-4 h-auto min-h-[4rem] items-start"
+                    className="w-full justify-between p-4 h-auto min-h-[5rem] items-start text-left"
                     onClick={() => handleFrameworkSelect(framework)}
                     data-testid={`button-framework-${framework.id}`}
                   >
-                    <div className="flex items-center min-w-0 flex-1">
-                      <Award className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <div className="text-left min-w-0 flex-1">
-                        <div className="font-medium break-words leading-tight">{framework.name}</div>
-                        <div className="text-xs text-muted-foreground line-clamp-2 mt-1">{framework.description}</div>
+                    <div className="flex items-start min-w-0 flex-1">
+                      <Award className="w-4 h-4 mr-3 flex-shrink-0 mt-0.5" />
+                      <div className="text-left min-w-0 flex-1 overflow-hidden">
+                        <div className="font-medium break-words leading-tight whitespace-normal max-w-full">{framework.name}</div>
+                        <div className="text-xs text-muted-foreground line-clamp-2 mt-1 break-words">{framework.description}</div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 flex-shrink-0">
-                      <Badge variant={framework.isOfficial ? "default" : "secondary"} className="text-xs">
+                    <div className="flex items-start space-x-2 flex-shrink-0 mt-0.5">
+                      <Badge variant={framework.isOfficial ? "default" : "secondary"} className="text-xs whitespace-nowrap">
                         {framework.isOfficial ? "Official" : "Custom"}
                       </Badge>
                       <ChevronRight className="w-4 h-4 flex-shrink-0" />
