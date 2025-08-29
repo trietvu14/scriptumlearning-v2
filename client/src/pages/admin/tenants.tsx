@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Settings, Users, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
 
 interface Tenant {
   id: string;
@@ -25,6 +26,7 @@ export function TenantsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newTenant, setNewTenant] = useState({
     name: "",
@@ -120,6 +122,14 @@ export function TenantsPage() {
       id: tenant.id,
       updates: { isActive: !tenant.isActive }
     });
+  };
+
+  const handleViewUsers = (tenantId: string) => {
+    setLocation(`/admin/users?tenantId=${tenantId}`);
+  };
+
+  const handleTenantSettings = (tenantId: string) => {
+    setLocation(`/admin/tenants/${tenantId}/settings`);
   };
 
   if (user?.role !== "super_admin") {
@@ -268,10 +278,22 @@ export function TenantsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" data-testid={`button-users-${tenant.id}`}>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleViewUsers(tenant.id)}
+                          data-testid={`button-users-${tenant.id}`}
+                          title="View Users"
+                        >
                           <Users className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" data-testid={`button-settings-${tenant.id}`}>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleTenantSettings(tenant.id)}
+                          data-testid={`button-settings-${tenant.id}`}
+                          title="Tenant Settings"
+                        >
                           <Settings className="h-4 w-4" />
                         </Button>
                       </div>

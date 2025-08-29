@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Mail, Users, UserPlus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useSearch } from "wouter";
 
 interface User {
   id: string;
@@ -40,6 +41,7 @@ export function UsersPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const search = useSearch();
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [newInvitation, setNewInvitation] = useState({
     email: "",
@@ -48,11 +50,20 @@ export function UsersPage() {
     role: "student"
   });
 
+  // Get tenantId from URL parameters if present
+  const urlParams = new URLSearchParams(search);
+  const selectedTenantId = urlParams.get('tenantId');
+
   // Fetch users
-  const { data: users, isLoading: usersLoading } = useQuery<User[]>({
+  const { data: allUsers, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: ["/api/users"],
     enabled: ["super_admin", "school_admin"].includes(user?.role || "")
   });
+
+  // Filter users by tenant if tenantId is provided
+  const users = selectedTenantId 
+    ? allUsers?.filter(u => u.tenantId === selectedTenantId)
+    : allUsers;
 
   // Fetch invitations
   const { data: invitations, isLoading: invitationsLoading } = useQuery<Invitation[]>({
@@ -199,8 +210,15 @@ export function UsersPage() {
     <div className="space-y-6" data-testid="users-page">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">User Management</h1>
-          <p className="text-muted-foreground">Manage users and send invitations</p>
+          <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">
+            User Management {selectedTenantId && '(Filtered by Tenant)'}
+          </h1>
+          <p className="text-muted-foreground">
+            {selectedTenantId 
+              ? `Showing users for selected institution (${users?.length || 0} users)`
+              : 'Manage users and send invitations'
+            }
+          </p>
         </div>
         
         <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
