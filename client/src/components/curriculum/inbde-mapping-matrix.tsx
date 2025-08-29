@@ -250,7 +250,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                 INBDE Curriculum Mapping Matrix
               </CardTitle>
               <CardDescription>
-                Foundation Knowledge (FK) areas vs Clinical Content (CC) areas with content alignment percentages
+                Clinical Content (CC) areas vs Foundation Knowledge (FK) areas with content alignment percentages
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -274,111 +274,120 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
             </TabsList>
             
             <TabsContent value="matrix" className="mt-6">
-              <ScrollArea className="w-full">
-                <div className="min-w-[1200px]">
-                  <Table className="text-xs">
+              <ScrollArea className="w-full h-[600px]">
+                <div className="min-w-[900px]">
+                  <Table className="text-xs border-collapse">
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="sticky left-0 bg-background z-10 border-r w-64">
-                          Foundation Knowledge Areas
+                        <TableHead className="sticky left-0 bg-background z-10 border-r w-48">
+                          Clinical Content Areas
                         </TableHead>
-                        {clinicalContent.map((cc: INBDEClinicalContent) => (
-                          <TableHead key={cc.id} className="text-center min-w-[60px] px-1">
-                            <div className="transform -rotate-90 whitespace-nowrap origin-center">
-                              CC{cc.ccNumber}
+                        {foundationKnowledge.map((fk: INBDEFoundationKnowledge) => (
+                          <TableHead key={fk.id} className="text-center min-w-[60px] px-1">
+                            <div className="transform -rotate-90 whitespace-nowrap origin-center text-xs">
+                              FK{fk.fkNumber}
                             </div>
                           </TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {matrix.map((row: MatrixRow) => (
-                        <TableRow key={row.fk.id}>
-                          <TableCell className="sticky left-0 bg-background z-10 border-r font-medium">
+                      {clinicalContent.map((cc: INBDEClinicalContent) => (
+                        <TableRow key={cc.id}>
+                          <TableCell className="sticky left-0 bg-background z-10 border-r font-medium p-2">
                             <div className="space-y-1">
-                              <div className="font-semibold">FK{row.fk.fkNumber}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {row.fk.name}
+                              <div className="font-semibold text-xs">CC{cc.ccNumber}</div>
+                              <div className="text-xs text-muted-foreground line-clamp-1" title={cc.name}>
+                                {cc.name.length > 30 ? cc.name.substring(0, 27) + '...' : cc.name}
                               </div>
+                              <Badge variant="outline" className="text-xs px-1 py-0">
+                                {cc.category.split(' ')[0]}
+                              </Badge>
                             </div>
                           </TableCell>
-                          {row.ccMappings.map((mapping: MappingCell) => (
-                            <TableCell key={mapping.cc.id} className="text-center p-1">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-12 w-full p-1"
-                                    onClick={() => setSelectedCell({
-                                      fkId: row.fk.id,
-                                      ccId: mapping.cc.id,
-                                      fk: row.fk,
-                                      cc: mapping.cc
-                                    })}
-                                  >
-                                    <div className="space-y-1">
-                                      <Badge className={`text-xs ${getPercentageColor(mapping.coveragePercentage)}`}>
-                                        {mapping.coveragePercentage}%
-                                      </Badge>
-                                      <div className="text-xs text-muted-foreground">
-                                        {mapping.contentCount}
+                          {foundationKnowledge.map((fk: INBDEFoundationKnowledge) => {
+                            // Find the mapping for this CC-FK combination
+                            const matrixRow = matrix.find((row: MatrixRow) => row.fk.id === fk.id);
+                            const mapping = matrixRow?.ccMappings.find((m: MappingCell) => m.cc.id === cc.id);
+                            
+                            return (
+                              <TableCell key={fk.id} className="text-center p-0.5">
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      className="h-10 w-full p-0.5"
+                                      onClick={() => setSelectedCell({
+                                        fkId: fk.id,
+                                        ccId: cc.id,
+                                        fk: fk,
+                                        cc: cc
+                                      })}
+                                    >
+                                      <div className="space-y-0.5">
+                                        <Badge className={`text-xs ${getPercentageColor(mapping?.coveragePercentage || "0.00")}`}>
+                                          {mapping?.coveragePercentage || "0"}%
+                                        </Badge>
+                                        <div className="text-xs text-muted-foreground">
+                                          {mapping?.contentCount || 0}
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-2xl">
-                                  <DialogHeader>
-                                    <DialogTitle>
-                                      FK{row.fk.fkNumber} × CC{mapping.cc.ccNumber} Mapping Details
-                                    </DialogTitle>
-                                    <DialogDescription className="space-y-2">
-                                      <div><strong>Foundation Knowledge:</strong> {row.fk.name}</div>
-                                      <div><strong>Clinical Content:</strong> {mapping.cc.name}</div>
-                                      <div><strong>Category:</strong> {mapping.cc.category}</div>
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="space-y-4">
-                                    <div className="grid grid-cols-3 gap-4">
-                                      <div className="text-center">
-                                        <div className="text-2xl font-bold text-primary">{mapping.contentCount}</div>
-                                        <div className="text-sm text-muted-foreground">Mapped Content</div>
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-2xl">
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        CC{cc.ccNumber} × FK{fk.fkNumber} Mapping Details
+                                      </DialogTitle>
+                                      <DialogDescription className="space-y-2">
+                                        <div><strong>Clinical Content:</strong> {cc.name}</div>
+                                        <div><strong>Foundation Knowledge:</strong> {fk.name}</div>
+                                        <div><strong>Category:</strong> {cc.category}</div>
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-3 gap-4">
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-primary">{mapping?.contentCount || 0}</div>
+                                          <div className="text-sm text-muted-foreground">Mapped Content</div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold">{mapping?.totalContentCount || 0}</div>
+                                          <div className="text-sm text-muted-foreground">Total Content</div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-green-600">{mapping?.coveragePercentage || "0.00"}%</div>
+                                          <div className="text-sm text-muted-foreground">Coverage</div>
+                                        </div>
                                       </div>
-                                      <div className="text-center">
-                                        <div className="text-2xl font-bold">{mapping.totalContentCount}</div>
-                                        <div className="text-sm text-muted-foreground">Total Content</div>
-                                      </div>
-                                      <div className="text-center">
-                                        <div className="text-2xl font-bold text-green-600">{mapping.coveragePercentage}%</div>
-                                        <div className="text-sm text-muted-foreground">Coverage</div>
-                                      </div>
-                                    </div>
-                                    <Progress value={parseFloat(mapping.coveragePercentage)} className="w-full" />
-                                    
-                                    {cellMappings && cellMappings.length > 0 && (
-                                      <div>
-                                        <h4 className="font-semibold mb-2">Mapped Content ({cellMappings.length})</h4>
-                                        <ScrollArea className="h-32">
-                                          <div className="space-y-2">
-                                            {cellMappings.map((mapping: any) => (
-                                              <div key={mapping.id} className="flex justify-between items-center p-2 border rounded">
-                                                <div>
-                                                  <div className="font-medium">{mapping.contentTitle}</div>
-                                                  <div className="text-sm text-muted-foreground">{mapping.contentType}</div>
+                                      <Progress value={parseFloat(mapping?.coveragePercentage || "0.00")} className="w-full" />
+                                      
+                                      {cellMappings && cellMappings.length > 0 && (
+                                        <div>
+                                          <h4 className="font-semibold mb-2">Mapped Content ({cellMappings.length})</h4>
+                                          <ScrollArea className="h-32">
+                                            <div className="space-y-2">
+                                              {cellMappings.map((mapping: any) => (
+                                                <div key={mapping.id} className="flex justify-between items-center p-2 border rounded">
+                                                  <div>
+                                                    <div className="font-medium">{mapping.contentTitle}</div>
+                                                    <div className="text-sm text-muted-foreground">{mapping.contentType}</div>
+                                                  </div>
+                                                  <Badge variant="outline">
+                                                    {(parseFloat(mapping.alignmentStrength) * 100).toFixed(0)}%
+                                                  </Badge>
                                                 </div>
-                                                <Badge variant="outline">
-                                                  {(parseFloat(mapping.alignmentStrength) * 100).toFixed(0)}%
-                                                </Badge>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </ScrollArea>
-                                      </div>
-                                    )}
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            </TableCell>
-                          ))}
+                                              ))}
+                                            </div>
+                                          </ScrollArea>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                              </TableCell>
+                            );
+                          })}
                         </TableRow>
                       ))}
                     </TableBody>
