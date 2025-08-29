@@ -1,39 +1,38 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Building2, Users, Settings, ArrowRight, ArrowLeft } from "lucide-react";
+import { CheckCircle, Building2, Settings, Users, ArrowRight, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
 interface OnboardingData {
   // Step 1: Institution Details
-  institutionName: string;
-  domain: string;
-  educationalArea: string;
   description: string;
   
-  // Step 2: Admin User
-  adminFirstName: string;
-  adminLastName: string;
-  adminEmail: string;
-  adminPassword: string;
+  // Step 2: LMS Integration
+  enableLMSIntegration: boolean;
+  lmsType: string;
+  lmsApiUrl: string;
+  lmsApiKey: string;
   
-  // Step 3: Initial Settings
+  // Step 3: Platform Settings
   allowSelfRegistration: boolean;
   defaultStudentRole: string;
-  enableLMSIntegration: boolean;
+  enableNotifications: boolean;
+  customBranding: boolean;
 }
 
 const STEPS = [
-  { id: 1, title: "Institution Details", icon: Building2 },
-  { id: 2, title: "Admin Account", icon: Users },
-  { id: 3, title: "Configuration", icon: Settings },
+  { id: 1, title: "Institution Setup", icon: Building2 },
+  { id: 2, title: "LMS Integration", icon: Settings },
+  { id: 3, title: "Platform Settings", icon: Users },
   { id: 4, title: "Complete", icon: CheckCircle }
 ];
 
@@ -42,80 +41,69 @@ export function OnboardingPage() {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingData>({
-    institutionName: "",
-    domain: "",
-    educationalArea: "medical_school",
     description: "",
-    adminFirstName: "",
-    adminLastName: "",
-    adminEmail: "",
-    adminPassword: "",
+    enableLMSIntegration: false,
+    lmsType: "canvas",
+    lmsApiUrl: "",
+    lmsApiKey: "",
     allowSelfRegistration: false,
     defaultStudentRole: "student",
-    enableLMSIntegration: true
+    enableNotifications: true,
+    customBranding: false
   });
 
-  // Tenant creation mutation
-  const createTenantMutation = useMutation({
+  // Get tenant info for school admin
+  const { data: tenant } = useQuery({
+    queryKey: ["/api/tenants", user?.tenantId],
+    queryFn: async () => {
+      const response = await fetch(`/api/tenants/${user?.tenantId}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+        }
+      });
+      if (!response.ok) throw new Error("Failed to fetch tenant");
+      return response.json();
+    },
+    enabled: user?.role === "school_admin" && !!user?.tenantId
+  });
+
+  // Complete onboarding mutation
+  const completeOnboardingMutation = useMutation({
     mutationFn: async (onboardingData: OnboardingData) => {
-      // First create the tenant
-      const tenantResponse = await fetch("/api/tenants", {
-        method: "POST",
+      const response = await fetch(`/api/tenants/${user?.tenantId}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
         },
         body: JSON.stringify({
-          name: onboardingData.institutionName,
-          domain: onboardingData.domain,
-          educationalArea: onboardingData.educationalArea,
           settings: {
             description: onboardingData.description,
+            enableLMSIntegration: onboardingData.enableLMSIntegration,
+            lmsType: onboardingData.lmsType,
+            lmsApiUrl: onboardingData.lmsApiUrl,
+            lmsApiKey: onboardingData.lmsApiKey,
             allowSelfRegistration: onboardingData.allowSelfRegistration,
             defaultStudentRole: onboardingData.defaultStudentRole,
-            enableLMSIntegration: onboardingData.enableLMSIntegration
+            enableNotifications: onboardingData.enableNotifications,
+            customBranding: onboardingData.customBranding,
+            onboardingCompleted: true
           }
         })
       });
       
-      if (!tenantResponse.ok) {
-        const error = await tenantResponse.json();
-        throw new Error(error.error || "Failed to create institution");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to complete onboarding");
       }
       
-      const tenant = await tenantResponse.json();
-      
-      // Then create the admin user
-      const userResponse = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
-        },
-        body: JSON.stringify({
-          tenantId: tenant.id,
-          email: onboardingData.adminEmail,
-          username: onboardingData.adminEmail,
-          password: onboardingData.adminPassword,
-          firstName: onboardingData.adminFirstName,
-          lastName: onboardingData.adminLastName,
-          role: "school_admin",
-          isActive: true
-        })
-      });
-      
-      if (!userResponse.ok) {
-        const error = await userResponse.json();
-        throw new Error(error.error || "Failed to create admin user");
-      }
-      
-      return { tenant, admin: await userResponse.json() };
+      return response.json();
     },
     onSuccess: () => {
       setCurrentStep(4);
       toast({
-        title: "Success!",
-        description: "Institution has been set up successfully"
+        title: "Onboarding Complete!",
+        description: "Your institution setup is now complete"
       });
     },
     onError: (error: Error) => {
@@ -131,8 +119,7 @@ export function OnboardingPage() {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else if (currentStep === 3) {
-      // Submit the onboarding form
-      createTenantMutation.mutate(formData);
+      completeOnboardingMutation.mutate(formData);
     }
   };
 
@@ -149,20 +136,20 @@ export function OnboardingPage() {
   const isStepValid = (step: number) => {
     switch (step) {
       case 1:
-        return formData.institutionName && formData.domain && formData.educationalArea;
+        return true; // Description is optional
       case 2:
-        return formData.adminFirstName && formData.adminLastName && formData.adminEmail && formData.adminPassword;
+        return !formData.enableLMSIntegration || (formData.lmsApiUrl && formData.lmsApiKey);
       case 3:
-        return true; // Configuration is optional
+        return true; // Settings are optional
       default:
         return false;
     }
   };
 
-  if (user?.role !== "super_admin") {
+  if (user?.role !== "school_admin") {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Access denied. Super admin privileges required.</p>
+        <p className="text-muted-foreground">Access denied. School Admin privileges required.</p>
       </div>
     );
   }
@@ -171,10 +158,10 @@ export function OnboardingPage() {
     <div className="max-w-4xl mx-auto p-6" data-testid="onboarding-page">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">
-          Institution Setup
+          Complete Institution Setup
         </h1>
         <p className="text-muted-foreground mt-2">
-          Set up a new educational institution on the Scriptum Learning platform
+          Welcome to {tenant?.name}! Complete your institution setup to get started.
         </p>
       </div>
 
@@ -214,9 +201,9 @@ export function OnboardingPage() {
             Step {currentStep}: {STEPS[currentStep - 1]?.title}
           </CardTitle>
           <CardDescription>
-            {currentStep === 1 && "Enter basic information about your educational institution"}
-            {currentStep === 2 && "Create the primary administrator account"}
-            {currentStep === 3 && "Configure initial platform settings"}
+            {currentStep === 1 && "Add a description and additional details about your institution"}
+            {currentStep === 2 && "Configure LMS integration for automatic course and user sync"}
+            {currentStep === 3 && "Set up platform preferences and access controls"}
             {currentStep === 4 && "Your institution is ready to use!"}
           </CardDescription>
         </CardHeader>
@@ -224,153 +211,149 @@ export function OnboardingPage() {
           {/* Step 1: Institution Details */}
           {currentStep === 1 && (
             <div className="space-y-4">
-              <div className="grid gap-2">
-                <Label htmlFor="institutionName">Institution Name *</Label>
-                <Input
-                  id="institutionName"
-                  value={formData.institutionName}
-                  onChange={(e) => updateFormData({ institutionName: e.target.value })}
-                  placeholder="Johns Hopkins School of Medicine"
-                  data-testid="input-institution-name"
-                />
+              <div className="p-4 bg-muted rounded-lg">
+                <h3 className="font-medium mb-2">Institution Information</h3>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p><strong>Name:</strong> {tenant?.name}</p>
+                  <p><strong>Domain:</strong> {tenant?.domain}</p>
+                  <p><strong>Type:</strong> {tenant?.educationalArea?.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}</p>
+                </div>
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="domain">Domain *</Label>
-                <Input
-                  id="domain"
-                  value={formData.domain}
-                  onChange={(e) => updateFormData({ domain: e.target.value })}
-                  placeholder="johnshopkins.edu"
-                  data-testid="input-domain"
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="educationalArea">Educational Area *</Label>
-                <Select
-                  value={formData.educationalArea}
-                  onValueChange={(value) => updateFormData({ educationalArea: value })}
-                >
-                  <SelectTrigger data-testid="select-educational-area">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="medical_school">Medical School</SelectItem>
-                    <SelectItem value="dental_school">Dental School</SelectItem>
-                    <SelectItem value="nursing_school">Nursing School</SelectItem>
-                    <SelectItem value="physical_therapy_school">Physical Therapy School</SelectItem>
-                    <SelectItem value="law_school">Law School</SelectItem>
-                    <SelectItem value="engineering_school">Engineering School</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Institution Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => updateFormData({ description: e.target.value })}
-                  placeholder="Brief description of your institution..."
+                  placeholder="Describe your institution, its mission, and key programs..."
                   data-testid="input-description"
+                  rows={4}
                 />
+                <p className="text-sm text-muted-foreground">
+                  This description will be visible to students and faculty in your institution.
+                </p>
               </div>
             </div>
           )}
 
-          {/* Step 2: Admin Account */}
+          {/* Step 2: LMS Integration */}
           {currentStep === 2 && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="adminFirstName">First Name *</Label>
-                  <Input
-                    id="adminFirstName"
-                    value={formData.adminFirstName}
-                    onChange={(e) => updateFormData({ adminFirstName: e.target.value })}
-                    placeholder="John"
-                    data-testid="input-admin-firstname"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="adminLastName">Last Name *</Label>
-                  <Input
-                    id="adminLastName"
-                    value={formData.adminLastName}
-                    onChange={(e) => updateFormData({ adminLastName: e.target.value })}
-                    placeholder="Doe"
-                    data-testid="input-admin-lastname"
-                  />
-                </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="enableLMSIntegration"
+                  checked={formData.enableLMSIntegration}
+                  onCheckedChange={(checked) => updateFormData({ enableLMSIntegration: checked })}
+                  data-testid="switch-lms-integration"
+                />
+                <Label htmlFor="enableLMSIntegration">Enable LMS Integration</Label>
               </div>
               
-              <div className="grid gap-2">
-                <Label htmlFor="adminEmail">Email Address *</Label>
-                <Input
-                  id="adminEmail"
-                  type="email"
-                  value={formData.adminEmail}
-                  onChange={(e) => updateFormData({ adminEmail: e.target.value })}
-                  placeholder="admin@johnshopkins.edu"
-                  data-testid="input-admin-email"
-                />
-              </div>
+              {formData.enableLMSIntegration && (
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="lmsType">LMS Platform</Label>
+                    <Select
+                      value={formData.lmsType}
+                      onValueChange={(value) => updateFormData({ lmsType: value })}
+                    >
+                      <SelectTrigger data-testid="select-lms-type">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="canvas">Canvas</SelectItem>
+                        <SelectItem value="blackboard">Blackboard Learn</SelectItem>
+                        <SelectItem value="moodle">Moodle</SelectItem>
+                        <SelectItem value="brightspace">Brightspace D2L</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="lmsApiUrl">LMS API URL *</Label>
+                    <Input
+                      id="lmsApiUrl"
+                      value={formData.lmsApiUrl}
+                      onChange={(e) => updateFormData({ lmsApiUrl: e.target.value })}
+                      placeholder="https://canvas.example.edu/api/v1"
+                      data-testid="input-lms-url"
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="lmsApiKey">API Key *</Label>
+                    <Input
+                      id="lmsApiKey"
+                      type="password"
+                      value={formData.lmsApiKey}
+                      onChange={(e) => updateFormData({ lmsApiKey: e.target.value })}
+                      placeholder="Enter your LMS API key"
+                      data-testid="input-lms-key"
+                    />
+                  </div>
+                </>
+              )}
               
-              <div className="grid gap-2">
-                <Label htmlFor="adminPassword">Password *</Label>
-                <Input
-                  id="adminPassword"
-                  type="password"
-                  value={formData.adminPassword}
-                  onChange={(e) => updateFormData({ adminPassword: e.target.value })}
-                  placeholder="Choose a strong password"
-                  data-testid="input-admin-password"
-                />
-              </div>
+              {!formData.enableLMSIntegration && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    You can enable LMS integration later in your institution settings. 
+                    Users will need to be invited manually without LMS sync.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Step 3: Configuration */}
+          {/* Step 3: Platform Settings */}
           {currentStep === 3 && (
             <div className="space-y-4">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="allowSelfRegistration"
-                    checked={formData.allowSelfRegistration}
-                    onChange={(e) => updateFormData({ allowSelfRegistration: e.target.checked })}
-                    data-testid="checkbox-self-registration"
-                  />
-                  <Label htmlFor="allowSelfRegistration">Allow student self-registration</Label>
-                </div>
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="defaultStudentRole">Default Student Role</Label>
-                  <Select
-                    value={formData.defaultStudentRole}
-                    onValueChange={(value) => updateFormData({ defaultStudentRole: value })}
-                  >
-                    <SelectTrigger data-testid="select-default-role">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="enableLMSIntegration"
-                    checked={formData.enableLMSIntegration}
-                    onChange={(e) => updateFormData({ enableLMSIntegration: e.target.checked })}
-                    data-testid="checkbox-lms-integration"
-                  />
-                  <Label htmlFor="enableLMSIntegration">Enable LMS integration features</Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="allowSelfRegistration"
+                  checked={formData.allowSelfRegistration}
+                  onCheckedChange={(checked) => updateFormData({ allowSelfRegistration: checked })}
+                  data-testid="switch-self-registration"
+                />
+                <Label htmlFor="allowSelfRegistration">Allow Self Registration</Label>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="defaultStudentRole">Default Student Role</Label>
+                <Select
+                  value={formData.defaultStudentRole}
+                  onValueChange={(value) => updateFormData({ defaultStudentRole: value })}
+                >
+                  <SelectTrigger data-testid="select-student-role">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="resident">Resident</SelectItem>
+                    <SelectItem value="fellow">Fellow</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="enableNotifications"
+                  checked={formData.enableNotifications}
+                  onCheckedChange={(checked) => updateFormData({ enableNotifications: checked })}
+                  data-testid="switch-notifications"
+                />
+                <Label htmlFor="enableNotifications">Enable Email Notifications</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="customBranding"
+                  checked={formData.customBranding}
+                  onCheckedChange={(checked) => updateFormData({ customBranding: checked })}
+                  data-testid="switch-branding"
+                />
+                <Label htmlFor="customBranding">Enable Custom Branding</Label>
               </div>
             </div>
           )}
@@ -378,48 +361,49 @@ export function OnboardingPage() {
           {/* Step 4: Complete */}
           {currentStep === 4 && (
             <div className="text-center space-y-4">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto" data-testid="success-icon" />
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
               <h3 className="text-xl font-semibold">Setup Complete!</h3>
               <p className="text-muted-foreground">
-                Your institution has been successfully set up. The admin account has been created 
-                and users can now be invited to join the platform.
+                Your institution has been successfully configured. You can now:
               </p>
-              <div className="mt-6">
-                <Button data-testid="button-finish">
-                  Go to Dashboard
-                </Button>
-              </div>
+              <ul className="text-left text-sm text-muted-foreground space-y-1 max-w-md mx-auto">
+                <li>• Invite faculty and administrative staff</li>
+                <li>• Configure curriculum standards and mapping</li>
+                <li>• Set up assessment and board review tools</li>
+                <li>• Access your institution dashboard</li>
+              </ul>
+            </div>
+          )}
+
+          {/* Navigation Buttons */}
+          {currentStep < 4 && (
+            <div className="flex justify-between pt-6">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
+                data-testid="button-previous"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+              <Button
+                onClick={handleNext}
+                disabled={!isStepValid(currentStep) || completeOnboardingMutation.isPending}
+                data-testid="button-next"
+              >
+                {currentStep === 3 ? (
+                  completeOnboardingMutation.isPending ? "Completing..." : "Complete Setup"
+                ) : (
+                  <>
+                    Next
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </CardContent>
-        
-        {currentStep < 4 && (
-          <div className="flex justify-between p-6 pt-0">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              data-testid="button-previous"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-            <Button
-              onClick={handleNext}
-              disabled={!isStepValid(currentStep) || createTenantMutation.isPending}
-              data-testid="button-next"
-            >
-              {currentStep === 3 ? (
-                createTenantMutation.isPending ? "Creating..." : "Complete Setup"
-              ) : (
-                <>
-                  Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
-          </div>
-        )}
       </Card>
     </div>
   );

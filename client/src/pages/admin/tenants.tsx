@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Settings, Users, Building2 } from "lucide-react";
+import { Plus, Settings, Users, Building2, UserPlus, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -32,6 +32,13 @@ export function TenantsPage() {
     name: "",
     domain: "",
     educationalArea: "medical_school"
+  });
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [selectedTenantId, setSelectedTenantId] = useState<string>("");
+  const [invitationData, setInvitationData] = useState({
+    email: "",
+    firstName: "",
+    lastName: ""
   });
 
   // Fetch tenants
@@ -132,6 +139,66 @@ export function TenantsPage() {
     setLocation(`/admin/tenants/${tenantId}/settings`);
   };
 
+  const handleInviteAdmin = (tenantId: string) => {
+    setSelectedTenantId(tenantId);
+    setIsInviteDialogOpen(true);
+  };
+
+  // Invite school admin mutation
+  const inviteAdminMutation = useMutation({
+    mutationFn: async (data: { tenantId: string; email: string; firstName: string; lastName: string }) => {
+      const response = await fetch("/api/invitations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+        },
+        body: JSON.stringify({
+          ...data,
+          role: "school_admin"
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to send invitation");
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      setIsInviteDialogOpen(false);
+      setInvitationData({ email: "", firstName: "", lastName: "" });
+      toast({
+        title: "Invitation Sent",
+        description: "School admin invitation has been sent successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleSendInvitation = () => {
+    if (!invitationData.email || !invitationData.firstName || !invitationData.lastName) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    inviteAdminMutation.mutate({
+      tenantId: selectedTenantId,
+      ...invitationData
+    });
+  };
+
   if (user?.role !== "super_admin") {
     return (
       <div className="flex items-center justify-center h-64">
@@ -221,6 +288,70 @@ export function TenantsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Invite School Admin Dialog */}
+        <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+          <DialogContent data-testid="dialog-invite-admin">
+            <DialogHeader>
+              <DialogTitle>Invite School Administrator</DialogTitle>
+              <DialogDescription>
+                Send an invitation to a school administrator to complete the onboarding process
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="adminEmail">Email Address *</Label>
+                <Input
+                  id="adminEmail"
+                  type="email"
+                  value={invitationData.email}
+                  onChange={(e) => setInvitationData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="admin@university.edu"
+                  data-testid="input-admin-email"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="adminFirstName">First Name *</Label>
+                  <Input
+                    id="adminFirstName"
+                    value={invitationData.firstName}
+                    onChange={(e) => setInvitationData(prev => ({ ...prev, firstName: e.target.value }))}
+                    placeholder="John"
+                    data-testid="input-admin-firstname"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="adminLastName">Last Name *</Label>
+                  <Input
+                    id="adminLastName"
+                    value={invitationData.lastName}
+                    onChange={(e) => setInvitationData(prev => ({ ...prev, lastName: e.target.value }))}
+                    placeholder="Smith"
+                    data-testid="input-admin-lastname"
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsInviteDialogOpen(false)}
+                data-testid="button-cancel-invite"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSendInvitation}
+                disabled={inviteAdminMutation.isPending}
+                data-testid="button-send-invite"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                {inviteAdminMutation.isPending ? "Sending..." : "Send Invitation"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {isLoading ? (
@@ -247,7 +378,7 @@ export function TenantsPage() {
                   <TableHead data-testid="header-type">Type</TableHead>
                   <TableHead data-testid="header-status">Status</TableHead>
                   <TableHead data-testid="header-created">Created</TableHead>
-                  <TableHead data-testid="header-actions">Actions</TableHead>
+                  <TableHead data-testid="header-actions" className="w-32">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -277,7 +408,7 @@ export function TenantsPage() {
                       {new Date(tenant.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
                         <Button 
                           variant="outline" 
                           size="sm" 
@@ -286,6 +417,15 @@ export function TenantsPage() {
                           title="View Users"
                         >
                           <Users className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleInviteAdmin(tenant.id)}
+                          data-testid={`button-invite-admin-${tenant.id}`}
+                          title="Invite School Admin"
+                        >
+                          <UserPlus className="h-4 w-4" />
                         </Button>
                         <Button 
                           variant="outline" 
