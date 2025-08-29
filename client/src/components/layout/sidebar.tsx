@@ -37,13 +37,18 @@ export function Sidebar({ className }: SidebarProps) {
   const [expandedStandardsAreas, setExpandedStandardsAreas] = useState<string[]>([]);
 
   // Fetch standards frameworks for hierarchical tree
-  const { data: standardsFrameworks = [] } = useQuery({
+  const { data: standardsFrameworks = [], error, isLoading } = useQuery({
     queryKey: ["/api/standards/frameworks"],
-    enabled: ["super_admin", "school_admin", "faculty"].includes(user?.role || "")
+    enabled: ["super_admin", "school_admin", "faculty"].includes(user?.role || "") && !!user
   });
+  
+  // Debug logging (temporary)
+  if (standardsFrameworks.length > 0) {
+    console.log("Sidebar - Standards loaded:", standardsFrameworks.length, "frameworks");
+  }
 
   // Group standards by educational area
-  const groupedStandards = standardsFrameworks.reduce((acc: any, framework: any) => {
+  const groupedStandards = (standardsFrameworks as any[]).reduce((acc: any, framework: any) => {
     const area = framework.educationalArea;
     if (!acc[area]) {
       acc[area] = {
