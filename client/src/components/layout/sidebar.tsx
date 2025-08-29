@@ -222,6 +222,10 @@ export function Sidebar({ className }: SidebarProps) {
                                         "w-full justify-start p-2 h-auto text-xs",
                                         location.includes(framework.name.toLowerCase().replace(/\s+/g, '-')) && "bg-primary/10"
                                       )}
+                                      onClick={() => {
+                                        console.log(`Navigating to: /standards?area=${area}&framework=${framework.id}`);
+                                        console.log('Framework:', framework.name, 'Area:', area);
+                                      }}
                                     >
                                       <Award className="w-3 h-3 mr-2" />
                                       {framework.name}
