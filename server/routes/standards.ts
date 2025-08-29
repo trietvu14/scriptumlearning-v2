@@ -320,4 +320,18 @@ router.patch("/frameworks/:id", requireAuth, requireRole(["super_admin", "school
   }
 });
 
+// Seed official standards (publicly accessible for setup)
+router.post("/seed", async (req, res) => {
+  try {
+    console.log("Starting standards seeding...");
+    const { seedOfficialStandards } = await import("../data/official-standards");
+    await seedOfficialStandards(db, standardsFrameworks, standardsSubjects, standardsTopics, standardsSubtopics);
+    console.log("Standards seeding completed successfully");
+    res.json({ message: "Official standards seeded successfully" });
+  } catch (error) {
+    console.error("Error seeding standards:", error);
+    res.status(500).json({ error: "Failed to seed standards", details: error });
+  }
+});
+
 export default router;
