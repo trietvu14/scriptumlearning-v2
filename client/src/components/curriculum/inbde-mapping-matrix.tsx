@@ -294,7 +294,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
                     <TableBody>
                       {clinicalContent.map((cc: INBDEClinicalContent) => (
                         <TableRow key={cc.id}>
-                          <TableCell className="sticky left-0 bg-gray-50 z-10 border-r font-medium p-2">
+                          <TableCell className="sticky left-0 bg-orange-50 z-10 border-r font-medium p-2">
                             <div className="space-y-1">
                               <div className="font-semibold text-xs">CC{cc.ccNumber}</div>
                               <div className="text-xs text-muted-foreground line-clamp-1" title={cc.name}>
