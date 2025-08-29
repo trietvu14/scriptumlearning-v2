@@ -186,6 +186,143 @@ export const officialStandardsData = {
     }
   ],
 
+  nursing_school: [
+    {
+      name: "CCNE Standards",
+      description: "Commission on Collegiate Nursing Education Accreditation Standards",
+      frameworkType: "accreditation",
+      version: "2024",
+      subjects: [
+        {
+          name: "Program Quality: Mission and Administrative Capacity",
+          code: "CCNE-I",
+          description: "Standard I: Program quality and administrative infrastructure",
+          topics: [
+            {
+              name: "Mission and Administrative Capacity",
+              code: "CCNE-I-A",
+              learningObjectives: [
+                "Establish clear program mission aligned with institutional goals",
+                "Demonstrate administrative capacity for program management",
+                "Ensure adequate governance structure"
+              ]
+            },
+            {
+              name: "Faculty and Staff Resources",
+              code: "CCNE-I-B",
+              learningObjectives: [
+                "Maintain qualified faculty with appropriate credentials",
+                "Provide adequate faculty-student ratios",
+                "Support faculty development and scholarship"
+              ]
+            },
+            {
+              name: "Student Support Services",
+              code: "CCNE-I-C",
+              learningObjectives: [
+                "Implement fair admission policies",
+                "Provide comprehensive student support services",
+                "Maintain academic progression policies"
+              ]
+            },
+            {
+              name: "Curriculum Design and Implementation",
+              code: "CCNE-I-D",
+              learningObjectives: [
+                "Design evidence-based curriculum",
+                "Integrate theoretical and clinical learning",
+                "Ensure curriculum reflects current practice"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Program Effectiveness",
+          code: "CCNE-II",
+          description: "Standard II: Program effectiveness and continuous improvement",
+          topics: [
+            {
+              name: "Student Learning Outcomes",
+              code: "CCNE-II-A",
+              learningObjectives: [
+                "Demonstrate student achievement of program outcomes",
+                "Assess clinical competency development",
+                "Evaluate critical thinking skills"
+              ]
+            },
+            {
+              name: "Faculty Development and Scholarship",
+              code: "CCNE-II-B",
+              learningObjectives: [
+                "Support faculty scholarly activities",
+                "Promote evidence-based teaching practices",
+                "Encourage professional development"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: "ACEN Standards",
+      description: "Accreditation Commission for Education in Nursing Standards",
+      frameworkType: "accreditation",
+      version: "2024",
+      subjects: [
+        {
+          name: "Mission and Administrative Capacity",
+          code: "ACEN-1",
+          description: "Standard 1: Mission and administrative infrastructure",
+          topics: [
+            {
+              name: "Mission Statement and Goals",
+              code: "ACEN-1-1",
+              learningObjectives: [
+                "Develop clear mission statement",
+                "Establish measurable program goals",
+                "Align with institutional mission"
+              ]
+            },
+            {
+              name: "Governance and Administration",
+              code: "ACEN-1-2",
+              learningObjectives: [
+                "Establish effective governance structure",
+                "Ensure administrative support",
+                "Maintain financial stability"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Faculty and Staff",
+          code: "ACEN-2",
+          description: "Standard 2: Faculty qualifications and development",
+          topics: [
+            {
+              name: "Faculty Qualifications",
+              code: "ACEN-2-1",
+              learningObjectives: [
+                "Hire appropriately credentialed faculty",
+                "Maintain adequate faculty numbers",
+                "Ensure clinical expertise"
+              ]
+            },
+            {
+              name: "Faculty Policies and Development",
+              code: "ACEN-2-2",
+              learningObjectives: [
+                "Implement faculty evaluation policies",
+                "Support professional development",
+                "Promote scholarly activities"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
   physical_therapy_school: [
     {
       name: "NPTE",
@@ -205,6 +342,89 @@ export const officialStandardsData = {
                 "Obtain comprehensive patient history",
                 "Review medical records",
                 "Identify precautions and contraindications"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: "CAPTE Standards",
+      description: "Commission on Accreditation in Physical Therapy Education Standards",
+      frameworkType: "accreditation",
+      version: "2024",
+      subjects: [
+        {
+          name: "Institutional Setting",
+          code: "CAPTE-1",
+          description: "Standard 1: Institutional characteristics and relationships",
+          topics: [
+            {
+              name: "Institutional Accreditation",
+              code: "CAPTE-1A",
+              learningObjectives: [
+                "Maintain institutional accreditation",
+                "Demonstrate institutional support",
+                "Ensure resource availability"
+              ]
+            },
+            {
+              name: "Program Integration",
+              code: "CAPTE-1B",
+              learningObjectives: [
+                "Integrate program within institution",
+                "Establish clear reporting relationships",
+                "Maintain academic standards"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Program Mission, Goals, and Objectives",
+          code: "CAPTE-2",
+          description: "Standard 2: Program planning and assessment",
+          topics: [
+            {
+              name: "Mission and Goals",
+              code: "CAPTE-2A",
+              learningObjectives: [
+                "Develop comprehensive program mission",
+                "Establish measurable goals",
+                "Align with profession standards"
+              ]
+            },
+            {
+              name: "Assessment and Evaluation",
+              code: "CAPTE-2B",
+              learningObjectives: [
+                "Implement systematic assessment",
+                "Use data for program improvement",
+                "Demonstrate effectiveness"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Curriculum",
+          code: "CAPTE-7",
+          description: "Standard 7: Curriculum design and implementation",
+          topics: [
+            {
+              name: "Curriculum Design",
+              code: "CAPTE-7A",
+              learningObjectives: [
+                "Design evidence-based curriculum",
+                "Integrate foundational and clinical sciences",
+                "Ensure professional skill development"
+              ]
+            },
+            {
+              name: "Clinical Education",
+              code: "CAPTE-7B",
+              learningObjectives: [
+                "Provide comprehensive clinical experiences",
+                "Ensure clinical competency assessment",
+                "Maintain clinical site standards"
               ]
             }
           ]
@@ -232,6 +452,89 @@ export const officialStandardsData = {
                 "Select appropriate drug therapy",
                 "Monitor therapeutic outcomes",
                 "Identify drug interactions"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: "ACPE Standards",
+      description: "Accreditation Council for Pharmacy Education Standards",
+      frameworkType: "accreditation",
+      version: "2024",
+      subjects: [
+        {
+          name: "Educational Outcomes",
+          code: "ACPE-1",
+          description: "Standard 1: Foundational knowledge and skills",
+          topics: [
+            {
+              name: "Foundational Knowledge",
+              code: "ACPE-1-1",
+              learningObjectives: [
+                "Apply pharmaceutical sciences knowledge",
+                "Understand drug action and interaction",
+                "Demonstrate clinical reasoning"
+              ]
+            },
+            {
+              name: "Patient Care Skills",
+              code: "ACPE-1-2",
+              learningObjectives: [
+                "Provide patient-centered care",
+                "Manage drug therapy",
+                "Counsel patients effectively"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Educational Program Structure",
+          code: "ACPE-8",
+          description: "Standard 8: Organization and structure of didactic curriculum",
+          topics: [
+            {
+              name: "Curriculum Design",
+              code: "ACPE-8-1",
+              learningObjectives: [
+                "Design integrated curriculum",
+                "Ensure progressive learning",
+                "Include interprofessional education"
+              ]
+            },
+            {
+              name: "Assessment Methods",
+              code: "ACPE-8-2",
+              learningObjectives: [
+                "Implement comprehensive assessment",
+                "Use multiple assessment methods",
+                "Provide timely feedback"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Faculty and Staff",
+          code: "ACPE-25",
+          description: "Standard 25: Faculty qualifications and development",
+          topics: [
+            {
+              name: "Faculty Qualifications",
+              code: "ACPE-25-1",
+              learningObjectives: [
+                "Maintain qualified faculty",
+                "Ensure appropriate credentials",
+                "Support scholarly activities"
+              ]
+            },
+            {
+              name: "Faculty Development",
+              code: "ACPE-25-2",
+              learningObjectives: [
+                "Provide faculty development opportunities",
+                "Support teaching excellence",
+                "Encourage research and service"
               ]
             }
           ]
@@ -283,22 +586,106 @@ export const officialStandardsData = {
     },
     {
       name: "ABA Standards",
-      description: "American Bar Association Standards for Legal Education",
+      description: "American Bar Association Standards and Rules of Procedure for Approval of Law Schools",
       frameworkType: "accreditation",
       version: "2024",
       subjects: [
         {
           name: "Program of Legal Education",
-          code: "PLE",
-          description: "Academic standards for JD programs",
+          code: "ABA-301",
+          description: "Standard 301: Objectives of program of legal education",
           topics: [
             {
-              name: "Curriculum",
-              code: "PLE-CURR",
+              name: "Educational Objectives",
+              code: "ABA-301-1",
               learningObjectives: [
-                "Provide rigorous legal education",
-                "Include practical skills training",
-                "Ensure ethical instruction"
+                "Prepare students for admission to the bar",
+                "Provide education in theory, doctrine and practice",
+                "Prepare students for effective participation in legal profession"
+              ]
+            },
+            {
+              name: "Professional Skills",
+              code: "ABA-301-2", 
+              learningObjectives: [
+                "Develop competency in professional skills",
+                "Include practical training experiences",
+                "Integrate experiential learning opportunities"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Curriculum Requirements",
+          code: "ABA-302",
+          description: "Standard 302: Curriculum and program requirements",
+          topics: [
+            {
+              name: "Required Coursework",
+              code: "ABA-302-1",
+              learningObjectives: [
+                "Include constitutional law instruction",
+                "Provide legal research and writing training",
+                "Ensure professional responsibility education"
+              ]
+            },
+            {
+              name: "Clinical and Experiential Learning",
+              code: "ABA-302-2",
+              learningObjectives: [
+                "Provide experiential learning opportunities",
+                "Include simulation-based learning",
+                "Offer law clinic participation"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Faculty Qualifications",
+          code: "ABA-401",
+          description: "Standard 401: Faculty qualifications and responsibilities",
+          topics: [
+            {
+              name: "Faculty Credentials",
+              code: "ABA-401-1",
+              learningObjectives: [
+                "Maintain qualified full-time faculty",
+                "Ensure appropriate academic credentials",
+                "Demonstrate professional competence"
+              ]
+            },
+            {
+              name: "Faculty Development",
+              code: "ABA-401-2",
+              learningObjectives: [
+                "Support faculty scholarship and research",
+                "Provide professional development opportunities",
+                "Encourage service to profession and community"
+              ]
+            }
+          ]
+        },
+        {
+          name: "Admissions and Student Services",
+          code: "ABA-501",
+          description: "Standard 501: Admissions policies and procedures",
+          topics: [
+            {
+              name: "Admission Standards",
+              code: "ABA-501-1",
+              learningObjectives: [
+                "Establish fair admission policies",
+                "Evaluate academic qualifications",
+                "Consider potential for legal study"
+              ]
+            },
+            {
+              name: "Student Support",
+              code: "ABA-501-2",
+              learningObjectives: [
+                "Provide academic support services",
+                "Offer career counseling and placement",
+                "Maintain student diversity initiatives"
               ]
             }
           ]
@@ -358,8 +745,8 @@ export async function seedOfficialStandards(db: any, standardsFrameworks: any, s
 
               console.log(`    Created topic: ${topic.name}`);
 
-              // Create subtopics
-              if (topicData.subtopics) {
+              // Create subtopics (if they exist)
+              if ('subtopics' in topicData && topicData.subtopics) {
                 for (const subtopicData of topicData.subtopics) {
                   const [subtopic] = await db.insert(standardsSubtopics)
                     .values({
@@ -367,7 +754,7 @@ export async function seedOfficialStandards(db: any, standardsFrameworks: any, s
                       name: subtopicData.name,
                       code: subtopicData.code,
                       learningObjectives: subtopicData.learningObjectives || [],
-                      competencyLevel: subtopicData.competencyLevel,
+                      competencyLevel: subtopicData.competencyLevel || 'basic',
                       assessmentCriteria: subtopicData.assessmentCriteria || [],
                       sortOrder: 0
                     })
