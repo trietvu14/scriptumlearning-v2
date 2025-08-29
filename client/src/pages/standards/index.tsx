@@ -337,37 +337,45 @@ export function StandardsPage() {
             ) : frameworks && frameworks.length > 0 ? (
               <div className="space-y-1">
                 {frameworks.map((framework) => (
-                  <Button
+                  <div
                     key={framework.id}
-                    variant={selectedFramework?.id === framework.id ? "secondary" : "ghost"}
-                    className="w-full p-4 h-auto min-h-[5rem] text-left"
+                    className={`w-full p-4 rounded-md border cursor-pointer transition-colors ${
+                      selectedFramework?.id === framework.id 
+                        ? "bg-secondary/10 border-secondary" 
+                        : "border-transparent hover:bg-accent/5"
+                    }`}
                     onClick={() => handleFrameworkSelect(framework)}
                     data-testid={`button-framework-${framework.id}`}
                   >
-                    <div className="flex flex-col w-full space-y-2 overflow-hidden">
-                      {/* Top row with icon, title, and badge */}
-                      <div className="flex items-start justify-between w-full min-w-0">
-                        <div className="flex items-start min-w-0 flex-1 mr-2 overflow-hidden">
-                          <Award className="w-4 h-4 mr-3 flex-shrink-0 mt-0.5" />
-                          <div className="min-w-0 flex-1 overflow-hidden">
-                            <div className="font-medium text-sm leading-tight break-words overflow-wrap-anywhere max-w-full">{framework.name}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2 flex-shrink-0">
-                          <Badge variant={framework.isOfficial ? "default" : "secondary"} className="text-xs whitespace-nowrap">
-                            {framework.isOfficial ? "Official" : "Custom"}
-                          </Badge>
-                          <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                    <div className="space-y-3">
+                      {/* Title row */}
+                      <div className="flex items-start gap-3">
+                        <Award className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm leading-tight" style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
+                            {framework.name}
+                          </h3>
                         </div>
                       </div>
-                      {/* Description row */}
-                      {framework.description && (
-                        <div className="text-xs text-muted-foreground ml-7 leading-relaxed break-words overflow-wrap-anywhere max-w-full pr-2">
-                          {framework.description}
+                      
+                      {/* Description and badges row */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          {framework.description && (
+                            <p className="text-xs text-muted-foreground leading-relaxed ml-7" style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
+                              {framework.description}
+                            </p>
+                          )}
                         </div>
-                      )}
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Badge variant={framework.isOfficial ? "default" : "secondary"} className="text-xs">
+                            {framework.isOfficial ? "Official" : "Custom"}
+                          </Badge>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
                     </div>
-                  </Button>
+                  </div>
                 ))}
               </div>
             ) : (
