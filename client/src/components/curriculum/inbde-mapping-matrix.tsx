@@ -83,9 +83,12 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
   const { data: matrixData, isLoading, error } = useQuery({
     queryKey: ["/api/inbde/mapping-matrix", tenantId, courseId],
     queryFn: async () => {
+      // For Super Admin (tenantId === "all"), use aggregated endpoint or default tenant
+      const effectiveTenantId = tenantId === "all" ? "global" : tenantId;
+      
       const url = courseId 
-        ? `/api/inbde/mapping-matrix/${tenantId}?courseId=${courseId}`
-        : `/api/inbde/mapping-matrix/${tenantId}`;
+        ? `/api/inbde/mapping-matrix/${effectiveTenantId}?courseId=${courseId}`
+        : `/api/inbde/mapping-matrix/${effectiveTenantId}`;
       
       const response = await fetch(url, {
         headers: {
@@ -109,13 +112,15 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
         return false;
       }
       return failureCount < 3;
-    }
+    },
+    enabled: !!tenantId && tenantId !== ""
   });
 
   // Recalculate statistics
   const recalculateMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/inbde/recalculate-stats/${tenantId}`, {
+      const effectiveTenantId = tenantId === "all" ? "global" : tenantId;
+      const response = await fetch(`/api/inbde/recalculate-stats/${effectiveTenantId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +145,8 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
     queryKey: ["/api/inbde/content-mapping", tenantId, selectedCell?.fkId, selectedCell?.ccId],
     queryFn: async () => {
       if (!selectedCell) return [];
-      const response = await fetch(`/api/inbde/content-mapping/${tenantId}/${selectedCell.fkId}/${selectedCell.ccId}`, {
+      const effectiveTenantId = tenantId === "all" ? "global" : tenantId;
+      const response = await fetch(`/api/inbde/content-mapping/${effectiveTenantId}/${selectedCell.fkId}/${selectedCell.ccId}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
         }
@@ -148,7 +154,7 @@ export function INBDEMappingMatrix({ frameworkId, tenantId, courseId }: INBDEMap
       if (!response.ok) throw new Error("Failed to fetch content mappings");
       return response.json();
     },
-    enabled: !!selectedCell
+    enabled: !!selectedCell && !!tenantId && tenantId !== ""
   });
 
   const getPercentageColor = (percentage: string) => {

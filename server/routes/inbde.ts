@@ -77,21 +77,31 @@ router.get("/mapping-matrix/:tenantId", async (req, res) => {
       .orderBy(inbdeClinicalContent.ccNumber);
     
     // Get mapping statistics
-    const whereConditions = [eq(inbdeMappingStats.tenantId, tenantId)];
-    if (courseId) {
-      whereConditions.push(eq(inbdeMappingStats.courseId, courseId as string));
-    }
+    let stats = [];
     
-    const stats = await db
-      .select({
-        fkId: inbdeMappingStats.fkId,
-        ccId: inbdeMappingStats.ccId,
-        contentCount: inbdeMappingStats.contentCount,
-        totalContentCount: inbdeMappingStats.totalContentCount,
-        coveragePercentage: inbdeMappingStats.coveragePercentage
-      })
-      .from(inbdeMappingStats)
-      .where(and(...whereConditions));
+    // For Super Admin (tenantId === "global"), return aggregated stats or empty matrix
+    if (tenantId === "global") {
+      // For Super Admin, show empty matrix or aggregated data across all tenants
+      // For now, we'll show an empty matrix to demonstrate the structure
+      stats = [];
+    } else {
+      // For regular users, get tenant-specific stats
+      const whereConditions = [eq(inbdeMappingStats.tenantId, tenantId)];
+      if (courseId) {
+        whereConditions.push(eq(inbdeMappingStats.courseId, courseId as string));
+      }
+      
+      stats = await db
+        .select({
+          fkId: inbdeMappingStats.fkId,
+          ccId: inbdeMappingStats.ccId,
+          contentCount: inbdeMappingStats.contentCount,
+          totalContentCount: inbdeMappingStats.totalContentCount,
+          coveragePercentage: inbdeMappingStats.coveragePercentage
+        })
+        .from(inbdeMappingStats)
+        .where(and(...whereConditions));
+    }
 
     
     // Create matrix structure

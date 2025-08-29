@@ -57,6 +57,7 @@ const FRAMEWORK_TYPES = [
 
 export function StandardsPage() {
   const { user } = useAuth();
+  const { tenant } = useTenant();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [location] = useLocation();
@@ -440,7 +441,10 @@ export function StandardsPage() {
           </CardHeader>
           <CardContent>
             {selectedFramework.name === "INBDE" && selectedFramework.educationalArea === "dental_school" ? (
-              <INBDEMappingMatrix frameworkId={selectedFramework.id} />
+              <INBDEMappingMatrix 
+                frameworkId={selectedFramework.id} 
+                tenantId={user?.role === "super_admin" ? "all" : (tenant?.id || "")}
+              />
             ) : (
               <Tabs defaultValue="subjects" className="w-full">
                 <TabsList>
