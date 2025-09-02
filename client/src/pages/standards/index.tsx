@@ -61,16 +61,23 @@ export function StandardsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [location] = useLocation();
-  const [selectedEducationalArea, setSelectedEducationalArea] = useState<string>("medical_school");
+  const [selectedEducationalArea, setSelectedEducationalArea] = useState<string>(tenant?.educationalArea || "dental_school");
   const [isCreateFrameworkOpen, setIsCreateFrameworkOpen] = useState(false);
   const [selectedFramework, setSelectedFramework] = useState<StandardsFramework | null>(null);
   const [newFramework, setNewFramework] = useState({
     name: "",
     description: "",
-    educationalArea: "medical_school",
+    educationalArea: tenant?.educationalArea || "dental_school",
     frameworkType: "internal",
     version: "1.0"
   });
+
+  // Update selected area when tenant data loads
+  useEffect(() => {
+    if (tenant?.educationalArea && tenant.educationalArea !== selectedEducationalArea) {
+      setSelectedEducationalArea(tenant.educationalArea);
+    }
+  }, [tenant]);
 
   // Parse URL parameters to auto-select area and framework
   useEffect(() => {
@@ -78,7 +85,8 @@ export function StandardsPage() {
     const areaParam = urlParams.get('area');
     const frameworkParam = urlParams.get('framework');
     
-    if (areaParam && areaParam !== selectedEducationalArea) {
+    // For non-super admins, ignore area parameter and use their tenant's area
+    if (user?.role === 'super_admin' && areaParam && areaParam !== selectedEducationalArea) {
       setSelectedEducationalArea(areaParam);
     }
     
@@ -87,13 +95,13 @@ export function StandardsPage() {
       // Store framework ID to select after frameworks load
       sessionStorage.setItem('pendingFrameworkSelection', frameworkParam);
     }
-  }, [location]);
+  }, [location, user?.role]);
 
-  // Fetch frameworks for selected educational area
+  // Fetch frameworks (automatically filtered by backend based on user's educational area)
   const { data: frameworks, isLoading } = useQuery<StandardsFramework[]>({
-    queryKey: ["/api/standards/frameworks", { educationalArea: selectedEducationalArea }],
+    queryKey: ["/api/standards/frameworks"],
     queryFn: async () => {
-      const response = await fetch(`/api/standards/frameworks?educationalArea=${selectedEducationalArea}`, {
+      const response = await fetch(`/api/standards/frameworks`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
         }
@@ -156,7 +164,7 @@ export function StandardsPage() {
       setNewFramework({
         name: "",
         description: "",
-        educationalArea: "medical_school",
+        educationalArea: tenant?.educationalArea || "dental_school",
         frameworkType: "internal",
         version: "1.0"
       });
@@ -246,7 +254,9 @@ export function StandardsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {EDUCATIONAL_AREAS.map((area) => (
+                      {(user?.role === 'super_admin' ? EDUCATIONAL_AREAS : 
+                        EDUCATIONAL_AREAS.filter(area => area.value === tenant?.educationalArea)
+                      ).map((area) => (
                         <SelectItem key={area.value} value={area.value}>
                           {area.label}
                         </SelectItem>
@@ -290,18 +300,25 @@ export function StandardsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Educational Areas Panel */}
+        {/* Educational Area Panel - Show only user's area for non-super admins */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building2 className="w-5 h-5 mr-2" />
-              Educational Areas
+              {user?.role === 'super_admin' ? 'Educational Areas' : 'Your Educational Area'}
             </CardTitle>
-            <CardDescription>Select an educational area to view its standards</CardDescription>
+            <CardDescription>
+              {user?.role === 'super_admin' 
+                ? 'Select an educational area to view its standards'
+                : `Standards for ${tenant?.name || 'your institution'}`
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="space-y-1">
-              {EDUCATIONAL_AREAS.map((area) => {
+              {(user?.role === 'super_admin' ? EDUCATIONAL_AREAS : 
+                EDUCATIONAL_AREAS.filter(area => area.value === tenant?.educationalArea)
+              ).map((area) => {
                 const Icon = area.icon;
                 return (
                   <Button
@@ -310,6 +327,7 @@ export function StandardsPage() {
                     className="w-full justify-start"
                     onClick={() => setSelectedEducationalArea(area.value)}
                     data-testid={`button-${area.value}`}
+                    disabled={user?.role !== 'super_admin'}
                   >
                     <Icon className="w-4 h-4 mr-3" />
                     {area.label}
