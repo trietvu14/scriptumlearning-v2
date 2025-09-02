@@ -1,7 +1,7 @@
 # Scriptum Learning Platform
 
 ## Overview
-Scriptum is a multi-tenant AI-powered curriculum mapping platform designed for educational institutions. Its primary purpose is to streamline curriculum management, integrate with Learning Management Systems (LMS), map educational standards, and provide advanced assessment tools. The platform aims to offer a modern, intuitive, and scalable solution for academic institutions to manage and enhance their educational programs, leveraging AI for content categorization and personalized learning paths.
+Scriptum Learning Platform is a comprehensive, multi-tenant, AI-powered curriculum mapping solution designed for educational institutions. It integrates with Learning Management Systems (LMS), facilitates standards mapping, and provides advanced assessment tools. The platform aims to offer a modern, intuitive, and scalable system for curriculum management, enhancing educational content delivery and alignment with academic standards, thereby improving institutional efficiency and student outcomes.
 
 ## User Preferences
 - Clean, professional interface suitable for educational institutions
@@ -14,66 +14,23 @@ Scriptum is a multi-tenant AI-powered curriculum mapping platform designed for e
 - School admin capability to delete institution-specific curriculum standards
 
 ## System Architecture
-The platform features a modern web application architecture:
-- **Frontend**: Built with React and TypeScript, utilizing Vite for fast development, Tailwind CSS for styling, and shadcn/ui for UI components. It includes a multi-tenant dashboard system with custom UI components like a `TopBar` with Scriptum branding and a `Sidebar` with institution-specific branding.
-- **Backend**: Comprises an Express.js API layer written in TypeScript for core application logic and Python-based services (Flask/FastAPI) dedicated to AI functionalities (content categorization, agentic workflows, board review generation, study path recommendations) and ETL processes for LMS integrations.
-- **Database**: PostgreSQL is used as the primary database, enhanced with the `pgvector` extension for AI embeddings, supporting a multi-tenant architecture with robust tenant isolation and a comprehensive schema for educational content mapping.
-- **AI Integration**: Leverages OpenAI GPT models for advanced AI capabilities, including content categorization, standards mapping, and personalized learning.
-- **Multi-tenancy**: Designed with row-level security ensuring strict tenant isolation. Super admins are tenant-agnostic with platform-wide access across all institutions.
-- **UI/UX Decisions**: Emphasizes a clean, professional aesthetic with custom branding, including a specific logo integration, Zain font for typography, a blue-to-purple gradient for navigation elements, and a centered search bar.
+The platform features a robust, multi-tenant architecture with distinct frontend and backend services.
 
-Key features include:
-- Multi-tenant school/college management with automated user provisioning.
-- Integrations with major LMS platforms (Canvas, Blackboard, Moodle).
-- Comprehensive standards mapping (e.g., USMLE, LCME, iNBDE, CODA).
-- AI-powered content categorization with Retrieval-Augmented Generation (RAG) training.
-- Role-based access control (Super Admin, School Admin, Faculty, Administrative Support, Students) with automated user provisioning from LMS data. Super admins have cross-tenant management capabilities.
-- Dashboard visualizations and reporting with export capabilities.
-- Robust assessment tools and board review mock exams with personalized study paths.
-- **Comprehensive Dental School Curriculum Template System**: Master template with 14 subjects and 45 topics covering 4-year dental education (D1-D4), with multi-tenant cloning capabilities allowing schools to create and customize their own copies while preserving the official master template.
+### UI/UX Decisions
+The user interface prioritizes a clean, professional aesthetic. It incorporates custom branding with the Scriptum logo and elegant typography using the Zain font. Key UI elements include a centered search bar, a blue-to-purple gradient navigation bar, and a sidebar with institution-specific branding. Components are built using shadcn/ui on React, ensuring a responsive and modern user experience.
 
-## Development Phases
-
-### Phase 1: Foundation (Completed)
-- ✅ Multi-tenant architecture with PostgreSQL database
-- ✅ User authentication and role-based access control
-- ✅ Basic curriculum standards management
-- ✅ Super admin tenant-agnostic architecture
-- ✅ Core UI components with Scriptum branding
-
-### Phase 2: Standards & Templates (Completed)
-- ✅ Comprehensive standards frameworks (USMLE, LCME, iNBDE, CODA)
-- ✅ Curriculum Standard Template for dental schools
-- ✅ Multi-tenant template cloning system
-- ✅ School admin permissions for template management
-- ✅ Template deletion capabilities
-
-### Phase 3: AI Integration (In Progress)
-- 🔄 OpenAI GPT integration for content analysis
-- 🔄 RAG document processing system
-- 🔄 Automated content categorization
-- 🔄 AI-powered curriculum recommendations
-
-### Phase 4: LMS Integration (Planned)
-- 📋 Canvas, Blackboard, and Moodle API integrations
-- 📋 Automated user provisioning from LMS data
-- 📋 Course roster synchronization
-- 📋 Grade passback capabilities
-
-### Phase 5: Assessment Tools (Planned)
-- 📋 Board review mock exams
-- 📋 Personalized study paths
-- 📋 Progress tracking and analytics
-- 📋 Performance dashboards
-
-### Phase 6: Advanced Features (Future)
-- 📋 Real-time collaboration tools
-- 📋 Advanced reporting and analytics
-- 📋 Mobile application support
-- 📋 Third-party integrations
+### Technical Implementations
+- **Frontend**: Developed with React and TypeScript, leveraging Vite for build tooling, Tailwind CSS for styling, and shadcn/ui for UI components. TanStack Query manages data fetching, and Wouter handles client-side routing.
+- **Backend**: Comprises an Express.js API layer built with TypeScript for core application logic and dedicated Python services (Flask/FastAPI) for AI and ETL operations.
+- **Database**: PostgreSQL is used as the primary database, enhanced with the pgvector extension to support AI embeddings for efficient semantic search and content mapping.
+- **AI Integration**: Utilizes OpenAI GPT models for advanced AI capabilities, including content categorization, agentic workflows, board review generation, and study path recommendations.
+- **Multi-tenancy**: Implemented with row-level security ensuring strict tenant isolation and data segregation.
+- **Key Features**: Includes multi-tenant management, automated user provisioning, LMS integrations (Canvas, Blackboard, Moodle), AI-powered standards mapping (USMLE, LCME, iNBDE, CODA), board review mock exams, and comprehensive role-based access control (RBAC). A notable feature is the comprehensive dental school curriculum template system, allowing multi-tenant cloning and customization.
+- **RAG Document Stores**: Utilizes dedicated RAG (Retrieval Augmented Generation) stores for AI training, including a Standards Training Store, Course-Specific Stores, and an Internal Curriculum Store.
+- **RBAC System**: Defines roles such as Super Admin, School Admin, Faculty, Administrative Support, and Students, each with specific permissions and data access levels.
 
 ## External Dependencies
-- **OpenAI GPT Models**: Used for AI-powered content categorization, intelligent content analysis, and generating recommendations.
-- **PostgreSQL with pgvector**: For database management and efficient storage/retrieval of AI embeddings.
-- **LMS APIs**: Integration with Canvas, Blackboard, and Moodle via their respective APIs for user provisioning, course roster synchronization, and data exchange.
-- **Google Fonts**: For loading custom fonts, specifically Zain, to maintain consistent branding and typography.
+- **OpenAI GPT Models**: Integrated for AI-powered content analysis, categorization, and recommendation generation.
+- **PostgreSQL with pgvector**: Employed for database management and efficient storage and retrieval of AI embeddings.
+- **LMS APIs**: Utilized for integration with Learning Management Systems such as Canvas, Blackboard, and Moodle, facilitating user provisioning, course roster synchronization, and data exchange.
+- **Google Fonts**: Used to load custom fonts, specifically Zain, for consistent branding and typography across the platform.
