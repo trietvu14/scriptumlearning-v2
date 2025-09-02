@@ -33,6 +33,12 @@ interface UserProfile {
   lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
+  tenant?: {
+    id: string;
+    name: string;
+    domain: string;
+    educationalArea: string;
+  };
 }
 
 // Profile schemas
@@ -286,6 +292,12 @@ export function ProfilePage() {
             <Separator />
             
             <div className="space-y-2 text-sm">
+              {profile.tenant && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Institution:</span>
+                  <span className="font-medium" data-testid="text-institution-name">{profile.tenant.name}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Member since:</span>
                 <span>{new Date(profile.createdAt).toLocaleDateString()}</span>

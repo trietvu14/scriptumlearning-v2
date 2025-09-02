@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "../db";
-import { users } from "../../shared/schema";
+import { users, tenants } from "../../shared/schema";
 import { requireAuth } from "../middleware/auth";
 
 const router = Router();
@@ -41,7 +41,7 @@ router.get("/", requireAuth, async (req, res) => {
   try {
     const userId = req.user!.id;
     
-    const user = await db
+    const result = await db
       .select({
         id: users.id,
         email: users.email,
@@ -56,15 +56,45 @@ router.get("/", requireAuth, async (req, res) => {
         profileImageUrl: users.profileImageUrl,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
-        updatedAt: users.updatedAt
+        updatedAt: users.updatedAt,
+        tenantId: users.tenantId,
+        tenantName: tenants.name,
+        tenantDomain: tenants.domain,
+        tenantEducationalArea: tenants.educationalArea
       })
       .from(users)
+      .leftJoin(tenants, eq(users.tenantId, tenants.id))
       .where(eq(users.id, userId))
       .then(rows => rows[0]);
     
-    if (!user) {
+    if (!result) {
       return res.status(404).json({ error: "User not found" });
     }
+    
+    const user = {
+      id: result.id,
+      email: result.email,
+      firstName: result.firstName,
+      lastName: result.lastName,
+      role: result.role,
+      title: result.title,
+      department: result.department,
+      phoneNumber: result.phoneNumber,
+      officeLocation: result.officeLocation,
+      bio: result.bio,
+      profileImageUrl: result.profileImageUrl,
+      lastLoginAt: result.lastLoginAt,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      tenantId: result.tenantId,
+      // Include tenant information in response
+      tenant: result.tenantId ? {
+        id: result.tenantId,
+        name: result.tenantName,
+        domain: result.tenantDomain,
+        educationalArea: result.tenantEducationalArea
+      } : null
+    };
     
     res.json(user);
   } catch (error) {
