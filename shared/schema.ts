@@ -360,6 +360,55 @@ export const aiAgentSessions = pgTable("ai_agent_sessions", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// AI Categorization Jobs for batch processing
+export const aiCategorizationJobs = pgTable("ai_categorization_jobs", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  initiatedBy: uuid("initiated_by").references(() => users.id).notNull(),
+  jobType: text("job_type").notNull(), // single_content, bulk_content, document_analysis
+  status: text("status").default("pending"), // pending, processing, completed, failed, cancelled
+  totalItems: integer("total_items").default(0),
+  processedItems: integer("processed_items").default(0),
+  successItems: integer("success_items").default(0),
+  failedItems: integer("failed_items").default(0),
+  settings: jsonb("settings"), // AI categorization preferences and parameters
+  results: jsonb("results"), // Summary of categorization results
+  errorMessages: text("error_messages").array().default(sql`'{}'::text[]`),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// AI Training Data for improving categorization accuracy
+export const aiTrainingData = pgTable("ai_training_data", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  contentId: uuid("content_id").references(() => content.id),
+  standardObjectiveId: uuid("standard_objective_id").references(() => standardObjectives.id),
+  humanLabel: text("human_label").notNull(), // Human-verified classification
+  aiPrediction: text("ai_prediction"), // AI's prediction
+  confidence: decimal("confidence", { precision: 3, scale: 2 }), // AI confidence score
+  isCorrect: boolean("is_correct"), // Whether AI prediction matches human label
+  feedback: text("feedback"), // Additional human feedback
+  trainingContext: jsonb("training_context"), // Context used for training
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// AI Model Performance tracking
+export const aiModelMetrics = pgTable("ai_model_metrics", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id),
+  modelVersion: text("model_version").notNull(),
+  metricType: text("metric_type").notNull(), // accuracy, precision, recall, f1_score
+  metricValue: decimal("metric_value", { precision: 5, scale: 4 }).notNull(),
+  category: text("category"), // content_type, educational_area, etc.
+  sampleSize: integer("sample_size"),
+  evaluationDate: timestamp("evaluation_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
 export const studentProgress = pgTable("student_progress", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   studentId: uuid("student_id").references(() => users.id).notNull(),
@@ -719,3 +768,34 @@ export type SelectSystemAnalytics = typeof systemAnalytics.$inferSelect;
 
 export type RAGDocument = typeof ragDocuments.$inferSelect;
 export type InsertRAGDocument = z.infer<typeof insertRAGDocumentSchema>;
+
+// AI Categorization Job schemas
+export const insertAICategorizationJobSchema = createInsertSchema(aiCategorizationJobs).omit({
+  id: true,
+  processedItems: true,
+  successItems: true,
+  failedItems: true,
+  startedAt: true,
+  completedAt: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertAICategorizationJob = z.infer<typeof insertAICategorizationJobSchema>;
+export type SelectAICategorizationJob = typeof aiCategorizationJobs.$inferSelect;
+
+// AI Training Data schemas
+export const insertAITrainingDataSchema = createInsertSchema(aiTrainingData).omit({
+  id: true,
+  createdAt: true
+});
+export type InsertAITrainingData = z.infer<typeof insertAITrainingDataSchema>;
+export type SelectAITrainingData = typeof aiTrainingData.$inferSelect;
+
+// AI Model Metrics schemas
+export const insertAIModelMetricsSchema = createInsertSchema(aiModelMetrics).omit({
+  id: true,
+  evaluationDate: true,
+  createdAt: true
+});
+export type InsertAIModelMetrics = z.infer<typeof insertAIModelMetricsSchema>;
+export type SelectAIModelMetrics = typeof aiModelMetrics.$inferSelect;

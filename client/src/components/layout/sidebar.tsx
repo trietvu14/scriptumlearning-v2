@@ -113,6 +113,12 @@ export function Sidebar({ className }: SidebarProps) {
       ]
     },
     {
+      name: "AI Tools",
+      items: [
+        { name: "Content Categorization", href: "/ai-categorization", icon: Bot, requiredRoles: ["super_admin", "school_admin", "faculty"] }
+      ]
+    },
+    {
       name: "Account",
       items: [
         { name: "Profile Settings", href: "/profile", icon: User }

@@ -29,8 +29,7 @@ import {
 } from "@shared/schema";
 import { authenticateToken, requireRole, requireSchoolAdmin, requireFaculty } from "./middleware/auth";
 import { loadTenant } from "./middleware/tenant";
-import { aiService } from "./services/ai";
-import { lmsService } from "./services/lms";
+
 
 // Import route modules
 import tenantRoutes from "./routes/tenants";
@@ -41,6 +40,7 @@ import notificationRoutes from "./routes/notifications";
 import adminRoutes from "./routes/admin";
 import profileRoutes from "./routes/profile";
 import inbdeRoutes from "./routes/inbde";
+import { aiRoutes } from "./routes/ai";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -490,6 +490,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/admin", adminRoutes);
   app.use("/api/profile", profileRoutes);
   app.use("/api/inbde", inbdeRoutes);
+  app.use("/api/ai", aiRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
