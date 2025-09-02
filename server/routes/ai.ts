@@ -277,7 +277,10 @@ router.get('/jobs/:jobId', authenticateToken, requireRole(['super_admin', 'schoo
 // Get tenant's categorization jobs
 router.get('/jobs', authenticateToken, requireRole(['super_admin', 'school_admin', 'faculty']), async (req, res) => {
   try {
-    const tenantId = req.user?.role === 'super_admin' ? req.query.tenantId as string : req.user?.tenantId;
+    // For super admin, allow querying any tenant; otherwise use user's tenant
+    const tenantId = req.user?.role === 'super_admin' && req.query.tenantId 
+      ? req.query.tenantId as string 
+      : req.user?.tenantId;
     
     if (!tenantId) {
       return res.status(400).json({ error: 'Tenant ID required' });

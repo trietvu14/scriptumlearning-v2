@@ -23,6 +23,7 @@ import { StandardsPage } from "@/pages/standards";
 import { SuperAdminDashboard } from "@/pages/admin/super-admin-dashboard";
 import { ProfilePage } from "@/pages/profile";
 import { AICategorizationPage } from "@/pages/ai-categorization";
+import { AIInsightsPage } from "@/pages/ai-insights";
 
 function Router() {
   return (
@@ -183,6 +184,20 @@ function Router() {
               <Sidebar />
               <div className="flex-1 p-6">
                 <AICategorizationPage />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/ai-insights">
+        <ProtectedRoute requiredRole={["super_admin", "school_admin", "faculty"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <AIInsightsPage />
               </div>
             </div>
           </div>
