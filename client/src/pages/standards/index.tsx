@@ -92,15 +92,18 @@ export function StandardsPage() {
     const areaParam = urlParams.get('area');
     const frameworkParam = urlParams.get('framework');
     
+    console.log('URL parsing - Area:', areaParam, 'Framework:', frameworkParam);
+    
     // For non-super admins, ignore area parameter and use their tenant's area
     if (user?.role === 'super_admin' && areaParam && areaParam !== selectedEducationalArea) {
       setSelectedEducationalArea(areaParam);
     }
     
     // Framework selection will happen after frameworks are loaded
-    if (frameworkParam && !selectedFramework) {
-      // Store framework ID to select after frameworks load
+    if (frameworkParam) {
+      // Always store framework ID to select after frameworks load, even if one is already selected
       sessionStorage.setItem('pendingFrameworkSelection', frameworkParam);
+      console.log('Stored pending framework selection:', frameworkParam);
     }
   }, [location, user?.role]);
 
@@ -121,10 +124,19 @@ export function StandardsPage() {
   // Auto-select framework when frameworks load and there's a pending selection
   useEffect(() => {
     const pendingFrameworkId = sessionStorage.getItem('pendingFrameworkSelection');
+    console.log('Checking pending framework selection:', pendingFrameworkId, 'Frameworks loaded:', frameworks?.length);
+    
     if (pendingFrameworkId && frameworks && frameworks.length > 0) {
       const targetFramework = frameworks.find(f => f.id === pendingFrameworkId);
+      console.log('Target framework found:', targetFramework?.name);
+      
       if (targetFramework) {
         setSelectedFramework(targetFramework);
+        sessionStorage.removeItem('pendingFrameworkSelection');
+        console.log('Framework auto-selected:', targetFramework.name);
+      } else {
+        console.warn('Framework not found in available frameworks:', pendingFrameworkId);
+        // Remove invalid pending selection
         sessionStorage.removeItem('pendingFrameworkSelection');
       }
     }
