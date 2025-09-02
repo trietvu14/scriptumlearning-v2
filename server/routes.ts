@@ -19,6 +19,9 @@ import {
   studentExamAttempts,
   lmsIntegrations,
   ragDocuments,
+  standardsFrameworks,
+  standardsSubjects,
+  standardsTopics,
   insertUserSchema,
   insertTenantSchema,
   insertStandardSchema,
@@ -451,6 +454,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(attempts);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch student progress" });
+    }
+  });
+
+  // Curriculum Template Cloning Endpoint
+  app.post("/api/standards/clone-template", authenticateToken, requireSchoolAdmin, loadTenant, async (req, res) => {
+    try {
+      const { templateId } = req.body;
+      const tenantId = req.user!.tenantId!;
+      
+      // Get the original template framework
+      const [templateFramework] = await db
+        .select()
+        .from(standardsFrameworks)
+        .where(eq(standardsFrameworks.id, templateId));
+        
+      if (!templateFramework) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+      
+      // Check if school already has a copy of this template
+      const existingCopy = await db
+        .select()
+        .from(standardsFrameworks)
+        .where(and(
+          eq(standardsFrameworks.tenantId, tenantId),
+          eq(standardsFrameworks.name, templateFramework.name + ` (${req.user!.firstName} ${req.user!.lastName} School)`)
+        ));
+        
+      if (existingCopy.length > 0) {
+        return res.status(400).json({ message: "Your school already has a copy of this template" });
+      }
+      
+      // Create tenant-specific copy of the framework
+      const [newFramework] = await db
+        .insert(standardsFrameworks)
+        .values({
+          name: templateFramework.name + ` (Your School)`,
+          description: templateFramework.description + ' - Customized for your institution',
+          educationalArea: templateFramework.educationalArea,
+          frameworkType: 'internal',
+          isOfficial: false,
+          tenantId: tenantId,
+          version: templateFramework.version,
+          isActive: true
+        })
+        .returning();
+        
+      // Copy all subjects
+      const originalSubjects = await db
+        .select()
+        .from(standardsSubjects)
+        .where(eq(standardsSubjects.frameworkId, templateId));
+        
+      const subjectMappings: { [key: string]: string } = {};
+      
+      for (const subject of originalSubjects) {
+        const [newSubject] = await db
+          .insert(standardsSubjects)
+          .values({
+            frameworkId: newFramework.id,
+            name: subject.name,
+            description: subject.description,
+            code: subject.code,
+            sortOrder: subject.sortOrder,
+            isActive: subject.isActive
+          })
+          .returning();
+          
+        subjectMappings[subject.id] = newSubject.id;
+      }
+      
+      // Copy all topics
+      for (const originalSubjectId of Object.keys(subjectMappings)) {
+        const topics = await db
+          .select()
+          .from(standardsTopics)
+          .where(eq(standardsTopics.subjectId, originalSubjectId));
+          
+        for (const topic of topics) {
+          await db
+            .insert(standardsTopics)
+            .values({
+              subjectId: subjectMappings[originalSubjectId],
+              name: topic.name,
+              description: topic.description,
+              code: topic.code,
+              learningObjectives: topic.learningObjectives,
+              sortOrder: topic.sortOrder,
+              isActive: topic.isActive
+            });
+        }
+      }
+      
+      res.status(201).json({
+        message: "Curriculum template cloned successfully",
+        frameworkId: newFramework.id,
+        frameworkName: newFramework.name
+      });
+      
+    } catch (error) {
+      console.error("Template cloning error:", error);
+      res.status(500).json({ message: "Failed to clone curriculum template" });
     }
   });
 
