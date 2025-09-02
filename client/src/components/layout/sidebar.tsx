@@ -148,7 +148,7 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-foreground" data-testid="text-tenant-name">
-              {tenant?.name || "John Hopkins Medical School"}
+              {user?.role === "super_admin" ? "Super Admin Multi-Tenant View" : (tenant?.name || "John Hopkins Medical School")}
             </h1>
           </div>
         </div>

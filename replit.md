@@ -17,7 +17,7 @@ The platform features a modern web application architecture:
 - **Backend**: Comprises an Express.js API layer written in TypeScript for core application logic and Python-based services (Flask/FastAPI) dedicated to AI functionalities (content categorization, agentic workflows, board review generation, study path recommendations) and ETL processes for LMS integrations.
 - **Database**: PostgreSQL is used as the primary database, enhanced with the `pgvector` extension for AI embeddings, supporting a multi-tenant architecture with robust tenant isolation and a comprehensive schema for educational content mapping.
 - **AI Integration**: Leverages OpenAI GPT models for advanced AI capabilities, including content categorization, standards mapping, and personalized learning.
-- **Multi-tenancy**: Designed with row-level security ensuring strict tenant isolation.
+- **Multi-tenancy**: Designed with row-level security ensuring strict tenant isolation. Super admins are tenant-agnostic with platform-wide access across all institutions.
 - **UI/UX Decisions**: Emphasizes a clean, professional aesthetic with custom branding, including a specific logo integration, Zain font for typography, a blue-to-purple gradient for navigation elements, and a centered search bar.
 
 Key features include:
@@ -25,7 +25,7 @@ Key features include:
 - Integrations with major LMS platforms (Canvas, Blackboard, Moodle).
 - Comprehensive standards mapping (e.g., USMLE, LCME, iNBDE, CODA).
 - AI-powered content categorization with Retrieval-Augmented Generation (RAG) training.
-- Role-based access control (Super Admin, School Admin, Faculty, Administrative Support, Students) with automated user provisioning from LMS data.
+- Role-based access control (Super Admin, School Admin, Faculty, Administrative Support, Students) with automated user provisioning from LMS data. Super admins have cross-tenant management capabilities.
 - Dashboard visualizations and reporting with export capabilities.
 - Robust assessment tools and board review mock exams with personalized study paths.
 
