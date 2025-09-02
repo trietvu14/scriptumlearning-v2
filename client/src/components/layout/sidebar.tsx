@@ -225,7 +225,7 @@ export function Sidebar({ className }: SidebarProps) {
                                     <Button
                                       variant="ghost"
                                       className={cn(
-                                        "w-full justify-start p-2 h-auto text-xs",
+                                        "w-full justify-start p-2 h-auto text-xs whitespace-normal text-left leading-tight min-h-[2rem]",
                                         location.includes(framework.name.toLowerCase().replace(/\s+/g, '-')) && "bg-primary/10"
                                       )}
                                       onClick={() => {
@@ -233,8 +233,8 @@ export function Sidebar({ className }: SidebarProps) {
                                         console.log('Framework:', framework.name, 'Area:', area);
                                       }}
                                     >
-                                      <Award className="w-3 h-3 mr-2" />
-                                      {framework.name}
+                                      <Award className="w-3 h-3 mr-2 flex-shrink-0" />
+                                      <span className="break-words overflow-hidden">{framework.name}</span>
                                     </Button>
                                   </Link>
                                 ))}
@@ -253,12 +253,12 @@ export function Sidebar({ className }: SidebarProps) {
                                         <Button
                                           variant="ghost"
                                           className={cn(
-                                            "w-full justify-start p-2 h-auto text-xs",
+                                            "w-full justify-start p-2 h-auto text-xs whitespace-normal text-left leading-tight min-h-[2rem]",
                                             location.includes(framework.name.toLowerCase().replace(/\s+/g, '-')) && "bg-primary/10"
                                           )}
                                         >
-                                          <Settings className="w-3 h-3 mr-2" />
-                                          {framework.name}
+                                          <Settings className="w-3 h-3 mr-2 flex-shrink-0" />
+                                          <span className="break-words overflow-hidden">{framework.name}</span>
                                         </Button>
                                       </Link>
                                     ))}

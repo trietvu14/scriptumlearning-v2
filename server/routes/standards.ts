@@ -7,6 +7,7 @@ import {
   standardsTopics, 
   standardsSubtopics,
   standardsDocuments,
+  tenants,
   insertStandardsFrameworkSchema,
   insertStandardsSubjectSchema,
   insertStandardsTopicSchema,
@@ -30,18 +31,33 @@ router.get("/frameworks", requireAuth, async (req, res) => {
     // Build where conditions
     const conditions = [];
     
-    if (educationalArea) {
-      conditions.push(eq(standardsFrameworks.educationalArea, educationalArea as string));
-    }
-    
-    // For non-super admins, show only official standards and their own tenant's custom standards
+    // For non-super admins, filter by their tenant's educational area
     if (req.user!.role !== "super_admin") {
+      // First, get user's tenant educational area from the db
+      const [userTenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.id, req.user!.tenantId!))
+        .limit(1);
+      
+      if (userTenant) {
+        // Only show standards for their educational area
+        conditions.push(eq(standardsFrameworks.educationalArea, userTenant.educationalArea));
+      }
+      
+      // Show only official standards and their own tenant's custom standards
       conditions.push(
         sql`(${standardsFrameworks.isOfficial} = true OR ${standardsFrameworks.tenantId} = ${req.user!.tenantId})`
       );
-    } else if (includeOfficial === "false") {
-      // Super admin can filter to only custom standards
-      conditions.push(eq(standardsFrameworks.isOfficial, false));
+    } else {
+      // Super admin can see all or filter by educational area if specified
+      if (educationalArea) {
+        conditions.push(eq(standardsFrameworks.educationalArea, educationalArea as string));
+      }
+      
+      if (includeOfficial === "false") {
+        conditions.push(eq(standardsFrameworks.isOfficial, false));
+      }
     }
     
     conditions.push(eq(standardsFrameworks.isActive, true));
