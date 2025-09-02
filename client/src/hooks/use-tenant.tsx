@@ -1,4 +1,5 @@
 import { createContext, useContext, ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./use-auth";
 import { Tenant } from "@/types";
 
@@ -12,20 +13,36 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 export function TenantProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: authLoading } = useAuth();
   
-  // In a real implementation, you would fetch tenant data based on user.tenantId
-  // For now, we'll create a mock tenant based on the user data
-  const tenant: Tenant | null = user ? {
-    id: user.tenantId,
-    name: "Johns Hopkins Medical School",
-    domain: "jhu-medical.edu",
-    educationalArea: "medical_school",
-    isActive: true
-  } : null;
+  // Fetch actual tenant data from API
+  const { data: tenantData, isLoading: tenantLoading } = useQuery({
+    queryKey: ['/api/tenants', user?.tenantId],
+    queryFn: async () => {
+      if (!user?.tenantId) return null;
+      
+      const response = await fetch(`/api/tenants/${user.tenantId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch tenant data');
+      }
+      
+      return response.json();
+    },
+    enabled: !!user?.tenantId && user.role !== 'super_admin'
+  });
+
+  // Use fetched tenant data, or fallback for super admin
+  const tenant: Tenant | null = user?.role === 'super_admin' 
+    ? null 
+    : tenantData || null;
 
   return (
     <TenantContext.Provider value={{
       tenant,
-      isLoading: authLoading
+      isLoading: authLoading || tenantLoading
     }}>
       {children}
     </TenantContext.Provider>
