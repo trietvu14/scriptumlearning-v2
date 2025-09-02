@@ -260,13 +260,15 @@ export const standardsSubjects = pgTable("standards_subjects", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Standards topics (second level)
+// Standards topics (second level) - Now supports nested hierarchy
 export const standardsTopics = pgTable("standards_topics", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   subjectId: uuid("subject_id").notNull().references(() => standardsSubjects.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id").references(() => standardsTopics.id, { onDelete: "cascade" }), // For nested subtopics
   name: text("name").notNull(),
   description: text("description"),
   code: text("code"), // Topic code
+  level: integer("level").default(1), // 1=Topic, 2=Subtopic, 3=Sub-subtopic, etc.
   learningObjectives: text("learning_objectives").array().default(sql`'{}'::text[]`),
   sortOrder: integer("sort_order").default(0),
   isActive: boolean("is_active").default(true),

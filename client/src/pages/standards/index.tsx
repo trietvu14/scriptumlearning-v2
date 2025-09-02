@@ -315,6 +315,63 @@ export function StandardsPage() {
     });
   };
 
+  // Recursive function to render hierarchical topic structure
+  const renderTopicHierarchy = (topics: any[], level: number) => {
+    // Filter topics by level and sort by order
+    const currentLevelTopics = topics.filter(t => t.level === level).sort((a: any, b: any) => a.sortOrder - b.sortOrder);
+    
+    return currentLevelTopics.map((topic: any) => {
+      const children = topics.filter(t => t.parentId === topic.id);
+      const indentClass = level === 1 ? "" : `ml-${Math.min(level * 4, 12)}`;
+      const borderClass = level === 1 ? "border-l-2 border-blue-400" : level === 2 ? "border-l-2 border-green-400" : "border-l-2 border-orange-400";
+      
+      return (
+        <div key={topic.id} className={`${indentClass}`}>
+          <div className={`p-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-md ${borderClass} pl-4`}>
+            <div className="flex items-start justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {'●'.repeat(level)}
+                  </span>
+                  <p className="font-medium text-sm">{topic.name}</p>
+                  <Badge variant="outline" className="text-xs">
+                    Level {topic.level}
+                  </Badge>
+                </div>
+                {topic.code && (
+                  <p className="text-xs text-muted-foreground mt-1 ml-6">{topic.code}</p>
+                )}
+                {topic.description && (
+                  <p className="text-xs text-muted-foreground mt-1 ml-6">
+                    {topic.description}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-1 ml-2">
+                <Badge variant="outline" className="text-xs">
+                  #{topic.sortOrder}
+                </Badge>
+                {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
+                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                    <Edit className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Render children recursively */}
+          {children.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {renderTopicHierarchy(topics, level + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
   const handleFrameworkSelect = (framework: StandardsFramework) => {
     setSelectedFramework(framework);
   };
@@ -663,56 +720,11 @@ export function StandardsPage() {
                               </div>
                             </CardHeader>
                             
-                            {/* Topics under this subject */}
+                            {/* Hierarchical Topics under this subject */}
                             {subject.topics && subject.topics.length > 0 && (
                               <CardContent className="pt-0">
-                                <h5 className="font-medium text-sm mb-3 text-muted-foreground">Topics ({subject.topics.length})</h5>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                  {subject.topics
-                                    .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                                    .map((topic: any) => (
-                                      <div key={topic.id} className="border rounded-md p-3 bg-gray-50 hover:bg-gray-100 transition-colors">
-                                        <div className="flex items-start justify-between">
-                                          <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-sm truncate">{topic.name}</p>
-                                            {topic.code && (
-                                              <p className="text-xs text-muted-foreground mt-1">{topic.code}</p>
-                                            )}
-                                            {topic.description && (
-                                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                                {topic.description}
-                                              </p>
-                                            )}
-                                          </div>
-                                          <div className="flex items-center gap-1 ml-2">
-                                            <Badge variant="outline" className="text-xs">
-                                              {topic.sortOrder}
-                                            </Badge>
-                                            {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
-                                              <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                                <Edit className="w-3 h-3" />
-                                              </Button>
-                                            )}
-                                          </div>
-                                        </div>
-                                        
-                                        {/* Subtopics under this topic */}
-                                        {topic.subtopics && topic.subtopics.length > 0 && (
-                                          <div className="mt-2 pl-2 border-l-2 border-gray-200">
-                                            <p className="text-xs text-muted-foreground mb-1">Subtopics:</p>
-                                            <div className="flex flex-wrap gap-1">
-                                              {topic.subtopics
-                                                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                                                .map((subtopic: any) => (
-                                                  <Badge key={subtopic.id} variant="secondary" className="text-xs">
-                                                    {subtopic.name}
-                                                  </Badge>
-                                                ))}
-                                            </div>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
+                                <div className="space-y-3">
+                                  {renderTopicHierarchy(subject.topics, 1)}
                                 </div>
                               </CardContent>
                             )}
