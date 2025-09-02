@@ -23,26 +23,32 @@ export const requireAuth = async (
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
+    console.log('No auth token provided');
     return res.status(401).json({ error: "Access token required" });
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    console.log('Token decoded:', { userId: decoded.userId });
+    
     const [user] = await db
       .select()
       .from(users)
       .where(eq(users.id, decoded.userId));
 
     if (!user) {
+      console.log('User not found:', decoded.userId);
       return res.status(401).json({ error: "User not found" });
     }
 
+    console.log('User authenticated:', user.email, user.role);
     req.user = {
       ...user,
       name: `${user.firstName} ${user.lastName}`
     };
     next();
   } catch (error) {
+    console.log('Token verification failed:', error);
     return res.status(403).json({ error: "Invalid token" });
   }
 };

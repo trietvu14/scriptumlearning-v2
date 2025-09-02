@@ -20,10 +20,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem("auth_token");
     const userData = localStorage.getItem("user_data");
     
+    console.log('Auth initialization:', { token: token?.substring(0, 20) + '...', userData });
+    
     if (token && userData) {
       try {
-        setUser(JSON.parse(userData));
+        const user = JSON.parse(userData);
+        console.log('Setting user from localStorage:', user);
+        setUser(user);
       } catch (error) {
+        console.error('Failed to parse user data:', error);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user_data");
       }

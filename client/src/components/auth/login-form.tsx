@@ -112,9 +112,9 @@ export function LoginForm() {
 
           <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             <p>Demo Credentials:</p>
-            <p className="font-mono">admin@university.edu / password123</p>
-            <p className="font-mono">faculty@university.edu / password123</p>
-            <p className="font-mono">student@university.edu / password123</p>
+            <p className="font-mono">tvu@scriptumlearning.com / password123</p>
+            <p className="font-mono">admin@test.edu / password123</p>
+            <p className="font-mono">faculty@test.edu / password123</p>
           </div>
         </CardContent>
       </Card>
