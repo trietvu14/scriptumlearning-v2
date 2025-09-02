@@ -10,6 +10,8 @@ Scriptum is a multi-tenant AI-powered curriculum mapping platform designed for e
 - Blue-to-purple gradient styling for modern appearance
 - Comprehensive documentation and error handling
 - Scalable architecture for multiple educational domains
+- Generic curriculum template descriptions for broader institutional appeal
+- School admin capability to delete institution-specific curriculum standards
 
 ## System Architecture
 The platform features a modern web application architecture:
@@ -28,6 +30,7 @@ Key features include:
 - Role-based access control (Super Admin, School Admin, Faculty, Administrative Support, Students) with automated user provisioning from LMS data. Super admins have cross-tenant management capabilities.
 - Dashboard visualizations and reporting with export capabilities.
 - Robust assessment tools and board review mock exams with personalized study paths.
+- **Comprehensive Dental School Curriculum Template System**: Master template with 14 subjects and 45 topics covering 4-year dental education (D1-D4), with multi-tenant cloning capabilities allowing schools to create and customize their own copies while preserving the official master template.
 
 ## External Dependencies
 - **OpenAI GPT Models**: Used for AI-powered content categorization, intelligent content analysis, and generating recommendations.

@@ -486,12 +486,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Your school already has a copy of this template" });
       }
       
+      // Get school name from tenant
+      const [tenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.id, tenantId));
+        
       // Create tenant-specific copy of the framework
       const [newFramework] = await db
         .insert(standardsFrameworks)
         .values({
-          name: templateFramework.name + ` (Your School)`,
-          description: templateFramework.description + ' - Customized for your institution',
+          name: templateFramework.name + ` (${tenant.name})`,
+          description: (templateFramework.description || '').replace('- Customizable', '- Customized for your institution'),
           educationalArea: templateFramework.educationalArea,
           frameworkType: 'internal',
           isOfficial: false,
