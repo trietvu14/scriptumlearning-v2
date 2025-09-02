@@ -63,12 +63,19 @@ export function StandardsPage() {
   const [location] = useLocation();
   const [selectedEducationalArea, setSelectedEducationalArea] = useState<string>(tenant?.educationalArea || "dental_school");
   const [isCreateFrameworkOpen, setIsCreateFrameworkOpen] = useState(false);
+  const [isEditFrameworkOpen, setIsEditFrameworkOpen] = useState(false);
   const [selectedFramework, setSelectedFramework] = useState<StandardsFramework | null>(null);
   const [newFramework, setNewFramework] = useState({
     name: "",
     description: "",
     educationalArea: tenant?.educationalArea || "dental_school",
     frameworkType: "internal",
+    version: "1.0"
+  });
+  
+  const [editFramework, setEditFramework] = useState({
+    name: "",
+    description: "",
     version: "1.0"
   });
 
@@ -228,10 +235,72 @@ export function StandardsPage() {
     createFrameworkMutation.mutate(newFramework);
   };
 
+  // Update framework mutation
+  const updateFrameworkMutation = useMutation({
+    mutationFn: async (frameworkData: typeof editFramework & { id: string }) => {
+      const response = await fetch(`/api/standards/frameworks/${frameworkData.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+        },
+        body: JSON.stringify({
+          name: frameworkData.name,
+          description: frameworkData.description,
+          version: frameworkData.version
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update framework");
+      }
+      
+      return response.json();
+    },
+    onSuccess: (updatedFramework) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/standards/frameworks"] });
+      setIsEditFrameworkOpen(false);
+      setSelectedFramework(updatedFramework);
+      toast({
+        title: "Success",
+        description: "Framework updated successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleDeleteFramework = (framework: StandardsFramework) => {
     if (window.confirm(`Are you sure you want to delete "${framework.name}"? This action cannot be undone.`)) {
       deleteFrameworkMutation.mutate(framework.id);
     }
+  };
+
+  const handleUpdateFramework = () => {
+    if (!editFramework.name || !editFramework.description) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    updateFrameworkMutation.mutate({ ...editFramework, id: selectedFramework!.id });
+  };
+
+  // Initialize edit form when framework is selected
+  const initializeEditForm = (framework: StandardsFramework) => {
+    setEditFramework({
+      name: framework.name,
+      description: framework.description,
+      version: framework.version
+    });
   };
 
   const handleFrameworkSelect = (framework: StandardsFramework) => {
@@ -482,7 +551,15 @@ export function StandardsPage() {
 
                 {user?.role && ["super_admin", "school_admin", "faculty"].includes(user.role) && (
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="outline" disabled>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        initializeEditForm(selectedFramework);
+                        setIsEditFrameworkOpen(true);
+                      }}
+                      disabled={selectedFramework.isOfficial && user?.role !== 'super_admin'}
+                    >
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Button>
@@ -543,28 +620,102 @@ export function StandardsPage() {
                 </TabsList>
                 <TabsContent value="subjects" className="space-y-4">
                   {frameworkDetails?.subjects && frameworkDetails.subjects.length > 0 ? (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Subject</TableHead>
-                          <TableHead>Code</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Order</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {frameworkDetails.subjects
-                          .sort((a: StandardsSubject, b: StandardsSubject) => a.sortOrder - b.sortOrder)
-                          .map((subject: StandardsSubject) => (
-                            <TableRow key={subject.id}>
-                              <TableCell className="font-medium">{subject.name}</TableCell>
-                              <TableCell>{subject.code || "—"}</TableCell>
-                              <TableCell>{subject.description || "—"}</TableCell>
-                              <TableCell>{subject.sortOrder}</TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
+                    <div className="space-y-6">
+                      {frameworkDetails.subjects
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map((subject: any) => (
+                          <Card key={subject.id} className="border-l-4 border-l-blue-500">
+                            <CardHeader className="pb-3">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <CardTitle className="text-lg">{subject.name}</CardTitle>
+                                  {subject.code && (
+                                    <Badge variant="outline" className="mt-1">
+                                      {subject.code}
+                                    </Badge>
+                                  )}
+                                  {subject.description && (
+                                    <CardDescription className="mt-2">
+                                      {subject.description}
+                                    </CardDescription>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="secondary">Order: {subject.sortOrder}</Badge>
+                                  {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
+                                    <Button size="sm" variant="ghost">
+                                      <Edit className="w-3 h-3" />
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                            </CardHeader>
+                            
+                            {/* Topics under this subject */}
+                            {subject.topics && subject.topics.length > 0 && (
+                              <CardContent className="pt-0">
+                                <h5 className="font-medium text-sm mb-3 text-muted-foreground">Topics ({subject.topics.length})</h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                  {subject.topics
+                                    .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                                    .map((topic: any) => (
+                                      <div key={topic.id} className="border rounded-md p-3 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <div className="flex items-start justify-between">
+                                          <div className="flex-1 min-w-0">
+                                            <p className="font-medium text-sm truncate">{topic.name}</p>
+                                            {topic.code && (
+                                              <p className="text-xs text-muted-foreground mt-1">{topic.code}</p>
+                                            )}
+                                            {topic.description && (
+                                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                                {topic.description}
+                                              </p>
+                                            )}
+                                          </div>
+                                          <div className="flex items-center gap-1 ml-2">
+                                            <Badge variant="outline" className="text-xs">
+                                              {topic.sortOrder}
+                                            </Badge>
+                                            {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
+                                              <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                                <Edit className="w-3 h-3" />
+                                              </Button>
+                                            )}
+                                          </div>
+                                        </div>
+                                        
+                                        {/* Subtopics under this topic */}
+                                        {topic.subtopics && topic.subtopics.length > 0 && (
+                                          <div className="mt-2 pl-2 border-l-2 border-gray-200">
+                                            <p className="text-xs text-muted-foreground mb-1">Subtopics:</p>
+                                            <div className="flex flex-wrap gap-1">
+                                              {topic.subtopics
+                                                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                                                .map((subtopic: any) => (
+                                                  <Badge key={subtopic.id} variant="secondary" className="text-xs">
+                                                    {subtopic.name}
+                                                  </Badge>
+                                                ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                </div>
+                              </CardContent>
+                            )}
+                            
+                            {/* No topics message */}
+                            {(!subject.topics || subject.topics.length === 0) && (
+                              <CardContent className="pt-0">
+                                <div className="text-center text-muted-foreground py-4 text-sm">
+                                  No topics defined for this subject
+                                </div>
+                              </CardContent>
+                            )}
+                          </Card>
+                        ))}
+                    </div>
                   ) : (
                     <div className="text-center text-muted-foreground py-8">
                       <BookOpen className="w-12 h-12 mx-auto mb-2 opacity-50" />
@@ -583,6 +734,55 @@ export function StandardsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Edit Framework Dialog */}
+      <Dialog open={isEditFrameworkOpen} onOpenChange={setIsEditFrameworkOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Framework</DialogTitle>
+            <DialogDescription>
+              Update the framework information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="edit-framework-name">Framework Name</Label>
+              <Input
+                id="edit-framework-name"
+                value={editFramework.name}
+                onChange={(e) => setEditFramework({ ...editFramework, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-framework-description">Description</Label>
+              <Textarea
+                id="edit-framework-description"
+                value={editFramework.description}
+                onChange={(e) => setEditFramework({ ...editFramework, description: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-framework-version">Version</Label>
+              <Input
+                id="edit-framework-version"
+                value={editFramework.version}
+                onChange={(e) => setEditFramework({ ...editFramework, version: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditFrameworkOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateFramework}
+              disabled={updateFrameworkMutation.isPending}
+            >
+              {updateFrameworkMutation.isPending ? "Updating..." : "Update Framework"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
