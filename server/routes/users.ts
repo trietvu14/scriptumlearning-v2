@@ -13,13 +13,13 @@ router.get("/", requireAuth, requireRole(["super_admin", "school_admin"]), async
     let users;
     
     if (req.user!.role === "super_admin") {
-      // Super admin can specify tenant, or get all users
+      // Super admin can specify tenant, or get all users from all tenants
       const tenantId = req.query.tenantId as string;
       if (tenantId) {
         users = await storage.getUsersByTenant(tenantId);
       } else {
-        // For now, return users from the super admin's tenant
-        users = await storage.getUsersByTenant(req.user!.tenantId);
+        // Super admin gets all users from all tenants with tenant info
+        users = await storage.getAllUsersWithTenantInfo();
       }
     } else {
       // School admin can only see users from their own tenant

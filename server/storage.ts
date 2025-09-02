@@ -21,6 +21,7 @@ interface IStorage {
   createUser(insertUser: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
   getUsersByTenant(tenantId: string): Promise<User[]>;
+  getAllUsersWithTenantInfo(): Promise<(User & { tenantName: string; tenantDomain: string })[]>;
   
   // Tenant management
   getTenant(id: string): Promise<Tenant | undefined>;
@@ -74,6 +75,34 @@ export class DatabaseStorage implements IStorage {
 
   async getUsersByTenant(tenantId: string): Promise<User[]> {
     return await db.select().from(users).where(eq(users.tenantId, tenantId));
+  }
+
+  async getAllUsersWithTenantInfo(): Promise<(User & { tenantName: string; tenantDomain: string })[]> {
+    return await db
+      .select({
+        id: users.id,
+        tenantId: users.tenantId,
+        email: users.email,
+        username: users.username,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        role: users.role,
+        title: users.title,
+        department: users.department,
+        phoneNumber: users.phoneNumber,
+        officeLocation: users.officeLocation,
+        bio: users.bio,
+        profileImageUrl: users.profileImageUrl,
+        isActive: users.isActive,
+        lastLoginAt: users.lastLoginAt,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        tenantName: tenants.name,
+        tenantDomain: tenants.domain
+      })
+      .from(users)
+      .innerJoin(tenants, eq(users.tenantId, tenants.id));
   }
 
   // Tenant management methods
