@@ -26,8 +26,6 @@ router.get("/frameworks", requireAuth, async (req, res) => {
   try {
     const { educationalArea, includeOfficial } = req.query;
     
-    let queryBuilder = db.select().from(standardsFrameworks);
-    
     // Build where conditions
     const conditions = [];
     
@@ -41,6 +39,7 @@ router.get("/frameworks", requireAuth, async (req, res) => {
         .limit(1);
       
       if (userTenant) {
+        console.log(`Filtering standards for educational area: ${userTenant.educationalArea}`);
         // Only show standards for their educational area
         conditions.push(eq(standardsFrameworks.educationalArea, userTenant.educationalArea));
       }
@@ -62,14 +61,13 @@ router.get("/frameworks", requireAuth, async (req, res) => {
     
     conditions.push(eq(standardsFrameworks.isActive, true));
     
-    if (conditions.length > 0) {
-      queryBuilder = queryBuilder.where(and(...conditions));
-    }
+    console.log(`Applied ${conditions.length} conditions to standards query`);
     
-    const frameworks = await queryBuilder.orderBy(
-      standardsFrameworks.isOfficial, 
-      standardsFrameworks.name
-    );
+    const frameworks = await db
+      .select()
+      .from(standardsFrameworks)
+      .where(and(...conditions))
+      .orderBy(standardsFrameworks.isOfficial, standardsFrameworks.name);
     
     res.json(frameworks);
   } catch (error) {
