@@ -316,34 +316,44 @@ export function StandardsPage() {
   };
 
   // Recursive function to render hierarchical topic structure
-  const renderTopicHierarchy = (topics: any[], level: number) => {
-    // Filter topics by level and sort by order
-    const currentLevelTopics = topics.filter(t => t.level === level).sort((a: any, b: any) => a.sortOrder - b.sortOrder);
+  const renderTopicHierarchy = (topics: any[], parentId: string | null = null, level: number = 1): React.ReactNode => {
+    // Filter topics by parentId and sort by order
+    const currentLevelTopics = topics
+      .filter(t => t.parentId === parentId)
+      .sort((a: any, b: any) => a.sortOrder - b.sortOrder);
     
     return currentLevelTopics.map((topic: any) => {
       const children = topics.filter(t => t.parentId === topic.id);
-      const indentClass = level === 1 ? "" : `ml-${Math.min(level * 4, 12)}`;
-      const borderClass = level === 1 ? "border-l-2 border-blue-400" : level === 2 ? "border-l-2 border-green-400" : "border-l-2 border-orange-400";
+      const indentStyle = { marginLeft: `${(level - 1) * 24}px` };
+      const bulletIcon = level === 1 ? '●' : level === 2 ? '○' : level === 3 ? '→' : '•';
+      const textSizeClass = level === 1 ? 'text-sm font-semibold' : level === 2 ? 'text-sm font-medium' : 'text-xs font-normal';
+      const bgClass = level === 1 ? 'bg-blue-50 hover:bg-blue-100' : level === 2 ? 'bg-green-50 hover:bg-green-100' : 'bg-orange-50 hover:bg-orange-100';
+      const borderClass = level === 1 ? 'border-l-4 border-blue-400' : level === 2 ? 'border-l-3 border-green-400' : 'border-l-2 border-orange-400';
       
       return (
-        <div key={topic.id} className={`${indentClass}`}>
-          <div className={`p-3 bg-gray-50 hover:bg-gray-100 transition-colors rounded-md ${borderClass} pl-4`}>
+        <div key={topic.id}>
+          <div 
+            className={`p-3 transition-colors rounded-md ${borderClass} ${bgClass}`}
+            style={indentStyle}
+          >
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {'●'.repeat(level)}
+                  <span className="text-muted-foreground font-mono text-sm">
+                    {bulletIcon}
                   </span>
-                  <p className="font-medium text-sm">{topic.name}</p>
+                  <p className={textSizeClass}>{topic.name}</p>
                   <Badge variant="outline" className="text-xs">
-                    Level {topic.level}
+                    L{topic.level || level}
                   </Badge>
                 </div>
                 {topic.code && (
-                  <p className="text-xs text-muted-foreground mt-1 ml-6">{topic.code}</p>
+                  <p className="text-xs text-muted-foreground mt-1" style={{ marginLeft: '20px' }}>
+                    Code: {topic.code}
+                  </p>
                 )}
                 {topic.description && (
-                  <p className="text-xs text-muted-foreground mt-1 ml-6">
+                  <p className="text-xs text-muted-foreground mt-1" style={{ marginLeft: '20px' }}>
                     {topic.description}
                   </p>
                 )}
@@ -363,8 +373,8 @@ export function StandardsPage() {
           
           {/* Render children recursively */}
           {children.length > 0 && (
-            <div className="mt-2 space-y-2">
-              {renderTopicHierarchy(topics, level + 1)}
+            <div className="mt-1 space-y-1">
+              {renderTopicHierarchy(topics, topic.id, level + 1)}
             </div>
           )}
         </div>
@@ -723,8 +733,8 @@ export function StandardsPage() {
                             {/* Hierarchical Topics under this subject */}
                             {subject.topics && subject.topics.length > 0 && (
                               <CardContent className="pt-0">
-                                <div className="space-y-3">
-                                  {renderTopicHierarchy(subject.topics, 1)}
+                                <div className="space-y-2">
+                                  {renderTopicHierarchy(subject.topics, null, 1)}
                                 </div>
                               </CardContent>
                             )}
