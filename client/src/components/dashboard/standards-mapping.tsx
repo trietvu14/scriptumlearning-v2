@@ -2,42 +2,141 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Stethoscope, Brain, Heart, Bot } from "lucide-react";
+import { Stethoscope, Brain, Heart, Bot, Activity, FileText, Smile } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useTenant } from "@/hooks/use-tenant";
+import { useAuth } from "@/hooks/use-auth";
 
-const mappingData = [
-  {
-    id: "usmle-step1",
-    title: "USMLE Step 1 Coverage",
-    subtitle: "Cardiovascular System",
-    progress: 85,
-    completed: 234,
-    total: 275,
-    icon: Stethoscope,
-    iconColor: "bg-primary/10 text-primary"
-  },
-  {
-    id: "lcme-standards",
-    title: "LCME Standards",
-    subtitle: "Clinical Reasoning",
-    progress: 92,
-    completed: 156,
-    total: 169,
-    icon: Brain,
-    iconColor: "bg-chart-2/10 text-chart-2"
-  },
-  {
-    id: "internal-standards", 
-    title: "Internal Standards",
-    subtitle: "Pathophysiology Core",
-    progress: 78,
-    completed: 98,
-    total: 125,
-    icon: Heart,
-    iconColor: "bg-chart-3/10 text-chart-3"
+// Educational area specific mapping data
+const getMappingDataByEducationalArea = (educationalArea: string) => {
+  switch (educationalArea) {
+    case "dental_school":
+      return [
+        {
+          id: "inbde-coverage",
+          title: "INBDE Coverage",
+          subtitle: "Foundation Knowledge",
+          progress: 78,
+          completed: 145,
+          total: 186,
+          icon: Smile,
+          iconColor: "bg-primary/10 text-primary"
+        },
+        {
+          id: "coda-standards",
+          title: "CODA Standards",
+          subtitle: "Clinical Competency",
+          progress: 85,
+          completed: 92,
+          total: 108,
+          icon: Activity,
+          iconColor: "bg-chart-2/10 text-chart-2"
+        },
+        {
+          id: "internal-standards", 
+          title: "Internal Standards",
+          subtitle: "Curriculum Template",
+          progress: 92,
+          completed: 67,
+          total: 73,
+          icon: FileText,
+          iconColor: "bg-chart-3/10 text-chart-3"
+        }
+      ];
+    case "medical_school":
+      return [
+        {
+          id: "usmle-step1",
+          title: "USMLE Step 1 Coverage",
+          subtitle: "Cardiovascular System",
+          progress: 85,
+          completed: 234,
+          total: 275,
+          icon: Stethoscope,
+          iconColor: "bg-primary/10 text-primary"
+        },
+        {
+          id: "lcme-standards",
+          title: "LCME Standards",
+          subtitle: "Clinical Reasoning",
+          progress: 92,
+          completed: 156,
+          total: 169,
+          icon: Brain,
+          iconColor: "bg-chart-2/10 text-chart-2"
+        },
+        {
+          id: "internal-standards", 
+          title: "Internal Standards",
+          subtitle: "Pathophysiology Core",
+          progress: 78,
+          completed: 98,
+          total: 125,
+          icon: Heart,
+          iconColor: "bg-chart-3/10 text-chart-3"
+        }
+      ];
+    default:
+      return [];
   }
-];
+};
+
+const getStandardsSelectOptions = (educationalArea: string) => {
+  switch (educationalArea) {
+    case "dental_school":
+      return [
+        { value: "all", label: "All Standards" },
+        { value: "inbde", label: "INBDE" },
+        { value: "coda", label: "CODA Standards" },
+        { value: "internal", label: "Internal Standards" }
+      ];
+    case "medical_school":
+      return [
+        { value: "all", label: "All Standards" },
+        { value: "usmle-step1", label: "USMLE Step 1" },
+        { value: "usmle-step2", label: "USMLE Step 2" },
+        { value: "lcme", label: "LCME Standards" }
+      ];
+    default:
+      return [{ value: "all", label: "All Standards" }];
+  }
+};
+
+const getAIRecommendations = (educationalArea: string) => {
+  switch (educationalArea) {
+    case "dental_school":
+      return {
+        description: "Based on current mapping analysis, consider adding more content for:",
+        items: [
+          "• Oral pathology identification (INBDE - Foundation Knowledge)",
+          "• Periodontal treatment planning (CODA Standards)",
+          "• Endodontic procedures (Internal Standards)"
+        ]
+      };
+    case "medical_school":
+      return {
+        description: "Based on current mapping analysis, consider adding more content for:",
+        items: [
+          "• Arrhythmia classification (USMLE Step 1 - Cardiovascular)",
+          "• Pharmacokinetics principles (Internal Standards)"
+        ]
+      };
+    default:
+      return {
+        description: "No recommendations available for this educational area.",
+        items: []
+      };
+  }
+};
 
 export function StandardsMapping() {
+  const { tenant } = useTenant();
+  const { user } = useAuth();
+  
+  const educationalArea = tenant?.educationalArea || "dental_school";
+  const mappingData = getMappingDataByEducationalArea(educationalArea);
+  const selectOptions = getStandardsSelectOptions(educationalArea);
+  const aiRecommendations = getAIRecommendations(educationalArea);
   return (
     <Card>
       <CardHeader>
@@ -48,10 +147,11 @@ export function StandardsMapping() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Standards</SelectItem>
-              <SelectItem value="usmle-step1">USMLE Step 1</SelectItem>
-              <SelectItem value="usmle-step2">USMLE Step 2</SelectItem>
-              <SelectItem value="lcme">LCME Standards</SelectItem>
+              {selectOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -103,11 +203,12 @@ export function StandardsMapping() {
             <div className="flex-1">
               <h4 className="font-medium text-foreground mb-1">AI Recommendation</h4>
               <p className="text-sm text-muted-foreground mb-2">
-                Based on current mapping analysis, consider adding more content for:
+                {aiRecommendations.description}
               </p>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Arrhythmia classification (USMLE Step 1 - Cardiovascular)</li>
-                <li>• Pharmacokinetics principles (Internal Standards)</li>
+                {aiRecommendations.items.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
               <button className="mt-3 text-xs text-accent hover:text-accent/80" data-testid="button-view-recommendations">
                 View detailed recommendations →
