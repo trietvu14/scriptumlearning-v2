@@ -35,7 +35,7 @@ const getMappingDataByEducationalArea = (educationalArea: string) => {
         {
           id: "internal-standards", 
           title: "Internal Standards",
-          subtitle: "Curriculum Template",
+          subtitle: "Curriculum Mapping Template",
           progress: 92,
           completed: 67,
           total: 73,
