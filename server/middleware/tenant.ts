@@ -7,6 +7,11 @@ export const loadTenant = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: "Authentication required" });
   }
 
+  // Super admins don't have a tenant association
+  if (req.user.role === "super_admin") {
+    return next();
+  }
+
   if (!req.user.tenantId) {
     return res.status(400).json({ message: "No tenant associated with user" });
   }

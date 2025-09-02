@@ -75,7 +75,7 @@ export const tenants = pgTable("tenants", {
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  tenantId: uuid("tenant_id").references(() => tenants.id), // Nullable for super_admin users
   email: text("email").notNull(),
   username: text("username").notNull(),
   password: text("password").notNull(),

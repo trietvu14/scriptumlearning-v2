@@ -146,6 +146,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const tenantId = req.user!.tenantId;
 
+      // Super admins can't access dashboard stats without a specific tenant
+      if (!tenantId) {
+        return res.status(400).json({ message: "Dashboard stats require tenant context" });
+      }
+
       const [studentCount] = await db
         .select({ count: sql<number>`count(*)` })
         .from(users)
@@ -183,7 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tenantStandards = await db
         .select()
         .from(standards)
-        .where(eq(standards.tenantId, req.user!.tenantId));
+        .where(eq(standards.tenantId, req.user!.tenantId!));
 
       res.json(tenantStandards);
     } catch (error) {
@@ -238,7 +243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .insert(content)
         .values({
           ...contentData,
-          tenantId: req.user!.tenantId
+          tenantId: req.user!.tenantId!
         })
         .returning();
 
@@ -248,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .select()
           .from(standardObjectives)
           .innerJoin(standards, eq(standardObjectives.standardId, standards.id))
-          .where(eq(standards.tenantId, req.user!.tenantId));
+          .where(eq(standards.tenantId, req.user!.tenantId!));
 
         try {
           // AI categorization will be handled by the new AI service endpoints
@@ -273,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const exams = await db
         .select()
         .from(boardExams)
-        .where(eq(boardExams.tenantId, req.user!.tenantId))
+        .where(eq(boardExams.tenantId, req.user!.tenantId!))
         .orderBy(desc(boardExams.createdAt));
 
       res.json(exams);
@@ -289,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .insert(boardExams)
         .values({
           ...examData,
-          tenantId: req.user!.tenantId,
+          tenantId: req.user!.tenantId!,
           createdBy: req.user!.id
         })
         .returning();
@@ -309,7 +314,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .select()
         .from(standardObjectives)
         .innerJoin(standards, eq(standardObjectives.standardId, standards.id))
-        .where(eq(standards.tenantId, req.user!.tenantId));
+        .where(eq(standards.tenantId, req.user!.tenantId!));
 
       // Board questions generation will be handled by dedicated AI endpoints
       const questions = []; // Placeholder for now
@@ -317,7 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Save generated questions
       const savedQuestions = await db.insert(examQuestions).values(
         questions.map((q: any) => ({
-          tenantId: req.user!.tenantId,
+          tenantId: req.user!.tenantId!,
           boardExamId: examId,
           question: q.question,
           options: q.options,
@@ -402,7 +407,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .insert(ragDocuments)
         .values({
           ...documentData,
-          tenantId: req.user!.tenantId,
+          tenantId: req.user!.tenantId!,
           uploadedBy: req.user!.id
         })
         .returning();
@@ -418,7 +423,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const documents = await db
         .select()
         .from(ragDocuments)
-        .where(eq(ragDocuments.tenantId, req.user!.tenantId))
+        .where(eq(ragDocuments.tenantId, req.user!.tenantId!))
         .orderBy(desc(ragDocuments.createdAt));
 
       res.json(documents);

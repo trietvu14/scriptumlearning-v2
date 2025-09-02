@@ -23,6 +23,9 @@ router.get("/", requireAuth, requireRole(["super_admin", "school_admin"]), async
       }
     } else {
       // School admin can only see users from their own tenant
+      if (!req.user!.tenantId) {
+        return res.status(400).json({ error: "User has no tenant association" });
+      }
       users = await storage.getUsersByTenant(req.user!.tenantId);
     }
     
