@@ -20,13 +20,14 @@ The platform is built with a modern, scalable architecture comprising:
 - **Database**: PostgreSQL with the pgvector extension is used for robust data storage and AI embeddings, supporting a multi-tenant architecture with row-level security.
 - **AI Integration**: Leverages OpenAI GPT models for agentic AI workflows, content categorization, board review generation, and study path recommendations. RAG (Retrieval Augmented Generation) document stores are utilized for AI training and course-specific assistance.
 - **Multi-tenancy**: Designed with a multi-tenant architecture, including tenant management APIs, user invitation systems, and admin dashboards. Role-Based Access Control (RBAC) ensures data isolation and appropriate access levels for Super Admins, School Admins, Faculty, Administrative Support, and Students.
+- **Hierarchical Curriculum Structure**: Enhanced database schema with parentId and level columns supporting unlimited nesting depth (Subject → Topic → Subtopic → Sub-subtopic, etc.) with recursive rendering and visual hierarchy displays.
 - **Key Features**:
     - Multi-tenant school/college management with automated user provisioning.
     - Integrations with major LMS platforms (Canvas, Blackboard, Moodle) for user and data synchronization.
     - Standards mapping for various educational frameworks (USMLE, LCME, iNBDE, CODA).
     - AI-powered content categorization and smart standards suggestions.
-    - Comprehensive dental school curriculum template system with multi-tenant cloning capabilities.
-    - Interactive curriculum mapping with matrix visualization.
+    - Comprehensive dental school curriculum template system with 22+ subjects, 80+ topics, and 200+ subtopics from official dental school curriculum documents.
+    - Interactive curriculum mapping with matrix visualization and hierarchical structure display.
     - Board review mock exams with personalized study paths.
     - Dashboard visualizations, reporting, and analytics.
 
