@@ -32,6 +32,46 @@ Key features include:
 - Robust assessment tools and board review mock exams with personalized study paths.
 - **Comprehensive Dental School Curriculum Template System**: Master template with 14 subjects and 45 topics covering 4-year dental education (D1-D4), with multi-tenant cloning capabilities allowing schools to create and customize their own copies while preserving the official master template.
 
+## Development Phases
+
+### Phase 1: Foundation (Completed)
+- ✅ Multi-tenant architecture with PostgreSQL database
+- ✅ User authentication and role-based access control
+- ✅ Basic curriculum standards management
+- ✅ Super admin tenant-agnostic architecture
+- ✅ Core UI components with Scriptum branding
+
+### Phase 2: Standards & Templates (Completed)
+- ✅ Comprehensive standards frameworks (USMLE, LCME, iNBDE, CODA)
+- ✅ Curriculum Standard Template for dental schools
+- ✅ Multi-tenant template cloning system
+- ✅ School admin permissions for template management
+- ✅ Template deletion capabilities
+
+### Phase 3: AI Integration (In Progress)
+- 🔄 OpenAI GPT integration for content analysis
+- 🔄 RAG document processing system
+- 🔄 Automated content categorization
+- 🔄 AI-powered curriculum recommendations
+
+### Phase 4: LMS Integration (Planned)
+- 📋 Canvas, Blackboard, and Moodle API integrations
+- 📋 Automated user provisioning from LMS data
+- 📋 Course roster synchronization
+- 📋 Grade passback capabilities
+
+### Phase 5: Assessment Tools (Planned)
+- 📋 Board review mock exams
+- 📋 Personalized study paths
+- 📋 Progress tracking and analytics
+- 📋 Performance dashboards
+
+### Phase 6: Advanced Features (Future)
+- 📋 Real-time collaboration tools
+- 📋 Advanced reporting and analytics
+- 📋 Mobile application support
+- 📋 Third-party integrations
+
 ## External Dependencies
 - **OpenAI GPT Models**: Used for AI-powered content categorization, intelligent content analysis, and generating recommendations.
 - **PostgreSQL with pgvector**: For database management and efficient storage/retrieval of AI embeddings.
