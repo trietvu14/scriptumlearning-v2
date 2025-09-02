@@ -348,31 +348,32 @@ router.post("/seed", async (req, res) => {
   }
 });
 
-// Delete framework (school admin can delete their own, super admin can delete any)
-router.delete("/frameworks/:frameworkId", requireAuth, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+// Delete framework (super admin and school admin for their own custom frameworks)
+router.delete("/frameworks/:id", requireAuth, requireRole(["super_admin", "school_admin"]), async (req, res) => {
   try {
-    const frameworkId = req.params.frameworkId;
+    const frameworkId = req.params.id;
     
     // Get the framework to check permissions
-    const framework = await db.select()
+    const [framework] = await db
+      .select()
       .from(standardsFrameworks)
       .where(eq(standardsFrameworks.id, frameworkId))
-      .then(rows => rows[0]);
+      .limit(1);
     
     if (!framework) {
       return res.status(404).json({ error: "Framework not found" });
     }
     
-    // Check if user can delete this framework
+    // Check permissions
     if (req.user!.role === "school_admin") {
-      // School admins can only delete their own non-official frameworks
+      // School admins can only delete their own custom frameworks
       if (framework.isOfficial || framework.tenantId !== req.user!.tenantId) {
         return res.status(403).json({ error: "Can only delete your own custom frameworks" });
       }
     }
     
-    // Delete related data in order (topics -> subjects -> framework)
-    // First, get all subjects for this framework
+    // Delete related data first (topics -> subjects -> framework)
+    // Get all subjects for this framework
     const subjects = await db.select()
       .from(standardsSubjects)
       .where(eq(standardsSubjects.frameworkId, frameworkId));
@@ -388,11 +389,12 @@ router.delete("/frameworks/:frameworkId", requireAuth, requireRole(["super_admin
       .where(eq(standardsSubjects.frameworkId, frameworkId));
     
     // Finally, delete the framework
-    await db.delete(standardsFrameworks)
+    await db
+      .delete(standardsFrameworks)
       .where(eq(standardsFrameworks.id, frameworkId));
     
     res.json({ message: "Framework deleted successfully" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting framework:", error);
     res.status(500).json({ error: "Failed to delete framework" });
   }

@@ -182,6 +182,40 @@ export function StandardsPage() {
     }
   });
 
+  // Delete framework mutation
+  const deleteFrameworkMutation = useMutation({
+    mutationFn: async (frameworkId: string) => {
+      const response = await fetch(`/api/standards/frameworks/${frameworkId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+        }
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to delete framework");
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/standards/frameworks"] });
+      setSelectedFramework(null);
+      toast({
+        title: "Success",
+        description: "Standards framework deleted successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleCreateFramework = () => {
     if (!newFramework.name || !newFramework.description) {
       toast({
@@ -192,6 +226,12 @@ export function StandardsPage() {
       return;
     }
     createFrameworkMutation.mutate(newFramework);
+  };
+
+  const handleDeleteFramework = (framework: StandardsFramework) => {
+    if (window.confirm(`Are you sure you want to delete "${framework.name}"? This action cannot be undone.`)) {
+      deleteFrameworkMutation.mutate(framework.id);
+    }
   };
 
   const handleFrameworkSelect = (framework: StandardsFramework) => {
@@ -442,7 +482,7 @@ export function StandardsPage() {
 
                 {user?.role && ["super_admin", "school_admin", "faculty"].includes(user.role) && (
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" disabled>
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Button>
@@ -450,6 +490,20 @@ export function StandardsPage() {
                       <Upload className="w-4 h-4 mr-2" />
                       Import Data
                     </Button>
+                    {/* Show delete button for custom frameworks or super admin */}
+                    {((user.role === "super_admin") || 
+                      (user.role === "school_admin" && !selectedFramework.isOfficial)) && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleDeleteFramework(selectedFramework)}
+                        disabled={deleteFrameworkMutation.isPending}
+                        data-testid="button-delete-framework"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        {deleteFrameworkMutation.isPending ? "Deleting..." : "Delete"}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
