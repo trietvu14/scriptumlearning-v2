@@ -351,4 +351,4 @@ router.post('/training-feedback', authenticateToken, requireRole(['super_admin',
   }
 });
 
-export { router as aiRoutes };
+export default router;

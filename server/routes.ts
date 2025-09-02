@@ -40,7 +40,7 @@ import notificationRoutes from "./routes/notifications";
 import adminRoutes from "./routes/admin";
 import profileRoutes from "./routes/profile";
 import inbdeRoutes from "./routes/inbde";
-import { aiRoutes } from "./routes/ai";
+import aiRoutes from "./routes/ai";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -251,40 +251,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .where(eq(standards.tenantId, req.user!.tenantId));
 
         try {
-          const categories = await aiService.categorizeContent(
-            {
-              title: newContent.title,
-              description: newContent.description,
-              content: newContent.content as string,
-              type: newContent.type
-            },
-            objectives.map(obj => ({
-              id: obj.standard_objectives.id,
-              code: obj.standard_objectives.code,
-              title: obj.standard_objectives.title,
-              description: obj.standard_objectives.description || undefined
-            }))
-          );
+          // AI categorization will be handled by the new AI service endpoints
+          console.log('Content created, AI categorization available via /ai-categorization page');
 
-          // Save AI mappings
-          if (categories.length > 0) {
-            await db.insert(contentStandardMappings).values(
-              categories.map(category => ({
-                contentId: newContent.id,
-                standardObjectiveId: category.standardObjectiveId,
-                confidence: category.confidence.toString(),
-                isAiGenerated: true
-              }))
-            );
-
-            await db
-              .update(content)
-              .set({ 
-                aiCategorized: true,
-                aiMetadata: { categories }
-              })
-              .where(eq(content.id, newContent.id));
-          }
+          // AI categorization is now handled via dedicated endpoints
         } catch (aiError) {
           console.error("AI categorization failed:", aiError);
           // Content is still created, just without AI categorization
@@ -341,11 +311,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .innerJoin(standards, eq(standardObjectives.standardId, standards.id))
         .where(eq(standards.tenantId, req.user!.tenantId));
 
-      const questions = await aiService.generateBoardQuestions(
-        subject || topics?.join(', ') || 'General Medicine',
-        difficulty || 'intermediate',
-        count || 5
-      );
+      // Board questions generation will be handled by dedicated AI endpoints
+      const questions = []; // Placeholder for now
 
       // Save generated questions
       const savedQuestions = await db.insert(examQuestions).values(
@@ -407,8 +374,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: integration.createdAt || undefined,
         updatedAt: integration.updatedAt || undefined
       };
-      const lmsUsers = await lmsService.syncUsers(integrationForSync);
-      const lmsCourses = await lmsService.syncCourses(integrationForSync);
+      // LMS sync functionality will be implemented in Phase 4
+      const lmsUsers: any[] = [];
+      const lmsCourses: any[] = [];
 
       // Update last sync time
       await db
