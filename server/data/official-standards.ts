@@ -181,69 +181,221 @@ export const officialStandardsData = {
             {
               name: "Instruction",
               code: "CODA-2-INST",
-              learningObjectives: [
-                "Provide written information about course goals, requirements, content, evaluation methods, and grading criteria in advance",
-                "Perform individual evaluations for students who do not meet published didactic, behavioral, and/or clinical criteria",
-                "Implement institutional due process policies for student evaluation decisions"
+              learningObjectives: ["Requirements for written course information and student evaluation policies"],
+              subtopics: [
+                {
+                  name: "2-1: Course Information Requirements",
+                  code: "CODA-2-1",
+                  competencyLevel: "required",
+                  learningObjectives: [
+                    "Provide written information about course goals and requirements in advance",
+                    "Specify nature of course content and evaluation methods", 
+                    "Explain how grades and competency are determined"
+                  ],
+                  assessmentCriteria: ["Written course syllabi available", "Clear evaluation criteria published"]
+                },
+                {
+                  name: "2-2: Student Evaluation Policies",
+                  code: "CODA-2-2", 
+                  competencyLevel: "required",
+                  learningObjectives: [
+                    "Perform individual evaluations for students not meeting published criteria",
+                    "Implement institutional due process policies for evaluation decisions"
+                  ],
+                  assessmentCriteria: ["Due process procedures documented", "Individual evaluation protocols established"]
+                }
               ]
             },
             {
               name: "Critical Thinking",
               code: "CODA-2-CT",
-              learningObjectives: [
-                "Demonstrate competency in critical thinking and problem-solving for comprehensive patient care",
-                "Apply critical thinking to scientific inquiry and research methodology",
-                "Use teaching methods that support critical thinking development",
-                "Engage in analysis, comparison, and evaluation of alternative approaches",
-                "Provide rationale for plans of action and predict outcomes",
-                "Perform decision-making through prospective simulations",
-                "Conduct retrospective critiques identifying errors and exemplary performance"
+              learningObjectives: ["Development of critical thinking and problem-solving competencies"],
+              subtopics: [
+                {
+                  name: "2-10: Critical Thinking Competency",
+                  code: "CODA-2-10",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Demonstrate competency in critical thinking and problem-solving for comprehensive patient care",
+                    "Apply critical thinking to scientific inquiry and research methodology"
+                  ],
+                  assessmentCriteria: ["Critical thinking assessments conducted", "Problem-solving skills demonstrated"]
+                },
+                {
+                  name: "Evidence of Critical Thinking Development",
+                  code: "CODA-2-10-EVIDENCE",
+                  competencyLevel: "implementation",
+                  learningObjectives: [
+                    "Explicit discussion of meaning, importance, and application of critical thinking",
+                    "Use questions requiring analysis of problem etiology and alternative approaches",
+                    "Provide rationale for plans of action and predict outcomes",
+                    "Conduct prospective simulations for decision-making practice",
+                    "Perform retrospective critiques identifying errors and exemplary performance",
+                    "Assign writing tasks analyzing problems and defending decisions",
+                    "Analyze work products comparing outcomes to best evidence",
+                    "Demonstrate active learning methods including case analysis and evidence appraisal"
+                  ],
+                  assessmentCriteria: ["Teaching methods support critical thinking", "Multiple evidence types documented"]
+                }
               ]
             },
             {
               name: "Biomedical Sciences",
               code: "CODA-2-BMS",
-              learningObjectives: [
-                "Ensure in-depth understanding of basic biological principles and fundamental body system structures and functions",
-                "Emphasize oro-facial complex as important anatomical area in complex biological interrelationship with entire body",
-                "Provide in-depth information on abnormal biological conditions",
-                "Support understanding of etiology, epidemiology, differential diagnosis, pathogenesis, prevention, treatment and prognosis of oral disorders",
-                "Apply biomedical science knowledge in patient care delivery",
-                "Apply advances in modern biology to clinical practice and integrate new medical knowledge relevant to oral health care"
+              learningObjectives: ["Comprehensive biomedical science knowledge and application"],
+              subtopics: [
+                {
+                  name: "2-12: Basic Biological Principles",
+                  code: "CODA-2-12",
+                  competencyLevel: "foundational",
+                  learningObjectives: [
+                    "Ensure in-depth understanding of basic biological principles",
+                    "Provide core information on fundamental structures, functions and interrelationships of body systems"
+                  ],
+                  assessmentCriteria: ["Comprehensive biomedical curricula implemented", "Systems integration demonstrated"]
+                },
+                {
+                  name: "2-13: Oro-facial Complex Emphasis",
+                  code: "CODA-2-13",
+                  competencyLevel: "specialized",
+                  learningObjectives: [
+                    "Emphasize oro-facial complex as important anatomical area",
+                    "Understand complex biological interrelationship with entire body"
+                  ],
+                  assessmentCriteria: ["Oro-facial anatomy extensively covered", "Systemic relationships taught"]
+                },
+                {
+                  name: "2-14: Abnormal Biological Conditions",
+                  code: "CODA-2-14",
+                  competencyLevel: "clinical",
+                  learningObjectives: [
+                    "Provide in-depth information on abnormal biological conditions",
+                    "Support understanding of etiology, epidemiology, differential diagnosis",
+                    "Cover pathogenesis, prevention, treatment and prognosis of oral disorders"
+                  ],
+                  assessmentCriteria: ["Pathology curricula comprehensive", "Clinical correlation demonstrated"]
+                },
+                {
+                  name: "2-15: Clinical Application",
+                  code: "CODA-2-15",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Apply biomedical science knowledge in patient care delivery",
+                    "Integrate advances in modern biology to clinical practice",
+                    "Apply new medical knowledge relevant to oral health care"
+                  ],
+                  assessmentCriteria: ["Clinical application demonstrated", "Current knowledge integrated"]
+                }
               ]
             },
             {
               name: "Behavioral Sciences",
               code: "CODA-2-BS",
-              learningObjectives: [
-                "Apply fundamental principles of behavioral sciences for patient-centered approaches to oral health",
-                "Manage diverse patient populations with interpersonal and communication skills",
-                "Function successfully in multicultural work environments",
-                "Address factors and practices associated with health disparities among subpopulations",
-                "Facilitate dental education in environments supportive of diversity and inclusion"
+              learningObjectives: ["Behavioral science principles for patient-centered care"],
+              subtopics: [
+                {
+                  name: "2-16: Behavioral Sciences Application",
+                  code: "CODA-2-16",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Apply fundamental principles of behavioral sciences",
+                    "Use patient-centered approaches for promoting, improving and maintaining oral health"
+                  ],
+                  assessmentCriteria: ["Behavioral science competencies assessed", "Patient-centered care demonstrated"]
+                },
+                {
+                  name: "2-17: Diverse Population Management",
+                  code: "CODA-2-17",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Manage diverse patient populations effectively",
+                    "Demonstrate interpersonal and communication skills",
+                    "Function successfully in multicultural work environments"
+                  ],
+                  assessmentCriteria: ["Cultural competence demonstrated", "Communication skills assessed"]
+                },
+                {
+                  name: "Diversity and Inclusion Focus",
+                  code: "CODA-2-BS-DIVERSITY",
+                  competencyLevel: "curricular",
+                  learningObjectives: [
+                    "Learn about factors associated with health disparities among subpopulations",
+                    "Address racial, ethnic, geographic, and socioeconomic health disparities",
+                    "Facilitate education in environments supportive of diversity and inclusion"
+                  ],
+                  assessmentCriteria: ["Diversity curriculum implemented", "Health disparities addressed"]
+                }
               ]
             },
             {
               name: "Clinical Sciences",
               code: "CODA-2-CS",
-              learningObjectives: [
-                "Access, critically appraise, apply, and communicate scientific and lay literature for evidence-based patient care",
-                "Understand basic principles of clinical and translational research",
-                "Provide oral health care within scope of general dentistry to patients in all life stages",
-                "Perform patient assessment, diagnosis, comprehensive treatment planning, prognosis, and informed consent",
-                "Screen and assess risk for head and neck cancer",
-                "Recognize treatment complexity and identify when referral is indicated",
-                "Implement health promotion and disease prevention including caries management",
-                "Administer local anesthesia and manage pain and anxiety control",
-                "Restore teeth and manage dental laboratory procedures",
-                "Replace teeth including fixed, removable and implant prosthodontic therapies",
-                "Provide periodontal therapy and pulpal therapy",
-                "Manage oral mucosal, temporomandibular, and osseous disorders",
-                "Perform hard and soft tissue surgery and manage dental emergencies",
-                "Manage malocclusion and space management",
-                "Evaluate treatment outcomes, recall strategies, and prognosis",
-                "Assess and manage treatment of patients with special needs",
-                "Engage in service learning and community-based learning experiences"
+              learningObjectives: ["Comprehensive clinical competencies for general dentistry"],
+              subtopics: [
+                {
+                  name: "2-22: Evidence-Based Practice",
+                  code: "CODA-2-22",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Access, critically appraise, apply, and communicate scientific literature",
+                    "Provide evidence-based patient care",
+                    "Understand basic principles of clinical and translational research"
+                  ],
+                  assessmentCriteria: ["Evidence-based practice demonstrated", "Research principles understood"]
+                },
+                {
+                  name: "2-23: General Dentistry Scope",
+                  code: "CODA-2-23",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Provide oral health care within scope of general dentistry",
+                    "Treat patients in all stages of life competently"
+                  ],
+                  assessmentCriteria: ["General dentistry competencies demonstrated", "Life-stage care provided"]
+                },
+                {
+                  name: "2-24: Minimum Clinical Competencies",
+                  code: "CODA-2-24",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Perform patient assessment, diagnosis, comprehensive treatment planning, prognosis, and informed consent",
+                    "Conduct screening and risk assessment for head and neck cancer",
+                    "Recognize treatment complexity and identify when referral is indicated",
+                    "Implement health promotion and disease prevention including caries management",
+                    "Administer local anesthesia and manage pain and anxiety control",
+                    "Restore teeth and manage dental laboratory procedures",
+                    "Replace teeth including fixed, removable and dental implant prosthodontic therapies",
+                    "Provide periodontal therapy and pulpal therapy",
+                    "Manage oral mucosal, temporomandibular, and osseous disorders",
+                    "Perform hard and soft tissue surgery and manage dental emergencies",
+                    "Manage malocclusion and space management",
+                    "Evaluate treatment outcomes, recall strategies, and prognosis"
+                  ],
+                  assessmentCriteria: ["All competency areas demonstrated", "Clinical proficiency assessed"]
+                },
+                {
+                  name: "2-25: Patients with Special Needs",
+                  code: "CODA-2-25",
+                  competencyLevel: "graduate_competency",
+                  learningObjectives: [
+                    "Assess and manage treatment of patients with special needs",
+                    "Use proper communication techniques and respectful nomenclature",
+                    "Assess treatment needs compatible with special needs",
+                    "Provide services or referral as appropriate"
+                  ],
+                  assessmentCriteria: ["Special needs patients treated", "Appropriate care protocols followed"]
+                },
+                {
+                  name: "2-26: Service Learning",
+                  code: "CODA-2-26",
+                  competencyLevel: "experiential",
+                  learningObjectives: [
+                    "Engage in service learning and community-based learning experiences",
+                    "Develop culturally competent oral health care workforce",
+                    "Experience treatment of diverse populations in community settings"
+                  ],
+                  assessmentCriteria: ["Service learning opportunities provided", "Community engagement documented"]
+                }
               ]
             }
           ]
@@ -256,47 +408,138 @@ export const officialStandardsData = {
             {
               name: "Patient-Centered Care Policies",
               code: "CODA-5-PCC",
-              learningObjectives: [
-                "Establish and distribute written policy addressing meaning and commitment to patient-centered care",
-                "Ensure considerate, respectful and confidential treatment of patients",
-                "Provide continuity and completion of treatment",
-                "Give patients access to complete and current information about their condition",
-                "Provide advance knowledge of treatment costs and informed consent",
-                "Explain recommended treatment, alternatives, risks, and expected outcomes"
+              learningObjectives: ["Establish comprehensive patient-centered care policies"],
+              subtopics: [
+                {
+                  name: "5-1: Published Policy Requirements",
+                  code: "CODA-5-1",
+                  competencyLevel: "institutional",
+                  learningObjectives: [
+                    "Establish published policy addressing meaning and commitment to patient-centered care",
+                    "Distribute written policy to students, faculty, staff, and patients"
+                  ],
+                  assessmentCriteria: ["Written policy published", "Policy distributed to all stakeholders"]
+                },
+                {
+                  name: "Patient Rights Statement Components",
+                  code: "CODA-5-1-RIGHTS",
+                  competencyLevel: "policy",
+                  learningObjectives: [
+                    "Ensure considerate, respectful and confidential treatment",
+                    "Provide continuity and completion of treatment",
+                    "Give access to complete and current information about patient condition",
+                    "Provide advance knowledge of treatment costs",
+                    "Obtain informed consent for all procedures",
+                    "Explain recommended treatment, alternatives, refusal options, and risks",
+                    "Ensure treatment meets professional standard of care"
+                  ],
+                  assessmentCriteria: ["All patient rights components addressed", "Patient rights statement comprehensive"]
+                }
               ]
             },
             {
               name: "Evidence-Based Patient Care",
               code: "CODA-5-EBC",
-              learningObjectives: [
-                "Provide evidence-based patient care integrating best research evidence and patient values",
-                "Use evidence to evaluate new technology and products",
-                "Guide diagnosis and treatment decisions with current evidence"
+              learningObjectives: ["Implement evidence-based patient care protocols"],
+              subtopics: [
+                {
+                  name: "5-2: Evidence Integration",
+                  code: "CODA-5-2",
+                  competencyLevel: "clinical",
+                  learningObjectives: [
+                    "Provide evidence-based patient care integrating best research evidence and patient values",
+                    "Use evidence to evaluate new technology and products",
+                    "Guide diagnosis and treatment decisions with current evidence"
+                  ],
+                  assessmentCriteria: ["Evidence-based protocols implemented", "Technology evaluation processes established"]
+                }
               ]
             },
             {
               name: "Quality Improvement System",
               code: "CODA-5-QI",
-              learningObjectives: [
-                "Conduct formal continuous quality improvement for patient care program",
-                "Establish patient-centered standards of care focused on comprehensive care with measurable criteria",
-                "Review and analyze compliance with defined standards of care",
-                "Review representative sample of patients and records to assess appropriateness and quality of care",
-                "Determine causes of treatment deficiencies and implement corrective measures",
-                "Create and maintain databases for monitoring and improving patient care"
+              learningObjectives: ["Conduct formal continuous quality improvement"],
+              subtopics: [
+                {
+                  name: "5-3: Continuous Quality Improvement",
+                  code: "CODA-5-3",
+                  competencyLevel: "institutional",
+                  learningObjectives: [
+                    "Establish patient-centered standards of care with measurable criteria",
+                    "Conduct ongoing review and analysis of compliance with standards",
+                    "Review representative sample of patients and records for quality assessment",
+                    "Determine causes of treatment deficiencies",
+                    "Implement corrective measures as appropriate"
+                  ],
+                  assessmentCriteria: ["Quality improvement system operational", "Data monitoring databases maintained"]
+                }
               ]
             },
             {
-              name: "Patient Safety and Emergency Management",
-              code: "CODA-5-PSE",
-              learningObjectives: [
-                "Ensure quantitative criteria for advancement do not compromise comprehensive patient care",
-                "Provide active patients access to professional services for dental emergencies at all times",
-                "Maintain continuous basic life support certification for all patient care personnel",
-                "Manage common medical emergencies effectively",
-                "Ensure safe use of ionizing radiation with appropriate policies and procedures",
-                "Establish and enforce adequate preclinical/clinical/laboratory asepsis and infection control",
-                "Maintain strict confidentiality of patient health information"
+              name: "Operational Requirements",
+              code: "CODA-5-OPS",
+              learningObjectives: ["Ensure safe and effective patient care operations"],
+              subtopics: [
+                {
+                  name: "5-4: Student Advancement Criteria",
+                  code: "CODA-5-4",
+                  competencyLevel: "policy",
+                  learningObjectives: [
+                    "Ensure quantitative criteria for advancement do not compromise comprehensive patient care"
+                  ],
+                  assessmentCriteria: ["Advancement criteria reviewed for patient care impact"]
+                },
+                {
+                  name: "5-5: Emergency Services Access",
+                  code: "CODA-5-5",
+                  competencyLevel: "operational",
+                  learningObjectives: [
+                    "Provide active patients access to professional services at all times for dental emergencies"
+                  ],
+                  assessmentCriteria: ["24/7 emergency service protocols established"]
+                },
+                {
+                  name: "5-6: Basic Life Support Certification",
+                  code: "CODA-5-6",
+                  competencyLevel: "safety",
+                  learningObjectives: [
+                    "Maintain continuous basic life support certification for all patient care personnel",
+                    "Ensure ability to manage common medical emergencies"
+                  ],
+                  assessmentCriteria: ["All personnel BLS certified", "Emergency management protocols current"]
+                },
+                {
+                  name: "5-7: Radiation Safety",
+                  code: "CODA-5-7",
+                  competencyLevel: "safety",
+                  learningObjectives: [
+                    "Implement written policies for safe use of ionizing radiation",
+                    "Establish criteria for patient selection and exposure frequency",
+                    "Define protocols for retaking radiographs consistent with accepted practice"
+                  ],
+                  assessmentCriteria: ["Radiation safety protocols documented", "ALARA principles followed"]
+                },
+                {
+                  name: "5-8: Infection Control",
+                  code: "CODA-5-8",
+                  competencyLevel: "safety",
+                  learningObjectives: [
+                    "Establish and enforce adequate preclinical/clinical/laboratory asepsis",
+                    "Implement infection and biohazard control measures",
+                    "Ensure proper disposal of hazardous waste"
+                  ],
+                  assessmentCriteria: ["Infection control protocols enforced", "Waste disposal procedures compliant"]
+                },
+                {
+                  name: "5-9: Patient Confidentiality",
+                  code: "CODA-5-9",
+                  competencyLevel: "privacy",
+                  learningObjectives: [
+                    "Ensure strict confidentiality of patient health information",
+                    "Implement HIPAA-compliant privacy policies and procedures"
+                  ],
+                  assessmentCriteria: ["Patient privacy protected", "HIPAA compliance maintained"]
+                }
               ]
             }
           ]
@@ -309,41 +552,94 @@ export const officialStandardsData = {
             {
               name: "Research Mission and Infrastructure",
               code: "CODA-6-RMI",
-              learningObjectives: [
-                "Integrate research as component of dental school purpose, mission, goals and objectives",
-                "Develop and sustain research program on continuing basis",
-                "Establish research areas with ongoing funded support",
-                "Demonstrate commitment to research in mission statement, strategic plan, and financial support",
-                "Conduct regular ongoing research programmatic review",
-                "Secure extramural grant and foundation support for research program",
-                "Demonstrate global impact of research program"
+              learningObjectives: ["Establish research as integral component of dental school mission"],
+              subtopics: [
+                {
+                  name: "6-1: Research Integration",
+                  code: "CODA-6-1",
+                  competencyLevel: "institutional",
+                  learningObjectives: [
+                    "Integrate research as component of dental school purpose, mission, goals and objectives",
+                    "Develop and sustain research program on continuing basis",
+                    "Regularly assess research mission achievement"
+                  ],
+                  assessmentCriteria: ["Research mission documented", "Annual research evaluations conducted"]
+                },
+                {
+                  name: "Research Infrastructure Evidence",
+                  code: "CODA-6-1-EVIDENCE",
+                  competencyLevel: "implementation",
+                  learningObjectives: [
+                    "Establish research areas with ongoing funded support",
+                    "Demonstrate commitment in mission statement, strategic plan, and financial support",
+                    "Conduct regular ongoing research programmatic review",
+                    "Secure extramural grant and foundation support",
+                    "Demonstrate global impact of research program"
+                  ],
+                  assessmentCriteria: ["Research infrastructure established", "External funding secured", "Global impact demonstrated"]
+                }
               ]
             },
             {
-              name: "Faculty Research and Scholarly Activity",
-              code: "CODA-6-FRSA",
-              learningObjectives: [
-                "Engage dental school faculty in research and scholarly activity appropriate to school mission",
-                "Establish focused, significant, and sustained programs to recruit and retain research faculty",
-                "Employ adequate number of full-time faculty with dedicated research time",
-                "Secure extramural funding for faculty research",
-                "Produce peer-reviewed scholarly publications based on original research",
-                "Present research at scientific meetings and symposia",
-                "Document research faculty recruitment efforts and productivity"
+              name: "Faculty Research Requirements",
+              code: "CODA-6-FRR",
+              learningObjectives: ["Ensure faculty engagement in research and scholarly activity"],
+              subtopics: [
+                {
+                  name: "6-2: Faculty Research Engagement",
+                  code: "CODA-6-2",
+                  competencyLevel: "faculty",
+                  learningObjectives: [
+                    "Engage dental school faculty in research and scholarly activity appropriate to school mission",
+                    "Establish programs to recruit and retain qualified research faculty",
+                    "Employ adequate number of full-time faculty with dedicated research time"
+                  ],
+                  assessmentCriteria: ["Faculty research participation documented", "Research faculty retention tracked"]
+                },
+                {
+                  name: "Faculty Research Evidence",
+                  code: "CODA-6-2-EVIDENCE",
+                  competencyLevel: "productivity",
+                  learningObjectives: [
+                    "Maintain faculty roster of full-time equivalents dedicated to research",
+                    "Secure extramural funding for faculty research",
+                    "Document research faculty recruitment efforts",
+                    "Produce peer-reviewed scholarly publications based on original research",
+                    "Present research at scientific meetings and symposia",
+                    "Demonstrate research program impact and productivity"
+                  ],
+                  assessmentCriteria: ["Faculty research productivity measured", "Publications and presentations tracked"]
+                }
               ]
             },
             {
               name: "Student Research Participation",
               code: "CODA-6-SRP",
-              learningObjectives: [
-                "Provide opportunities and encourage student participation in faculty-mentored research",
-                "Expose students to biomedical, translational, educational, epidemiologic and clinical research",
-                "Align student research activities with institutional research mission and goals",
-                "Introduce students to principles of research methodology",
-                "Provide elective research opportunities beyond basic introduction",
-                "Support formal presentation of student research at school or university events",
-                "Encourage scholarly publications with student authors",
-                "Facilitate student presentation at scientific meetings"
+              learningObjectives: ["Provide student research opportunities and mentorship"],
+              subtopics: [
+                {
+                  name: "6-3: Student Research Opportunities",
+                  code: "CODA-6-3",
+                  competencyLevel: "educational",
+                  learningObjectives: [
+                    "Provide opportunities and encourage student participation in faculty-mentored research",
+                    "Expose students to biomedical, translational, educational, epidemiologic and clinical research",
+                    "Align student research activities with institutional research mission and goals",
+                    "Introduce students to principles of research methodology"
+                  ],
+                  assessmentCriteria: ["Student research opportunities provided", "Research methodology taught"]
+                },
+                {
+                  name: "Student Research Evidence",
+                  code: "CODA-6-3-EVIDENCE",
+                  competencyLevel: "outcomes",
+                  learningObjectives: [
+                    "Support formal presentation of student research at school or university events",
+                    "Encourage scholarly publications with student authors based on original research",
+                    "Facilitate student presentation at scientific meetings"
+                  ],
+                  assessmentCriteria: ["Student research presentations documented", "Student research publications tracked"]
+                }
               ]
             }
           ]
