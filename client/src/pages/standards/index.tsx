@@ -315,15 +315,9 @@ export function StandardsPage() {
     });
   };
 
-  // Recursive function to render hierarchical topic structure
-  const renderTopicHierarchy = (topics: any[], parentId: string | null = null, level: number = 1): React.ReactNode => {
-    // Filter topics by parentId and sort by order
-    const currentLevelTopics = topics
-      .filter(t => t.parentId === parentId)
-      .sort((a: any, b: any) => a.sortOrder - b.sortOrder);
-    
-    return currentLevelTopics.map((topic: any) => {
-      const children = topics.filter(t => t.parentId === topic.id);
+  // Function to render hierarchical topic structure with subtopics
+  const renderTopicHierarchy = (topics: any[], level: number = 1): React.ReactNode => {
+    return topics.map((topic: any) => {
       const indentStyle = { marginLeft: `${(level - 1) * 24}px` };
       const bulletIcon = level === 1 ? '●' : level === 2 ? '○' : level === 3 ? '→' : '•';
       const textSizeClass = level === 1 ? 'text-sm font-semibold' : level === 2 ? 'text-sm font-medium' : 'text-xs font-normal';
@@ -332,6 +326,7 @@ export function StandardsPage() {
       
       return (
         <div key={topic.id}>
+          {/* Main topic */}
           <div 
             className={`p-3 transition-colors rounded-md ${borderClass} ${bgClass}`}
             style={indentStyle}
@@ -357,6 +352,25 @@ export function StandardsPage() {
                     {topic.description}
                   </p>
                 )}
+                {/* Display learning objectives if available */}
+                {topic.learningObjectives && topic.learningObjectives.length > 0 && (
+                  <div className="mt-2" style={{ marginLeft: '20px' }}>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Learning Objectives:</p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      {topic.learningObjectives.slice(0, 3).map((objective: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-1">
+                          <span className="text-muted-foreground">•</span>
+                          <span>{objective}</span>
+                        </li>
+                      ))}
+                      {topic.learningObjectives.length > 3 && (
+                        <li className="text-xs italic">
+                          ... and {topic.learningObjectives.length - 3} more
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-1 ml-2">
                 <Badge variant="outline" className="text-xs">
@@ -371,10 +385,89 @@ export function StandardsPage() {
             </div>
           </div>
           
-          {/* Render children recursively */}
-          {children.length > 0 && (
+          {/* Render subtopics if they exist */}
+          {topic.subtopics && topic.subtopics.length > 0 && (
             <div className="mt-1 space-y-1">
-              {renderTopicHierarchy(topics, topic.id, level + 1)}
+              {topic.subtopics.map((subtopic: any) => {
+                const subtopicIndentStyle = { marginLeft: `${level * 24}px` };
+                const subtopicBulletIcon = level === 1 ? '○' : level === 2 ? '→' : '•';
+                const subtopicTextSizeClass = 'text-xs font-medium';
+                const subtopicBgClass = level === 1 ? 'bg-green-50 hover:bg-green-100' : 'bg-orange-50 hover:bg-orange-100';
+                const subtopicBorderClass = level === 1 ? 'border-l-3 border-green-400' : 'border-l-2 border-orange-400';
+                
+                return (
+                  <div key={subtopic.id || `${topic.id}-${subtopic.name}`}>
+                    <div 
+                      className={`p-3 transition-colors rounded-md ${subtopicBorderClass} ${subtopicBgClass}`}
+                      style={subtopicIndentStyle}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground font-mono text-sm">
+                              {subtopicBulletIcon}
+                            </span>
+                            <p className={subtopicTextSizeClass}>{subtopic.name}</p>
+                            <Badge variant="outline" className="text-xs">
+                              L{level + 1}
+                            </Badge>
+                          </div>
+                          {subtopic.code && (
+                            <p className="text-xs text-muted-foreground mt-1" style={{ marginLeft: '20px' }}>
+                              Code: {subtopic.code}
+                            </p>
+                          )}
+                          {subtopic.competencyLevel && (
+                            <p className="text-xs text-muted-foreground mt-1" style={{ marginLeft: '20px' }}>
+                              Level: {subtopic.competencyLevel}
+                            </p>
+                          )}
+                          {/* Display learning objectives for subtopics */}
+                          {subtopic.learningObjectives && subtopic.learningObjectives.length > 0 && (
+                            <div className="mt-2" style={{ marginLeft: '20px' }}>
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Learning Objectives:</p>
+                              <ul className="text-xs text-muted-foreground space-y-1">
+                                {subtopic.learningObjectives.slice(0, 2).map((objective: string, idx: number) => (
+                                  <li key={idx} className="flex items-start gap-1">
+                                    <span className="text-muted-foreground">•</span>
+                                    <span>{objective}</span>
+                                  </li>
+                                ))}
+                                {subtopic.learningObjectives.length > 2 && (
+                                  <li className="text-xs italic">
+                                    ... and {subtopic.learningObjectives.length - 2} more
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          )}
+                          {/* Display assessment criteria for subtopics */}
+                          {subtopic.assessmentCriteria && subtopic.assessmentCriteria.length > 0 && (
+                            <div className="mt-2" style={{ marginLeft: '20px' }}>
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Assessment:</p>
+                              <ul className="text-xs text-muted-foreground">
+                                {subtopic.assessmentCriteria.slice(0, 2).map((criteria: string, idx: number) => (
+                                  <li key={idx} className="flex items-start gap-1">
+                                    <span className="text-muted-foreground">•</span>
+                                    <span>{criteria}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 ml-2">
+                          {user?.role && ["super_admin", "school_admin"].includes(user.role) && (
+                            <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -734,7 +827,7 @@ export function StandardsPage() {
                             {subject.topics && subject.topics.length > 0 && (
                               <CardContent className="pt-0">
                                 <div className="space-y-2">
-                                  {renderTopicHierarchy(subject.topics, null, 1)}
+                                  {renderTopicHierarchy(subject.topics, 1)}
                                 </div>
                               </CardContent>
                             )}
