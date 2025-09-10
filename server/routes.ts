@@ -44,6 +44,7 @@ import adminRoutes from "./routes/admin";
 import profileRoutes from "./routes/profile";
 import inbdeRoutes from "./routes/inbde";
 import aiRoutes from "./routes/ai";
+import aiInsightsRoutes from "./routes/ai-insights";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -575,6 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/profile", profileRoutes);
   app.use("/api/inbde", inbdeRoutes);
   app.use("/api/ai", aiRoutes);
+  app.use("/api/ai-insights", aiInsightsRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

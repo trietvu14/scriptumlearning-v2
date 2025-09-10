@@ -386,11 +386,49 @@ export const aiAgentSessions = pgTable("ai_agent_sessions", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
   userId: uuid("user_id").references(() => users.id).notNull(),
-  sessionType: text("session_type").notNull(), // categorization, student_support, analysis
+  sessionType: text("session_type").notNull(), // categorization, student_support, analysis, insights
+  title: text("title"),
   context: jsonb("context"),
+  conversationHistory: jsonb("conversation_history").default(sql`'[]'::jsonb`),
+  dashboardConfig: jsonb("dashboard_config"),
+  generatedAnalytics: jsonb("generated_analytics"),
   isActive: boolean("is_active").default(true),
+  expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// AI Insights conversation messages for short-term memory
+export const aiConversationMessages = pgTable("ai_conversation_messages", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: uuid("session_id").references(() => aiAgentSessions.id, { onDelete: "cascade" }).notNull(),
+  role: text("role").notNull(), // 'user', 'assistant', 'system'
+  content: text("content").notNull(),
+  messageType: text("message_type").notNull(), // 'text', 'analytics_request', 'dashboard_generation', 'data_query'
+  metadata: jsonb("metadata").default(sql`'{}'::jsonb`),
+  toolCalls: jsonb("tool_calls"),
+  toolResults: jsonb("tool_results"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// AI Insights analytics requests and generated dashboards
+export const aiInsightsRequests = pgTable("ai_insights_requests", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: uuid("session_id").references(() => aiAgentSessions.id, { onDelete: "cascade" }).notNull(),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  requestType: text("request_type").notNull(), // 'dashboard', 'analytics', 'insights', 'reports'
+  query: text("query").notNull(),
+  processedQuery: text("processed_query"),
+  analysisScope: jsonb("analysis_scope"), // What data to analyze
+  generatedConfig: jsonb("generated_config"), // Dashboard/chart configuration
+  executionPlan: jsonb("execution_plan"), // Steps to generate the insights
+  results: jsonb("results"),
+  status: text("status").default("pending"), // pending, processing, completed, failed
+  processingTime: integer("processing_time"), // in milliseconds
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow(),
+  completedAt: timestamp("completed_at")
 });
 
 // AI Categorization Jobs for batch processing
@@ -832,3 +870,30 @@ export const insertAIModelMetricsSchema = createInsertSchema(aiModelMetrics).omi
 });
 export type InsertAIModelMetrics = z.infer<typeof insertAIModelMetricsSchema>;
 export type SelectAIModelMetrics = typeof aiModelMetrics.$inferSelect;
+
+// AI Agent Session schemas
+export const insertAIAgentSessionSchema = createInsertSchema(aiAgentSessions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertAIAgentSession = z.infer<typeof insertAIAgentSessionSchema>;
+export type SelectAIAgentSession = typeof aiAgentSessions.$inferSelect;
+
+// AI Conversation Message schemas
+export const insertAIConversationMessageSchema = createInsertSchema(aiConversationMessages).omit({
+  id: true,
+  createdAt: true
+});
+export type InsertAIConversationMessage = z.infer<typeof insertAIConversationMessageSchema>;
+export type SelectAIConversationMessage = typeof aiConversationMessages.$inferSelect;
+
+// AI Insights Request schemas
+export const insertAIInsightsRequestSchema = createInsertSchema(aiInsightsRequests).omit({
+  id: true,
+  processingTime: true,
+  createdAt: true,
+  completedAt: true
+});
+export type InsertAIInsightsRequest = z.infer<typeof insertAIInsightsRequestSchema>;
+export type SelectAIInsightsRequest = typeof aiInsightsRequests.$inferSelect;
