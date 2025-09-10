@@ -23,7 +23,7 @@ import { StandardsPage } from "@/pages/standards";
 import { SuperAdminDashboard } from "@/pages/admin/super-admin-dashboard";
 import { ProfilePage } from "@/pages/profile";
 import { AICategorizationPage } from "@/pages/ai-categorization";
-import { AIInsightsPage } from "@/pages/ai-insights";
+import AIInsightsPage from "@/pages/ai-insights/index";
 
 function Router() {
   return (

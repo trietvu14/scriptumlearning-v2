@@ -492,7 +492,7 @@ export default function AIInsightsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => createSessionMutation.mutate()}
+                  onClick={() => createSessionMutation.mutate(undefined)}
                   disabled={createSessionMutation.isPending}
                   data-testid="button-new-session"
                 >
@@ -587,3 +587,4 @@ export default function AIInsightsPage() {
     </div>
   );
 }
+
