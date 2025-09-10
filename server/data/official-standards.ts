@@ -169,21 +169,181 @@ export const officialStandardsData = {
     },
     {
       name: "CODA Standards",
-      description: "Commission on Dental Accreditation standards",
+      description: "Commission on Dental Accreditation predoctoral accreditation standards",
       frameworkType: "accreditation",
       version: "2025",
       subjects: [
         {
-          name: "Educational Program Standards",
-          code: "EPS",
-          description: "Predoctoral dental education standards",
+          name: "STANDARD 2 - EDUCATIONAL PROGRAM",
+          code: "CODA-2",
+          description: "Educational program requirements for predoctoral dental education",
           topics: [
             {
-              name: "Clinical Education",
-              code: "EPS-CE",
+              name: "Instruction",
+              code: "CODA-2-INST",
               learningObjectives: [
-                "Provide comprehensive patient care",
-                "Ensure clinical competency assessment"
+                "Provide written information about course goals, requirements, content, evaluation methods, and grading criteria in advance",
+                "Perform individual evaluations for students who do not meet published didactic, behavioral, and/or clinical criteria",
+                "Implement institutional due process policies for student evaluation decisions"
+              ]
+            },
+            {
+              name: "Critical Thinking",
+              code: "CODA-2-CT",
+              learningObjectives: [
+                "Demonstrate competency in critical thinking and problem-solving for comprehensive patient care",
+                "Apply critical thinking to scientific inquiry and research methodology",
+                "Use teaching methods that support critical thinking development",
+                "Engage in analysis, comparison, and evaluation of alternative approaches",
+                "Provide rationale for plans of action and predict outcomes",
+                "Perform decision-making through prospective simulations",
+                "Conduct retrospective critiques identifying errors and exemplary performance"
+              ]
+            },
+            {
+              name: "Biomedical Sciences",
+              code: "CODA-2-BMS",
+              learningObjectives: [
+                "Ensure in-depth understanding of basic biological principles and fundamental body system structures and functions",
+                "Emphasize oro-facial complex as important anatomical area in complex biological interrelationship with entire body",
+                "Provide in-depth information on abnormal biological conditions",
+                "Support understanding of etiology, epidemiology, differential diagnosis, pathogenesis, prevention, treatment and prognosis of oral disorders",
+                "Apply biomedical science knowledge in patient care delivery",
+                "Apply advances in modern biology to clinical practice and integrate new medical knowledge relevant to oral health care"
+              ]
+            },
+            {
+              name: "Behavioral Sciences",
+              code: "CODA-2-BS",
+              learningObjectives: [
+                "Apply fundamental principles of behavioral sciences for patient-centered approaches to oral health",
+                "Manage diverse patient populations with interpersonal and communication skills",
+                "Function successfully in multicultural work environments",
+                "Address factors and practices associated with health disparities among subpopulations",
+                "Facilitate dental education in environments supportive of diversity and inclusion"
+              ]
+            },
+            {
+              name: "Clinical Sciences",
+              code: "CODA-2-CS",
+              learningObjectives: [
+                "Access, critically appraise, apply, and communicate scientific and lay literature for evidence-based patient care",
+                "Understand basic principles of clinical and translational research",
+                "Provide oral health care within scope of general dentistry to patients in all life stages",
+                "Perform patient assessment, diagnosis, comprehensive treatment planning, prognosis, and informed consent",
+                "Screen and assess risk for head and neck cancer",
+                "Recognize treatment complexity and identify when referral is indicated",
+                "Implement health promotion and disease prevention including caries management",
+                "Administer local anesthesia and manage pain and anxiety control",
+                "Restore teeth and manage dental laboratory procedures",
+                "Replace teeth including fixed, removable and implant prosthodontic therapies",
+                "Provide periodontal therapy and pulpal therapy",
+                "Manage oral mucosal, temporomandibular, and osseous disorders",
+                "Perform hard and soft tissue surgery and manage dental emergencies",
+                "Manage malocclusion and space management",
+                "Evaluate treatment outcomes, recall strategies, and prognosis",
+                "Assess and manage treatment of patients with special needs",
+                "Engage in service learning and community-based learning experiences"
+              ]
+            }
+          ]
+        },
+        {
+          name: "STANDARD 5 - PATIENT CARE SERVICES",
+          code: "CODA-5",
+          description: "Patient care service requirements and quality improvement standards",
+          topics: [
+            {
+              name: "Patient-Centered Care Policies",
+              code: "CODA-5-PCC",
+              learningObjectives: [
+                "Establish and distribute written policy addressing meaning and commitment to patient-centered care",
+                "Ensure considerate, respectful and confidential treatment of patients",
+                "Provide continuity and completion of treatment",
+                "Give patients access to complete and current information about their condition",
+                "Provide advance knowledge of treatment costs and informed consent",
+                "Explain recommended treatment, alternatives, risks, and expected outcomes"
+              ]
+            },
+            {
+              name: "Evidence-Based Patient Care",
+              code: "CODA-5-EBC",
+              learningObjectives: [
+                "Provide evidence-based patient care integrating best research evidence and patient values",
+                "Use evidence to evaluate new technology and products",
+                "Guide diagnosis and treatment decisions with current evidence"
+              ]
+            },
+            {
+              name: "Quality Improvement System",
+              code: "CODA-5-QI",
+              learningObjectives: [
+                "Conduct formal continuous quality improvement for patient care program",
+                "Establish patient-centered standards of care focused on comprehensive care with measurable criteria",
+                "Review and analyze compliance with defined standards of care",
+                "Review representative sample of patients and records to assess appropriateness and quality of care",
+                "Determine causes of treatment deficiencies and implement corrective measures",
+                "Create and maintain databases for monitoring and improving patient care"
+              ]
+            },
+            {
+              name: "Patient Safety and Emergency Management",
+              code: "CODA-5-PSE",
+              learningObjectives: [
+                "Ensure quantitative criteria for advancement do not compromise comprehensive patient care",
+                "Provide active patients access to professional services for dental emergencies at all times",
+                "Maintain continuous basic life support certification for all patient care personnel",
+                "Manage common medical emergencies effectively",
+                "Ensure safe use of ionizing radiation with appropriate policies and procedures",
+                "Establish and enforce adequate preclinical/clinical/laboratory asepsis and infection control",
+                "Maintain strict confidentiality of patient health information"
+              ]
+            }
+          ]
+        },
+        {
+          name: "STANDARD 6 - RESEARCH PROGRAM",
+          code: "CODA-6",
+          description: "Research program requirements and scholarly activity standards",
+          topics: [
+            {
+              name: "Research Mission and Infrastructure",
+              code: "CODA-6-RMI",
+              learningObjectives: [
+                "Integrate research as component of dental school purpose, mission, goals and objectives",
+                "Develop and sustain research program on continuing basis",
+                "Establish research areas with ongoing funded support",
+                "Demonstrate commitment to research in mission statement, strategic plan, and financial support",
+                "Conduct regular ongoing research programmatic review",
+                "Secure extramural grant and foundation support for research program",
+                "Demonstrate global impact of research program"
+              ]
+            },
+            {
+              name: "Faculty Research and Scholarly Activity",
+              code: "CODA-6-FRSA",
+              learningObjectives: [
+                "Engage dental school faculty in research and scholarly activity appropriate to school mission",
+                "Establish focused, significant, and sustained programs to recruit and retain research faculty",
+                "Employ adequate number of full-time faculty with dedicated research time",
+                "Secure extramural funding for faculty research",
+                "Produce peer-reviewed scholarly publications based on original research",
+                "Present research at scientific meetings and symposia",
+                "Document research faculty recruitment efforts and productivity"
+              ]
+            },
+            {
+              name: "Student Research Participation",
+              code: "CODA-6-SRP",
+              learningObjectives: [
+                "Provide opportunities and encourage student participation in faculty-mentored research",
+                "Expose students to biomedical, translational, educational, epidemiologic and clinical research",
+                "Align student research activities with institutional research mission and goals",
+                "Introduce students to principles of research methodology",
+                "Provide elective research opportunities beyond basic introduction",
+                "Support formal presentation of student research at school or university events",
+                "Encourage scholarly publications with student authors",
+                "Facilitate student presentation at scientific meetings"
               ]
             }
           ]
