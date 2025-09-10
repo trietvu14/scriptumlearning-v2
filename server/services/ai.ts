@@ -356,20 +356,30 @@ Coverage should be 0-1 indicating how well current content addresses each standa
   }
 
   /**
-   * Enhanced similarity search with better text matching
+   * DEPRECATED: Legacy similarity search with JSON embeddings
+   * Use pgvector similarity search in database instead for better performance
    */
   async findSimilarContent(queryText: string, embeddings: Array<{id: string, embedding: string, text: string}>): Promise<Array<{
     id: string;
     similarity: number;
     text: string;
   }>> {
+    console.warn('findSimilarContent is deprecated. Use pgvector similarity search in database instead.');
+    
     try {
       // Generate embedding for query
       const queryEmbedding = await this.generateEmbedding(queryText);
       
-      // Calculate cosine similarity with stored embeddings
+      // Calculate cosine similarity with stored embeddings (legacy JSON format support)
       const similarities = embeddings.map(item => {
-        const storedEmbedding = JSON.parse(item.embedding);
+        let storedEmbedding: number[];
+        try {
+          storedEmbedding = JSON.parse(item.embedding);
+        } catch {
+          // If not JSON, assume it's already an array
+          storedEmbedding = Array.isArray(item.embedding) ? item.embedding : [];
+        }
+        
         const similarity = this.cosineSimilarity(queryEmbedding.embedding, storedEmbedding);
         
         return {

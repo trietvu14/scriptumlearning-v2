@@ -443,8 +443,12 @@ router.post('/rag/search', authenticateToken, async (req, res) => {
       whereConditions.push(eq(ragDocuments.documentType, documentType));
     }
 
-    // Use pgvector similarity search directly in database
+    // Use pgvector similarity search directly in database with threshold
     const queryEmbeddingVector = `[${queryEmbedding.embedding.join(',')}]`;
+    const maxDistance = 1 - threshold; // Convert similarity threshold to distance
+    
+    // Add distance threshold to where conditions
+    whereConditions.push(sql`${ragDocuments.embedding} <-> ${queryEmbeddingVector}::vector <= ${maxDistance}`);
     
     const results = await db
       .select({
