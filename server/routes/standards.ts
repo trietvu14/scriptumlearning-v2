@@ -128,18 +128,32 @@ router.get("/frameworks/:id", requireAuth, async (req, res) => {
       ))
       .orderBy(standardsSubjects.sortOrder, standardsSubjects.name);
     
+    // Helper function to build hierarchical topic structure
+    const buildTopicHierarchy = (allTopics: any[], parentId: string | null = null): any[] => {
+      const children = allTopics
+        .filter(topic => topic.parentId === parentId)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+      
+      return children.map(topic => ({
+        ...topic,
+        children: buildTopicHierarchy(allTopics, topic.id)
+      }));
+    };
+
     const subjectsWithTopics = await Promise.all(
       subjects.map(async (subject) => {
-        const topics = await db.select()
+        // Fetch all topics for this subject
+        const allTopics = await db.select()
           .from(standardsTopics)
           .where(and(
             eq(standardsTopics.subjectId, subject.id),
             eq(standardsTopics.isActive, true)
           ))
-          .orderBy(standardsTopics.sortOrder, standardsTopics.name);
+          .orderBy(standardsTopics.level, standardsTopics.sortOrder, standardsTopics.name);
         
+        // Add subtopics to each topic
         const topicsWithSubtopics = await Promise.all(
-          topics.map(async (topic) => {
+          allTopics.map(async (topic) => {
             const subtopics = await db.select()
               .from(standardsSubtopics)
               .where(and(
@@ -152,7 +166,10 @@ router.get("/frameworks/:id", requireAuth, async (req, res) => {
           })
         );
         
-        return { ...subject, topics: topicsWithSubtopics };
+        // Build hierarchical structure (only root topics - those without parents)
+        const hierarchicalTopics = buildTopicHierarchy(topicsWithSubtopics, null);
+        
+        return { ...subject, topics: hierarchicalTopics };
       })
     );
     
