@@ -315,14 +315,18 @@ export function StandardsPage() {
     });
   };
 
-  // Function to render hierarchical topic structure with subtopics
+  // Function to render hierarchical topic structure with proper indentation
   const renderTopicHierarchy = (topics: any[], level: number = 1): React.ReactNode => {
     return topics.map((topic: any) => {
       const indentStyle = { marginLeft: `${(level - 1) * 24}px` };
-      const bulletIcon = level === 1 ? '●' : level === 2 ? '○' : level === 3 ? '→' : '•';
-      const textSizeClass = level === 1 ? 'text-sm font-semibold' : level === 2 ? 'text-sm font-medium' : 'text-xs font-normal';
-      const bgClass = level === 1 ? 'bg-blue-50 hover:bg-blue-100' : level === 2 ? 'bg-green-50 hover:bg-green-100' : 'bg-orange-50 hover:bg-orange-100';
-      const borderClass = level === 1 ? 'border-l-4 border-blue-400' : level === 2 ? 'border-l-3 border-green-400' : 'border-l-2 border-orange-400';
+      const bulletIcon = level === 1 ? '●' : level === 2 ? '○' : level === 3 ? '→' : level === 4 ? '▸' : '•';
+      const textSizeClass = level === 1 ? 'text-sm font-semibold' : level === 2 ? 'text-sm font-medium' : level === 3 ? 'text-xs font-medium' : 'text-xs font-normal';
+      const bgClass = level === 1 ? 'bg-blue-50 hover:bg-blue-100' : 
+                     level === 2 ? 'bg-green-50 hover:bg-green-100' : 
+                     level === 3 ? 'bg-orange-50 hover:bg-orange-100' : 'bg-gray-50 hover:bg-gray-100';
+      const borderClass = level === 1 ? 'border-l-4 border-blue-400' : 
+                         level === 2 ? 'border-l-3 border-green-400' : 
+                         level === 3 ? 'border-l-2 border-orange-400' : 'border-l-1 border-gray-400';
       
       return (
         <div key={topic.id}>
@@ -357,15 +361,15 @@ export function StandardsPage() {
                   <div className="mt-2" style={{ marginLeft: '20px' }}>
                     <p className="text-xs font-medium text-muted-foreground mb-1">Learning Objectives:</p>
                     <ul className="text-xs text-muted-foreground space-y-1">
-                      {topic.learningObjectives.slice(0, 3).map((objective: string, idx: number) => (
+                      {topic.learningObjectives.slice(0, level === 1 ? 3 : 2).map((objective: string, idx: number) => (
                         <li key={idx} className="flex items-start gap-1">
                           <span className="text-muted-foreground">•</span>
                           <span>{objective}</span>
                         </li>
                       ))}
-                      {topic.learningObjectives.length > 3 && (
+                      {topic.learningObjectives.length > (level === 1 ? 3 : 2) && (
                         <li className="text-xs italic">
-                          ... and {topic.learningObjectives.length - 3} more
+                          ... and {topic.learningObjectives.length - (level === 1 ? 3 : 2)} more
                         </li>
                       )}
                     </ul>
@@ -385,15 +389,27 @@ export function StandardsPage() {
             </div>
           </div>
           
-          {/* Render subtopics if they exist */}
+          {/* Render child topics recursively */}
+          {topic.children && topic.children.length > 0 && (
+            <div className="mt-1 space-y-1">
+              {renderTopicHierarchy(topic.children, level + 1)}
+            </div>
+          )}
+          
+          {/* Render subtopics at the leaf level */}
           {topic.subtopics && topic.subtopics.length > 0 && (
             <div className="mt-1 space-y-1">
               {topic.subtopics.map((subtopic: any) => {
-                const subtopicIndentStyle = { marginLeft: `${level * 24}px` };
-                const subtopicBulletIcon = level === 1 ? '○' : level === 2 ? '→' : '•';
+                const subtopicLevel = level + 1;
+                const subtopicIndentStyle = { marginLeft: `${(level) * 24}px` };
+                const subtopicBulletIcon = subtopicLevel === 2 ? '○' : 
+                                          subtopicLevel === 3 ? '→' : 
+                                          subtopicLevel === 4 ? '▸' : '•';
                 const subtopicTextSizeClass = 'text-xs font-medium';
-                const subtopicBgClass = level === 1 ? 'bg-green-50 hover:bg-green-100' : 'bg-orange-50 hover:bg-orange-100';
-                const subtopicBorderClass = level === 1 ? 'border-l-3 border-green-400' : 'border-l-2 border-orange-400';
+                const subtopicBgClass = subtopicLevel === 2 ? 'bg-green-50 hover:bg-green-100' : 
+                                       subtopicLevel === 3 ? 'bg-orange-50 hover:bg-orange-100' : 'bg-gray-50 hover:bg-gray-100';
+                const subtopicBorderClass = subtopicLevel === 2 ? 'border-l-3 border-green-400' : 
+                                           subtopicLevel === 3 ? 'border-l-2 border-orange-400' : 'border-l-1 border-gray-400';
                 
                 return (
                   <div key={subtopic.id || `${topic.id}-${subtopic.name}`}>
@@ -409,7 +425,7 @@ export function StandardsPage() {
                             </span>
                             <p className={subtopicTextSizeClass}>{subtopic.name}</p>
                             <Badge variant="outline" className="text-xs">
-                              L{level + 1}
+                              L{subtopicLevel + 1}
                             </Badge>
                           </div>
                           {subtopic.code && (
