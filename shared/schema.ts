@@ -9,7 +9,8 @@ import {
   boolean, 
   jsonb, 
   decimal,
-  pgEnum
+  pgEnum,
+  vector
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -179,7 +180,7 @@ export const content = pgTable("content", {
   type: contentTypeEnum("type").notNull(),
   content: jsonb("content"), // Stores actual content or metadata
   fileUrl: text("file_url"),
-  embedding: text("embedding"), // Vector embedding as text for pgvector
+  embedding: vector("embedding", { dimensions: 3072 }), // OpenAI text-embedding-3-large dimensions
   aiCategorized: boolean("ai_categorized").default(false),
   aiMetadata: jsonb("ai_metadata"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -315,7 +316,7 @@ export const contentEmbeddings = pgTable("content_embeddings", {
   contentId: uuid("content_id").notNull(), // Reference to topic, subtopic, or document
   contentType: text("content_type").notNull(), // 'topic', 'subtopic', 'document', 'learning_objective'
   contentText: text("content_text").notNull(),
-  embedding: text("embedding").notNull(), // Store as JSON array string for now
+  embedding: vector("embedding", { dimensions: 3072 }).notNull(), // OpenAI text-embedding-3-large dimensions
   metadata: jsonb("metadata").default(sql`'{}'::jsonb`),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
@@ -333,7 +334,7 @@ export const ragDocuments = pgTable("rag_documents", {
   sourceDocument: text("source_document"),
   chunkIndex: integer("chunk_index").default(0), // For large documents split into chunks
   totalChunks: integer("total_chunks").default(1),
-  embedding: text("embedding"), // Store as JSON array string for now
+  embedding: vector("embedding", { dimensions: 3072 }), // OpenAI text-embedding-3-large dimensions
   metadata: jsonb("metadata").default(sql`'{}'::jsonb`),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
