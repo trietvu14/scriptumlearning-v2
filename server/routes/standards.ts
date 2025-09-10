@@ -243,10 +243,9 @@ router.post("/subjects/:subjectId/topics", requireAuth, requireRole(["super_admi
       return res.status(403).json({ error: "Can only modify your own custom frameworks" });
     }
     
-    const topic = await db.insert(standardsTopics)
+    const [topic] = await db.insert(standardsTopics)
       .values(validatedData)
-      .returning()
-      .then(rows => rows[0]);
+      .returning();
     
     res.status(201).json(topic);
   } catch (error: any) {
@@ -285,10 +284,9 @@ router.post("/topics/:topicId/subtopics", requireAuth, requireRole(["super_admin
       return res.status(403).json({ error: "Can only modify your own custom frameworks" });
     }
     
-    const subtopic = await db.insert(standardsSubtopics)
+    const [subtopic] = await db.insert(standardsSubtopics)
       .values(validatedData)
-      .returning()
-      .then(rows => rows[0]);
+      .returning();
     
     res.status(201).json(subtopic);
   } catch (error: any) {

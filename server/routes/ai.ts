@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db';
-import { aiService } from '../services/ai-service';
+import { aiService } from '../services/ai';
 import { authenticateToken, requireRole } from '../middleware/auth';
 import { 
   aiCategorizationJobs,

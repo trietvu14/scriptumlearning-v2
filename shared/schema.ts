@@ -261,10 +261,10 @@ export const standardsSubjects = pgTable("standards_subjects", {
 });
 
 // Standards topics (second level) - Now supports nested hierarchy
-export const standardsTopics = pgTable("standards_topics", {
+export const standardsTopics: any = pgTable("standards_topics", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   subjectId: uuid("subject_id").notNull().references(() => standardsSubjects.id, { onDelete: "cascade" }),
-  parentId: uuid("parent_id").references(() => standardsTopics.id, { onDelete: "cascade" }), // For nested subtopics
+  parentId: uuid("parent_id").references((): any => standardsTopics.id, { onDelete: "cascade" }), // For nested subtopics
   name: text("name").notNull(),
   description: text("description"),
   code: text("code"), // Topic code
@@ -309,6 +309,53 @@ export const standardsDocuments = pgTable("standards_documents", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Content embeddings for AI similarity search
+export const contentEmbeddings = pgTable("content_embeddings", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  contentId: uuid("content_id").notNull(), // Reference to topic, subtopic, or document
+  contentType: text("content_type").notNull(), // 'topic', 'subtopic', 'document', 'learning_objective'
+  contentText: text("content_text").notNull(),
+  embedding: text("embedding").notNull(), // Store as JSON array string for now
+  metadata: jsonb("metadata").default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// RAG document stores for different content types
+export const ragDocuments = pgTable("rag_documents", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  tenantId: uuid("tenant_id").references(() => tenants.id, { onDelete: "cascade" }),
+  frameworkId: uuid("framework_id").references(() => standardsFrameworks.id, { onDelete: "cascade" }),
+  documentType: text("document_type").notNull(), // 'curriculum', 'standards', 'learning_materials', 'assessments'
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  sourceUrl: text("source_url"),
+  sourceDocument: text("source_document"),
+  chunkIndex: integer("chunk_index").default(0), // For large documents split into chunks
+  totalChunks: integer("total_chunks").default(1),
+  embedding: text("embedding"), // Store as JSON array string for now
+  metadata: jsonb("metadata").default(sql`'{}'::jsonb`),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// AI analysis results for content categorization
+export const aiAnalysisResults = pgTable("ai_analysis_results", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  contentId: uuid("content_id").notNull(),
+  contentType: text("content_type").notNull(), // 'topic', 'subtopic', 'document', 'curriculum'
+  analysisType: text("analysis_type").notNull(), // 'categorization', 'standards_mapping', 'quality_assessment'
+  categories: text("categories").array().default(sql`'{}'::text[]`),
+  suggestedStandards: text("suggested_standards").array().default(sql`'{}'::text[]`),
+  keyTopics: text("key_topics").array().default(sql`'{}'::text[]`),
+  confidence: decimal("confidence", { precision: 3, scale: 2 }).default("0.00"),
+  qualityScore: decimal("quality_score", { precision: 3, scale: 2 }).default("0.00"),
+  analysisMetadata: jsonb("analysis_metadata").default(sql`'{}'::jsonb`),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 export const studentExamAttempts = pgTable("student_exam_attempts", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   studentId: uuid("student_id").references(() => users.id).notNull(),
@@ -333,23 +380,6 @@ export const studentAnswers = pgTable("student_answers", {
   answeredAt: timestamp("answered_at").defaultNow()
 });
 
-export const ragDocuments = pgTable("rag_documents", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
-  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
-  title: text("title").notNull(),
-  description: text("description"),
-  filePath: text("file_path").notNull(),
-  fileType: text("file_type").notNull(),
-  fileSize: integer("file_size"),
-  documentType: text("document_type").notNull(), // standards, course_specific, internal
-  courseId: uuid("course_id").references(() => courses.id), // for course-specific documents
-  isProcessed: boolean("is_processed").default(false),
-  chunks: jsonb("chunks"), // Processed text chunks
-  embeddings: jsonb("embeddings"), // Vector embeddings
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
 
 export const aiAgentSessions = pgTable("ai_agent_sessions", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
