@@ -218,6 +218,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Content management
+  // Add /api/courses/content endpoint for frontend compatibility
+  app.get("/api/courses/content", authenticateToken, loadTenant, async (req, res) => {
+    try {
+      const { courseId } = req.query;
+      
+      const whereConditions = courseId
+        ? and(
+            eq(content.tenantId, req.user!.tenantId),
+            eq(content.courseId, courseId as string)
+          )
+        : eq(content.tenantId, req.user!.tenantId);
+
+      const contentList = await db
+        .select({
+          id: content.id,
+          title: content.title,
+          type: content.type,
+          description: content.description,
+          courseId: content.courseId,
+          aiCategorized: content.aiCategorized,
+          createdAt: content.createdAt,
+          updatedAt: content.updatedAt,
+          courseName: courses.name,
+          courseCode: courses.code
+        })
+        .from(content)
+        .innerJoin(courses, eq(content.courseId, courses.id))
+        .where(whereConditions)
+        .orderBy(desc(content.createdAt));
+      
+      res.json(contentList);
+    } catch (error) {
+      console.error("Failed to fetch courses content:", error);
+      res.status(500).json({ message: "Failed to fetch content" });
+    }
+  });
+
   app.get("/api/content", authenticateToken, loadTenant, async (req, res) => {
     try {
       const { courseId } = req.query;
