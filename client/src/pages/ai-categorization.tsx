@@ -77,7 +77,7 @@ export function AICategorizationPage() {
   });
 
   // Get categorization jobs
-  const { data: jobsData, refetch: refetchJobs } = useQuery({
+  const { data: jobsData = { jobs: [] }, refetch: refetchJobs } = useQuery<{ jobs: AICategorizationJob[] }>({
     queryKey: ['/api/ai/jobs'],
     enabled: !!user?.tenantId,
     refetchInterval: 5000 // Refresh every 5 seconds for job status
