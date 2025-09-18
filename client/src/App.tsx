@@ -26,6 +26,7 @@ import { ProfilePage } from "@/pages/profile";
 import { AICategorizationPage } from "@/pages/ai-categorization";
 import AIInsightsPage from "@/pages/ai-insights/index";
 import CourseContentPage from "@/pages/course-content";
+import DemoRequestPage from "@/pages/demo-request";
 
 function Router() {
   return (
@@ -218,6 +219,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       
+      <Route path="/demo-request" component={DemoRequestPage} />
       <Route path="/" component={Homepage} />
       
       <Route component={NotFound} />
