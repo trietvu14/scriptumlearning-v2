@@ -581,6 +581,22 @@ export const inbdeMappingStats = pgTable("inbde_mapping_stats", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Demo requests table for tracking demo requests from the homepage
+export const demoRequests = pgTable("demo_requests", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  fullName: text("full_name").notNull(),
+  title: text("title").notNull(), // Title/Position
+  email: text("email").notNull(),
+  school: text("school").notNull(),
+  phoneNumber: text("phone_number"), // Optional
+  status: text("status").notNull().default("pending"), // pending, contacted, completed, cancelled
+  notes: text("notes"), // Admin notes
+  contactedAt: timestamp("contacted_at"),
+  contactedBy: uuid("contacted_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Relations
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
@@ -711,6 +727,14 @@ export const insertUserInvitationSchema = createInsertSchema(userInvitations).om
   isAccepted: true
 });
 
+export const insertDemoRequestSchema = createInsertSchema(demoRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  contactedAt: true,
+  contactedBy: true
+});
+
 // Types
 export type Tenant = typeof tenants.$inferSelect;
 export type InsertTenant = z.infer<typeof insertTenantSchema>;
@@ -720,6 +744,9 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type UserInvitation = typeof userInvitations.$inferSelect;
 export type InsertUserInvitation = z.infer<typeof insertUserInvitationSchema>;
+
+export type DemoRequest = typeof demoRequests.$inferSelect;
+export type InsertDemoRequest = z.infer<typeof insertDemoRequestSchema>;
 
 export type Standard = typeof standards.$inferSelect;
 export type InsertStandard = z.infer<typeof insertStandardSchema>;
