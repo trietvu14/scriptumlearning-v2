@@ -26,20 +26,17 @@ export function Homepage() {
           </h1>
         </div>
         <div className="flex gap-3">
-          <a href="mailto:demo@scriptumlearning.com?subject=Demo Request&body=Hi, I'm interested in scheduling a demo of Scriptum Learning. Please contact me to arrange a demonstration.">
-            <Button
-              variant="outline"
-              size="sm"
-              data-testid="button-request-demo"
-            >
-              Request Demo
-            </Button>
-          </a>
-          <Link href="/login">
-            <Button variant="outline" data-testid="button-sign-in">
-              Sign In
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            data-testid="button-request-demo"
+            asChild
+          >
+            <Link href="/demo-request">Request Demo</Link>
+          </Button>
+          <Button variant="outline" data-testid="button-sign-in" asChild>
+            <Link href="/login">Sign In</Link>
+          </Button>
         </div>
       </header>
 
@@ -56,23 +53,25 @@ export function Homepage() {
             curriculum updates impact student outcomes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/login">
-              <Button
-                size="lg"
-                className="text-lg px-8 py-3"
-                data-testid="button-get-started"
-              >
+            <Button
+              size="lg"
+              className="text-lg px-8 py-3"
+              data-testid="button-get-started"
+              asChild
+            >
+              <Link href="/login">
                 Get Started Today
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <Button
               variant="outline"
               size="lg"
               className="text-lg px-8 py-3"
-              data-testid="button-learn-more"
+              data-testid="button-request-demo-hero"
+              asChild
             >
-              Learn More
+              <Link href="/demo-request">Request Demo</Link>
             </Button>
           </div>
         </div>
@@ -166,17 +165,18 @@ export function Homepage() {
             Join thousands of educators who are already using Scriptum Learning
             to enhance their teaching and improve student outcomes.
           </p>
-          <Link href="/login">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8 py-3"
-              data-testid="button-start-free"
-            >
+          <Button
+            size="lg"
+            variant="secondary"
+            className="text-lg px-8 py-3"
+            data-testid="button-start-free"
+            asChild
+          >
+            <Link href="/login">
               Start Your Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </section>
 
