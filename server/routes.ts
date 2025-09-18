@@ -22,13 +22,15 @@ import {
   standardsFrameworks,
   standardsSubjects,
   standardsTopics,
+  demoRequests,
   insertUserSchema,
   insertTenantSchema,
   insertStandardSchema,
   insertContentSchema,
   insertBoardExamSchema,
   insertExamQuestionSchema,
-  insertRAGDocumentSchema
+  insertRAGDocumentSchema,
+  insertDemoRequestSchema
 } from "@shared/schema";
 import { authenticateToken, requireRole, requireSchoolAdmin, requireFaculty } from "./middleware/auth";
 import { loadTenant } from "./middleware/tenant";
@@ -600,6 +602,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Template cloning error:", error);
       res.status(500).json({ message: "Failed to clone curriculum template" });
+    }
+  });
+
+  // Demo requests endpoints
+  app.post("/api/demo-requests", async (req, res) => {
+    try {
+      const demoRequestData = insertDemoRequestSchema.parse(req.body);
+      const [newDemoRequest] = await db
+        .insert(demoRequests)
+        .values(demoRequestData)
+        .returning();
+
+      res.status(201).json(newDemoRequest);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create demo request" });
+    }
+  });
+
+  app.get("/api/demo-requests", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const allDemoRequests = await db
+        .select()
+        .from(demoRequests)
+        .orderBy(desc(demoRequests.createdAt));
+
+      res.json(allDemoRequests);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch demo requests" });
+    }
+  });
+
+  app.get("/api/demo-requests/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const [demoRequest] = await db
+        .select()
+        .from(demoRequests)
+        .where(eq(demoRequests.id, id));
+
+      if (!demoRequest) {
+        return res.status(404).json({ message: "Demo request not found" });
+      }
+
+      res.json(demoRequest);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch demo request" });
+    }
+  });
+
+  app.patch("/api/demo-requests/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const [updatedDemoRequest] = await db
+        .update(demoRequests)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(demoRequests.id, id))
+        .returning();
+
+      if (!updatedDemoRequest) {
+        return res.status(404).json({ message: "Demo request not found" });
+      }
+
+      res.json(updatedDemoRequest);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update demo request" });
+    }
+  });
+
+  app.delete("/api/demo-requests/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      await db
+        .delete(demoRequests)
+        .where(eq(demoRequests.id, id));
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete demo request" });
     }
   });
 
