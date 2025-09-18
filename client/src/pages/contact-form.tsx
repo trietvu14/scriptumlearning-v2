@@ -14,18 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { insertContactSchema } from "@shared/schema";
 
-const contactFormSchema = z.object({
-  firstName: z.string().min(1, "First name is required").max(50, "First name must be less than 50 characters"),
-  lastName: z.string().min(1, "Last name is required").max(50, "Last name must be less than 50 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  jobTitle: z.string().min(1, "Job title is required").max(100, "Job title must be less than 100 characters"),
-  institutionName: z.string().min(1, "Institution name is required").max(200, "Institution name must be less than 200 characters"),
-  schoolCollege: z.string().min(1, "School/College is required").max(200, "School/College must be less than 200 characters"),
-  disciplineArea: z.string().min(1, "Discipline area is required").max(100, "Discipline area must be less than 100 characters"),
-  phoneNumber: z.string().max(20, "Phone number must be less than 20 characters").optional().or(z.literal("")),
-  message: z.string().min(1, "Message is required").max(1000, "Message must be less than 1000 characters"),
-  referralSource: z.enum(["search_engine", "linkedin", "social_media", "referral", "news_blog"])
+const contactFormSchema = insertContactSchema.extend({
+  // Additional UI-specific validation rules can be added here if needed
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;

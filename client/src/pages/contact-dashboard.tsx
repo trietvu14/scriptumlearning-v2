@@ -50,6 +50,10 @@ export default function ContactDashboard() {
   const deleteContactMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await apiRequest("DELETE", `/api/contacts/${id}`);
+      // Handle 204 No Content responses (common for DELETE operations)
+      if (response.status === 204) {
+        return { success: true };
+      }
       return response.json();
     },
     onSuccess: () => {
