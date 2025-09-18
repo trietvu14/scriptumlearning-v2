@@ -183,8 +183,9 @@ export function Homepage() {
             Simplify curriculum mapping and accreditation with Scriptum Learning
           </h3>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-             Scriptum Learning
-            to enhance their teaching and improve student outcomes.
+            Accreditation doesn't need to be lengthy and tedious. With Scriptum
+            Learning you'll be able to map your curriculum and align it to
+            multiple national standards easily and quickly.
           </p>
           <Button
             size="lg"

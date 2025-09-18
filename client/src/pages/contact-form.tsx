@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertContactSchema } from "@shared/schema";
+import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
 
 const contactFormSchema = insertContactSchema.extend({
   // Additional UI-specific validation rules can be added here if needed
@@ -110,6 +111,29 @@ export default function ContactFormPage() {
           </Button>
         </Link>
       </header>
+
+      {/* Logo and Branding */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="flex items-center justify-center space-x-3 mb-6">
+            <img
+              src={scriptumLogo}
+              alt="Scriptum Learning"
+              className="h-12 w-auto"
+            />
+            <h1 
+              className="text-gray-900 dark:text-white"
+              style={{ 
+                fontFamily: "'Zain', sans-serif",
+                fontWeight: 400,
+                fontSize: '32px'
+              }}
+            >
+              Scriptum Learning
+            </h1>
+          </div>
+        </div>
+      </div>
 
       {/* Form Section */}
       <div className="container mx-auto px-4 pb-16">
