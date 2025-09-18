@@ -8,6 +8,7 @@ import { TenantProvider } from "@/hooks/use-tenant";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
+import Homepage from "@/pages/homepage";
 import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import CurriculumMappingPage from "@/pages/curriculum-mapping";
@@ -217,17 +218,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       
-      <Route path="/">
-        <ProtectedRoute>
-          <div className="flex flex-col min-h-screen">
-            <TopBar />
-            <div className="flex flex-1">
-              <Sidebar />
-              <DashboardPage />
-            </div>
-          </div>
-        </ProtectedRoute>
-      </Route>
+      <Route path="/" component={Homepage} />
       
       <Route component={NotFound} />
     </Switch>

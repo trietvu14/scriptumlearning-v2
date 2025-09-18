@@ -110,17 +110,6 @@ export function LoginForm() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>Demo Credentials:</p>
-            <p className="font-mono text-blue-600">Super Admin: tvu@scriptumlearning.com / password123</p>
-            <div className="mt-2 pt-2 border-t">
-              <p className="text-xs font-semibold">KU School of Dentistry:</p>
-              <p className="font-mono">admin@kudental.edu / password123</p>
-              <p className="font-mono">faculty@kudental.edu / password123</p>
-              <p className="font-mono">support@kudental.edu / password123</p>
-              <p className="font-mono">student@kudental.edu / password123</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
