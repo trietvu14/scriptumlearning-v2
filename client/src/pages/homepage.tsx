@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BookOpen, GraduationCap, TrendingUp, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  GraduationCap,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { Link } from "wouter";
 import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
 
@@ -10,12 +16,22 @@ export function Homepage() {
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <img src={scriptumLogo} alt="Scriptum Learning" className="h-10 w-auto" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Scriptum Learning</h1>
+          <img
+            src={scriptumLogo}
+            alt="Scriptum Learning"
+            className="h-10 w-auto"
+          />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Scriptum Learning
+          </h1>
         </div>
         <div className="flex gap-3">
           <a href="mailto:demo@scriptumlearning.com?subject=Demo Request&body=Hi, I'm interested in scheduling a demo of Scriptum Learning. Please contact me to arrange a demonstration.">
-            <Button variant="outline" size="sm" data-testid="button-request-demo">
+            <Button
+              variant="outline"
+              size="sm"
+              data-testid="button-request-demo"
+            >
               Request Demo
             </Button>
           </a>
@@ -31,21 +47,31 @@ export function Homepage() {
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Transform Your Educational Experience
+            Automate Curriculum Mapping Using AI!
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-            Empower educators and students with cutting-edge curriculum mapping, 
-            AI-powered insights, and comprehensive progress tracking to achieve 
-            educational excellence.
+            Transform your curriculum with AI-powered mapping. Scriptum tracks
+            course changes in real time, aligns content to national boards and
+            accreditation standards, and delivers insights that reveal how
+            curriculum updates impact student outcomes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/login">
-              <Button size="lg" className="text-lg px-8 py-3" data-testid="button-get-started">
+              <Button
+                size="lg"
+                className="text-lg px-8 py-3"
+                data-testid="button-get-started"
+              >
                 Get Started Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-3" data-testid="button-learn-more">
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-lg px-8 py-3"
+              data-testid="button-learn-more"
+            >
               Learn More
             </Button>
           </div>
@@ -64,50 +90,66 @@ export function Homepage() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow" data-testid="card-feature-mapping">
+          <Card
+            className="text-center p-6 hover:shadow-lg transition-shadow"
+            data-testid="card-feature-mapping"
+          >
             <CardContent className="pt-6">
               <BookOpen className="h-12 w-12 text-blue-600 mx-auto mb-4" />
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 Curriculum Mapping
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Align your curriculum with educational standards and track learning outcomes effectively.
+                Align your curriculum with educational standards and track
+                learning outcomes effectively.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow" data-testid="card-feature-ai">
+          <Card
+            className="text-center p-6 hover:shadow-lg transition-shadow"
+            data-testid="card-feature-ai"
+          >
             <CardContent className="pt-6">
               <TrendingUp className="h-12 w-12 text-green-600 mx-auto mb-4" />
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 AI-Powered Insights
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Get intelligent recommendations and data-driven insights to improve educational outcomes.
+                Get intelligent recommendations and data-driven insights to
+                improve educational outcomes.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow" data-testid="card-feature-progress">
+          <Card
+            className="text-center p-6 hover:shadow-lg transition-shadow"
+            data-testid="card-feature-progress"
+          >
             <CardContent className="pt-6">
               <Users className="h-12 w-12 text-purple-600 mx-auto mb-4" />
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 Student Progress
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Monitor student development with comprehensive tracking and reporting tools.
+                Monitor student development with comprehensive tracking and
+                reporting tools.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow" data-testid="card-feature-review">
+          <Card
+            className="text-center p-6 hover:shadow-lg transition-shadow"
+            data-testid="card-feature-review"
+          >
             <CardContent className="pt-6">
               <GraduationCap className="h-12 w-12 text-orange-600 mx-auto mb-4" />
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 Board Review
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Prepare students for certification with targeted review materials and assessments.
+                Prepare students for certification with targeted review
+                materials and assessments.
               </p>
             </CardContent>
           </Card>
@@ -121,11 +163,16 @@ export function Homepage() {
             Ready to Transform Your Educational Institution?
           </h3>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of educators who are already using Scriptum Learning 
+            Join thousands of educators who are already using Scriptum Learning
             to enhance their teaching and improve student outcomes.
           </p>
           <Link href="/login">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-3" data-testid="button-start-free">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8 py-3"
+              data-testid="button-start-free"
+            >
               Start Your Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
