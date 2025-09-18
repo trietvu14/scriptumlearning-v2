@@ -23,6 +23,7 @@ import {
   standardsSubjects,
   standardsTopics,
   demoRequests,
+  contacts,
   insertUserSchema,
   insertTenantSchema,
   insertStandardSchema,
@@ -30,7 +31,8 @@ import {
   insertBoardExamSchema,
   insertExamQuestionSchema,
   insertRAGDocumentSchema,
-  insertDemoRequestSchema
+  insertDemoRequestSchema,
+  insertContactSchema
 } from "@shared/schema";
 import { authenticateToken, requireRole, requireSchoolAdmin, requireFaculty } from "./middleware/auth";
 import { loadTenant } from "./middleware/tenant";
@@ -683,6 +685,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete demo request" });
+    }
+  });
+
+  // Contacts endpoints
+  app.post("/api/contacts", async (req, res) => {
+    try {
+      const contactData = insertContactSchema.parse(req.body);
+      const [newContact] = await db
+        .insert(contacts)
+        .values(contactData)
+        .returning();
+
+      res.status(201).json(newContact);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create contact" });
+    }
+  });
+
+  app.get("/api/contacts", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const allContacts = await db
+        .select()
+        .from(contacts)
+        .orderBy(desc(contacts.createdAt));
+
+      res.json(allContacts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch contacts" });
+    }
+  });
+
+  app.get("/api/contacts/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const [contact] = await db
+        .select()
+        .from(contacts)
+        .where(eq(contacts.id, id));
+
+      if (!contact) {
+        return res.status(404).json({ message: "Contact not found" });
+      }
+
+      res.json(contact);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch contact" });
+    }
+  });
+
+  app.patch("/api/contacts/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const [updatedContact] = await db
+        .update(contacts)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(contacts.id, id))
+        .returning();
+
+      if (!updatedContact) {
+        return res.status(404).json({ message: "Contact not found" });
+      }
+
+      res.json(updatedContact);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update contact" });
+    }
+  });
+
+  app.delete("/api/contacts/:id", authenticateToken, requireRole(["super_admin", "school_admin"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      await db
+        .delete(contacts)
+        .where(eq(contacts.id, id));
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete contact" });
     }
   });
 
