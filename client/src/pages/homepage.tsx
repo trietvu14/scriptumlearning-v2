@@ -65,7 +65,7 @@ export function Homepage() {
                     data-testid="button-get-started"
                     asChild
                   >
-                    <Link href="/login">
+                    <Link href="/contact">
                       Get started today
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
@@ -193,7 +193,7 @@ export function Homepage() {
             data-testid="button-start-free"
             asChild
           >
-            <Link href="/login">
+            <Link href="/contact">
               Start Your Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>

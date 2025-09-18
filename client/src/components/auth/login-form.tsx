@@ -118,9 +118,9 @@ export function LoginForm() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Don't have an account?
             </p>
-            <a href="mailto:demo@scriptumlearning.com?subject=Demo Request&body=Hi, I'm interested in scheduling a demo of Scriptum Learning. Please contact me to arrange a demonstration.">
-              <Button variant="outline" size="sm" data-testid="button-request-demo">
-                Request Demo Access
+            <a href="/contact">
+              <Button variant="outline" size="sm" data-testid="button-get-started">
+                Let's get started
               </Button>
             </a>
           </div>

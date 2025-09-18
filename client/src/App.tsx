@@ -28,6 +28,7 @@ import AIInsightsPage from "@/pages/ai-insights/index";
 import CourseContentPage from "@/pages/course-content";
 import DemoRequestPage from "@/pages/demo-request";
 import DemoRequestsDashboard from "@/pages/demo-requests-dashboard";
+import ContactFormPage from "@/pages/contact-form";
 
 function Router() {
   return (
@@ -235,6 +236,7 @@ function Router() {
       </Route>
       
       <Route path="/demo-request" component={DemoRequestPage} />
+      <Route path="/contact" component={ContactFormPage} />
       <Route path="/" component={Homepage} />
       
       <Route component={NotFound} />
