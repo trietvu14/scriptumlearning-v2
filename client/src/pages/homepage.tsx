@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
+import professorImage from "@assets/stock_images/professional_college_66672c37.jpg";
 
 export function Homepage() {
   return (
@@ -41,38 +42,58 @@ export function Homepage() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Automate Curriculum Mapping Using AI!
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-            Transform your curriculum with AI-powered mapping. Scriptum tracks
-            course changes in real time, aligns content to national boards and
-            accreditation standards, and delivers insights that reveal how
-            curriculum updates impact student outcomes.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="text-lg px-8 py-3"
-              data-testid="button-get-started"
-              asChild
-            >
-              <Link href="/login">
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-3"
-              data-testid="button-request-demo-hero"
-              asChild
-            >
-              <Link href="/demo-request">Request Demo</Link>
-            </Button>
+      <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 dark:from-blue-800 dark:via-purple-800 dark:to-indigo-900 py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Text Content */}
+              <div className="text-center lg:text-left">
+                <h2 className="text-5xl font-bold text-white mb-6">
+                  Automate Curriculum Mapping Using AI!
+                </h2>
+                <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+                  Transform your curriculum with AI-powered mapping. Scriptum tracks
+                  course changes in real time, aligns content to national boards and
+                  accreditation standards, and delivers insights that reveal how
+                  curriculum updates impact student outcomes.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="text-lg px-8 py-3"
+                    data-testid="button-get-started"
+                    asChild
+                  >
+                    <Link href="/login">
+                      Get Started Today
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="text-lg px-8 py-3 text-white border-white hover:bg-white hover:text-blue-600"
+                    data-testid="button-request-demo-hero"
+                    asChild
+                  >
+                    <Link href="/demo-request">Request Demo</Link>
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Professor Image */}
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl transform rotate-3"></div>
+                  <img
+                    src={professorImage}
+                    alt="College professor teaching in classroom"
+                    className="relative rounded-2xl shadow-2xl w-full max-w-lg h-auto object-cover"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
