@@ -29,6 +29,7 @@ import CourseContentPage from "@/pages/course-content";
 import DemoRequestPage from "@/pages/demo-request";
 import DemoRequestsDashboard from "@/pages/demo-requests-dashboard";
 import ContactFormPage from "@/pages/contact-form";
+import ContactDashboard from "@/pages/contact-dashboard";
 
 function Router() {
   return (
@@ -229,6 +230,20 @@ function Router() {
               <Sidebar />
               <div className="flex-1 p-6">
                 <DemoRequestsDashboard />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/contacts">
+        <ProtectedRoute requiredRole={["super_admin", "school_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <ContactDashboard />
               </div>
             </div>
           </div>

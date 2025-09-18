@@ -135,7 +135,8 @@ export function Sidebar({ className }: SidebarProps) {
           { name: "Onboarding", href: "/onboarding", icon: Shield }
         ] : []),
         { name: "User Management", href: "/admin/users", icon: Users },
-        { name: "Demo Requests", href: "/demo-requests", icon: Mail }
+        { name: "Demo Requests", href: "/demo-requests", icon: Mail },
+        { name: "Contact Dashboard", href: "/contacts", icon: Mail }
       ]
     }] : [])
   ].filter(section => section.items.length > 0);
