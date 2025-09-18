@@ -2,21 +2,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, BookOpen, GraduationCap, TrendingUp, Users } from "lucide-react";
 import { Link } from "wouter";
+import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
 
 export function Homepage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <GraduationCap className="h-8 w-8 text-blue-600" />
+        <div className="flex items-center space-x-3">
+          <img src={scriptumLogo} alt="Scriptum Learning" className="h-10 w-auto" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Scriptum Learning</h1>
         </div>
-        <Link href="/login">
-          <Button variant="outline" data-testid="button-login">
-            Sign In
-          </Button>
-        </Link>
+        <div className="flex gap-3">
+          <a href="mailto:demo@scriptumlearning.com?subject=Demo Request&body=Hi, I'm interested in scheduling a demo of Scriptum Learning. Please contact me to arrange a demonstration.">
+            <Button variant="outline" size="sm" data-testid="button-request-demo">
+              Request Demo
+            </Button>
+          </a>
+          <Link href="/login">
+            <Button variant="outline" data-testid="button-sign-in">
+              Sign In
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section */}

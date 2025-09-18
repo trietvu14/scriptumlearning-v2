@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -50,6 +51,9 @@ export function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img src={scriptumLogo} alt="Scriptum Learning" className="h-12 w-auto" />
+          </div>
           <CardTitle className="text-2xl font-bold">Scriptum Learning</CardTitle>
           <CardDescription>
             Sign in to your educational platform
@@ -110,6 +114,16 @@ export function LoginForm() {
             </Button>
           </form>
 
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              Don't have an account?
+            </p>
+            <a href="mailto:demo@scriptumlearning.com?subject=Demo Request&body=Hi, I'm interested in scheduling a demo of Scriptum Learning. Please contact me to arrange a demonstration.">
+              <Button variant="outline" size="sm" data-testid="button-request-demo">
+                Request Demo Access
+              </Button>
+            </a>
+          </div>
         </CardContent>
       </Card>
     </div>
