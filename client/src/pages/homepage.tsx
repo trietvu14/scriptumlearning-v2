@@ -73,7 +73,7 @@ export function Homepage() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="text-lg px-8 py-3 text-white border-white hover:bg-white hover:text-blue-600"
+                    className="text-lg px-8 py-3 bg-transparent text-white border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-300"
                     data-testid="button-request-demo-hero"
                     asChild
                   >
