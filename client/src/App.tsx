@@ -27,6 +27,7 @@ import { AICategorizationPage } from "@/pages/ai-categorization";
 import AIInsightsPage from "@/pages/ai-insights/index";
 import CourseContentPage from "@/pages/course-content";
 import DemoRequestPage from "@/pages/demo-request";
+import DemoRequestsDashboard from "@/pages/demo-requests-dashboard";
 
 function Router() {
   return (
@@ -214,6 +215,20 @@ function Router() {
             <div className="flex flex-1">
               <Sidebar />
               <CourseContentPage />
+            </div>
+          </div>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/demo-requests">
+        <ProtectedRoute requiredRole={["super_admin", "school_admin"]}>
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 p-6">
+                <DemoRequestsDashboard />
+              </div>
             </div>
           </div>
         </ProtectedRoute>

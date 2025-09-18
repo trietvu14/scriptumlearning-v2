@@ -20,7 +20,8 @@ import {
   Activity,
   User,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Mail
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -133,7 +134,8 @@ export function Sidebar({ className }: SidebarProps) {
           { name: "Tenants", href: "/admin/tenants", icon: Building2 },
           { name: "Onboarding", href: "/onboarding", icon: Shield }
         ] : []),
-        { name: "User Management", href: "/admin/users", icon: Users }
+        { name: "User Management", href: "/admin/users", icon: Users },
+        { name: "Demo Requests", href: "/demo-requests", icon: Mail }
       ]
     }] : [])
   ].filter(section => section.items.length > 0);
