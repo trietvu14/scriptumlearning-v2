@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
-import professorImage from "@assets/stock_images/professional_college_66672c37.jpg";
+import administratorImage from "@assets/stock_images/professional_college_3a9cf36e.jpg";
 
 export function Homepage() {
   return (
@@ -82,13 +82,13 @@ export function Homepage() {
                 </div>
               </div>
 
-              {/* Professor Image */}
+              {/* Administrator Image */}
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
                   <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl transform rotate-3"></div>
                   <img
-                    src={professorImage}
-                    alt="College professor teaching in classroom"
+                    src={administratorImage}
+                    alt="College administrator in her office"
                     className="relative rounded-2xl shadow-2xl w-full max-w-lg h-auto object-cover"
                   />
                 </div>
