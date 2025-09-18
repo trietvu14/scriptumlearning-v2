@@ -180,10 +180,10 @@ export function Homepage() {
       <section className="bg-blue-600 dark:bg-blue-700 py-16">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-3xl font-bold text-white mb-4">
-            Ready to Transform Your Educational Institution?
+            Simplify curriculum mapping and accreditation with Scriptum Learning
           </h3>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of educators who are already using Scriptum Learning
+             Scriptum Learning
             to enhance their teaching and improve student outcomes.
           </p>
           <Button
