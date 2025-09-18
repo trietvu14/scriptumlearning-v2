@@ -2,15 +2,18 @@ import {
   users, 
   tenants, 
   userInvitations,
+  demoRequests,
   type User, 
   type InsertUser, 
   type Tenant, 
   type InsertTenant,
   type UserInvitation,
-  type InsertUserInvitation
+  type InsertUserInvitation,
+  type DemoRequest,
+  type InsertDemoRequest
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, gt, desc } from "drizzle-orm";
 
 // Storage interface definition
 interface IStorage {
@@ -36,6 +39,13 @@ interface IStorage {
   getInvitationsByTenant(tenantId: string): Promise<UserInvitation[]>;
   acceptInvitation(token: string): Promise<UserInvitation | undefined>;
   deleteInvitation(id: string): Promise<void>;
+  
+  // Demo requests
+  createDemoRequest(insertDemoRequest: InsertDemoRequest): Promise<DemoRequest>;
+  getAllDemoRequests(): Promise<DemoRequest[]>;
+  getDemoRequest(id: string): Promise<DemoRequest | undefined>;
+  updateDemoRequest(id: string, updates: Partial<DemoRequest>): Promise<DemoRequest | undefined>;
+  deleteDemoRequest(id: string): Promise<void>;
 }
 
 // DatabaseStorage implementation
@@ -179,6 +189,37 @@ export class DatabaseStorage implements IStorage {
 
   async deleteInvitation(id: string): Promise<void> {
     await db.delete(userInvitations).where(eq(userInvitations.id, id));
+  }
+
+  // Demo request methods
+  async createDemoRequest(insertDemoRequest: InsertDemoRequest): Promise<DemoRequest> {
+    const [demoRequest] = await db
+      .insert(demoRequests)
+      .values(insertDemoRequest)
+      .returning();
+    return demoRequest;
+  }
+
+  async getAllDemoRequests(): Promise<DemoRequest[]> {
+    return await db.select().from(demoRequests).orderBy(desc(demoRequests.createdAt));
+  }
+
+  async getDemoRequest(id: string): Promise<DemoRequest | undefined> {
+    const [demoRequest] = await db.select().from(demoRequests).where(eq(demoRequests.id, id));
+    return demoRequest || undefined;
+  }
+
+  async updateDemoRequest(id: string, updates: Partial<DemoRequest>): Promise<DemoRequest | undefined> {
+    const [demoRequest] = await db
+      .update(demoRequests)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(demoRequests.id, id))
+      .returning();
+    return demoRequest || undefined;
+  }
+
+  async deleteDemoRequest(id: string): Promise<void> {
+    await db.delete(demoRequests).where(eq(demoRequests.id, id));
   }
 }
 
