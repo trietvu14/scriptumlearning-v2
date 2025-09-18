@@ -62,6 +62,14 @@ export const confidenceLevelEnum = pgEnum("confidence_level", [
   "guessing"
 ]);
 
+export const referralSourceEnum = pgEnum("referral_source", [
+  "search_engine",
+  "linkedin", 
+  "social_media",
+  "referral",
+  "news_blog"
+]);
+
 // Core Tables
 export const tenants = pgTable("tenants", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -597,6 +605,27 @@ export const demoRequests = pgTable("demo_requests", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Contact form table for tracking contact inquiries from the "Get Started Today" form
+export const contacts = pgTable("contacts", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  jobTitle: text("job_title").notNull(),
+  institutionName: text("institution_name").notNull(),
+  schoolCollege: text("school_college").notNull(),
+  disciplineArea: text("discipline_area").notNull(),
+  phoneNumber: text("phone_number"), // Optional
+  message: text("message").notNull(),
+  referralSource: referralSourceEnum("referral_source").notNull(),
+  status: text("status").notNull().default("new"), // new, contacted, qualified, converted, closed
+  notes: text("notes"), // Admin notes
+  contactedAt: timestamp("contacted_at"),
+  contactedBy: uuid("contacted_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Relations
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
@@ -735,6 +764,14 @@ export const insertDemoRequestSchema = createInsertSchema(demoRequests).omit({
   contactedBy: true
 });
 
+export const insertContactSchema = createInsertSchema(contacts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  contactedAt: true,
+  contactedBy: true
+});
+
 // Types
 export type Tenant = typeof tenants.$inferSelect;
 export type InsertTenant = z.infer<typeof insertTenantSchema>;
@@ -747,6 +784,9 @@ export type InsertUserInvitation = z.infer<typeof insertUserInvitationSchema>;
 
 export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = z.infer<typeof insertDemoRequestSchema>;
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = z.infer<typeof insertContactSchema>;
 
 export type Standard = typeof standards.$inferSelect;
 export type InsertStandard = z.infer<typeof insertStandardSchema>;

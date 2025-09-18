@@ -3,6 +3,7 @@ import {
   tenants, 
   userInvitations,
   demoRequests,
+  contacts,
   type User, 
   type InsertUser, 
   type Tenant, 
@@ -10,7 +11,9 @@ import {
   type UserInvitation,
   type InsertUserInvitation,
   type DemoRequest,
-  type InsertDemoRequest
+  type InsertDemoRequest,
+  type Contact,
+  type InsertContact
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, desc } from "drizzle-orm";
@@ -46,6 +49,13 @@ interface IStorage {
   getDemoRequest(id: string): Promise<DemoRequest | undefined>;
   updateDemoRequest(id: string, updates: Partial<DemoRequest>): Promise<DemoRequest | undefined>;
   deleteDemoRequest(id: string): Promise<void>;
+  
+  // Contacts
+  createContact(insertContact: InsertContact): Promise<Contact>;
+  getAllContacts(): Promise<Contact[]>;
+  getContact(id: string): Promise<Contact | undefined>;
+  updateContact(id: string, updates: Partial<Contact>): Promise<Contact | undefined>;
+  deleteContact(id: string): Promise<void>;
 }
 
 // DatabaseStorage implementation
@@ -220,6 +230,37 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDemoRequest(id: string): Promise<void> {
     await db.delete(demoRequests).where(eq(demoRequests.id, id));
+  }
+
+  // Contact methods
+  async createContact(insertContact: InsertContact): Promise<Contact> {
+    const [contact] = await db
+      .insert(contacts)
+      .values(insertContact)
+      .returning();
+    return contact;
+  }
+
+  async getAllContacts(): Promise<Contact[]> {
+    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
+  }
+
+  async getContact(id: string): Promise<Contact | undefined> {
+    const [contact] = await db.select().from(contacts).where(eq(contacts.id, id));
+    return contact || undefined;
+  }
+
+  async updateContact(id: string, updates: Partial<Contact>): Promise<Contact | undefined> {
+    const [contact] = await db
+      .update(contacts)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(contacts.id, id))
+      .returning();
+    return contact || undefined;
+  }
+
+  async deleteContact(id: string): Promise<void> {
+    await db.delete(contacts).where(eq(contacts.id, id));
   }
 }
 

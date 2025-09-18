@@ -52,10 +52,10 @@ export function Homepage() {
                   Automate Curriculum Mapping Using AI!
                 </h2>
                 <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-                  Transform your curriculum with AI-powered mapping. Scriptum tracks
-                  course changes in real time, aligns content to national boards and
-                  accreditation standards, and delivers insights that reveal how
-                  curriculum updates impact student outcomes.
+                  Transform your curriculum with AI-powered mapping. Scriptum
+                  tracks course changes in real time, aligns content to national
+                  boards and accreditation standards, and delivers insights that
+                  reveal how curriculum updates impact student outcomes.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                   <Button
@@ -66,7 +66,7 @@ export function Homepage() {
                     asChild
                   >
                     <Link href="/login">
-                      Get Started Today
+                      Get started today
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </Button>
@@ -81,7 +81,7 @@ export function Homepage() {
                   </Button>
                 </div>
               </div>
-              
+
               {/* Professor Image */}
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
