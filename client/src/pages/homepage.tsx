@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import scriptumLogo from "@assets/Scriptum-logo_1756408112211.png";
-import facultyImage from "@assets/generated_Image_faculty_1758227512632.png";
+import facultyImage from "@assets/Generated_faculty_Image_1758253800678.png";
 
 export function Homepage() {
   return (
