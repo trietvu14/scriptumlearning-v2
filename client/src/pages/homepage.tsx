@@ -84,12 +84,12 @@ export function Homepage() {
 
               {/* Faculty Image */}
               <div className="flex justify-center lg:justify-end">
-                <div className="relative">
+                <div className="relative w-full max-w-lg">
                   <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl transform rotate-3"></div>
                   <img
                     src={facultyImage}
                     alt="Faculty member in her office"
-                    className="relative rounded-2xl shadow-2xl w-full max-w-lg h-auto object-cover"
+                    className="relative rounded-2xl shadow-2xl w-full h-80 object-cover object-center"
                   />
                 </div>
               </div>
